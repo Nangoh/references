@@ -57,6 +57,7 @@
   .xp-stat-row .ds-stat__value { font-size: var(--text-2xl); line-height: var(--lh-2xl); }
   .xp-boot { position: fixed; inset: 0; z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-3); background: var(--bg); color: var(--fg-2); font-size: var(--text-sm); transition: opacity var(--dur) var(--ease); }
   .xp-boot[hidden] { display: none; }
+  @media (max-width: 720px) { .xp-rows { display: none; } .ds-shell__actions { min-width: 0; } }
   .xp-boot .ds-spinner { width: 24px; height: 24px; border: 2px solid var(--border-strong); border-top-color: var(--accent); border-radius: 50%; animation: ds-spin .8s linear infinite; }
   .ds-main > .ds-page-header { margin-bottom: var(--sp-3); }
   .xp-legend-note { font-size: var(--text-xs); color: var(--fg-muted); display: inline-flex; align-items: center; gap: 6px; }
@@ -224,7 +225,7 @@
         <div id="panel-detail" role="tabpanel" aria-labelledby="tab-detail"><div class="xp-grid" id="grid"></div></div>
         <div id="panel-pivot" role="tabpanel" aria-labelledby="tab-pivot" hidden>
           <div class="xp-pivot-note">Perspective (FINOS) — 행/열 그룹을 드래그해 바꿀 수 있습니다. 필터·마킹을 따라갑니다.</div>
-          <perspective-viewer id="pivot" class="xp-pivot" theme="DS"></perspective-viewer>
+          <div id="pivot-host"></div><!-- <perspective-viewer> 는 탭이 보일 때 생성 (숨김 상태에서 업그레이드되면 wasm 패닉) -->
         </div>
       </div>
     </div>
@@ -418,6 +419,10 @@ $('#btn-mark-filter').addEventListener('click', markingToFilter);
    5. 차트 (ECharts + ds 테마). 마킹은 "마킹/나머지" 두 시리즈로 그린다 → Spotfire 와 같은 부분 하이라이트
    ============================================================ */
 const charts = {};
+const keys = { shift: false, alt: false };   // zrender 가 넘기는 이벤트에 modifier 가 빠지는 경우가 있어 직접 추적
+addEventListener('keydown', e => { keys.shift = e.shiftKey; keys.alt = e.altKey; }); addEventListener('keyup', e => { keys.shift = e.shiftKey; keys.alt = e.altKey; }); addEventListener('blur', () => { keys.shift = keys.alt = false; });
+const isShift = (p) => !!(keys.shift || p?.event?.event?.shiftKey || p?.event?.shiftKey);
+const isAlt = (p) => !!(keys.alt || p?.event?.event?.altKey || p?.event?.altKey);
 const dim = () => cssv('--chart-dim');
 const C = () => DSEchartsTheme.colors();
 function bindChart(id, optionFn, onInit) {
@@ -450,7 +455,7 @@ function trendOption() {
 }
 function monthClause(m) { return { label: `월 ${m.slice(0, 7)}`, sql: `date_trunc('month', date) = DATE '${m}'` }; }
 bindChart('c-trend', trendOption, ch => {
-  ch.on('click', p => { if (p.componentType !== 'series') return; mark(monthClause(trend[p.dataIndex].m), { add: p.event.event.shiftKey }); });
+  ch.on('click', p => { if (p.componentType !== 'series') return; mark(monthClause(trend[p.dataIndex].m), { add: isShift(p) }); });
   ch.on('brushEnd', p => {
     const a = p.areas?.[0]; if (!a || !a.coordRange) return;
     const [i0, i1] = a.coordRange.map(i => Math.max(0, Math.min(trend.length - 1, Math.round(i))));
@@ -494,7 +499,7 @@ bindChart('c-region', regionOption, ch => {
   ch.on('click', p => {
     if (p.componentType !== 'series') return;
     const k = regionRows[p.dataIndex].k;
-    if (p.event.event.shiftKey || p.event.event.altKey) mark(regionClause(k), { add: p.event.event.shiftKey });
+    if (isShift(p) || isAlt(p)) mark(regionClause(k), { add: isShift(p) });
     else if (!drillRegion(k)) mark(regionClause(k));   // 마지막 레벨에서는 클릭 = 마킹
   });
 });
@@ -533,7 +538,7 @@ function categoryOption() {
   };
 }
 const catClause = k => ({ label: `카테고리 ${k}`, sql: `category = '${esc(k)}'` });
-bindChart('c-category', categoryOption, ch => ch.on('click', p => { if (p.componentType === 'series') mark(catClause(catRows[p.dataIndex].k), { add: p.event.event.shiftKey }); }));
+bindChart('c-category', categoryOption, ch => ch.on('click', p => { if (p.componentType === 'series') mark(catClause(catRows[p.dataIndex].k), { add: isShift(p) }); }));
 
 /* 5-4 채널 × 카테고리 누적 (수량) */
 let chRows = [];   // [{channel, category, units, marked}]
@@ -558,7 +563,7 @@ function channelOption() {
 bindChart('c-channel', channelOption, ch => ch.on('click', p => {
   if (p.componentType !== 'series') return;
   const cat = p.seriesName.replace(' (나머지)', ''); const chan = p.name;
-  mark({ label: `${chan} × ${cat}`, sql: `channel = '${esc(chan)}' AND category = '${esc(cat)}'` }, { add: p.event.event.shiftKey });
+  mark({ label: `${chan} × ${cat}`, sql: `channel = '${esc(chan)}' AND category = '${esc(cat)}'` }, { add: isShift(p) });
 }));
 
 /* 5-5 히트맵: 지점 × 카테고리 (드릴: 셀 클릭 → 지점 × 월) */
@@ -580,9 +585,9 @@ function heatOption() {
 }
 bindChart('c-heat', heatOption, ch => ch.on('click', p => {
   if (p.componentType !== 'series') return;
-  const r = heatRows[p.dataIndex]; const add = p.event.event.shiftKey;
+  const r = heatRows[p.dataIndex]; const add = isShift(p);
   if (state.drill.heat) { mark({ label: `${r.y} · ${r.x.slice(0, 7)}`, sql: `branch = '${esc(r.y)}' AND date_trunc('month', date) = DATE '${r.x}'` }, { add }); return; }
-  if (add || p.event.event.altKey) { mark({ label: `${r.y} × ${r.x}`, sql: `branch = '${esc(r.y)}' AND category = '${esc(r.x)}'` }, { add }); return; }
+  if (add || isAlt(p)) { mark({ label: `${r.y} × ${r.x}`, sql: `branch = '${esc(r.y)}' AND category = '${esc(r.x)}'` }, { add }); return; }
   state.drill.heat = r.y; refresh({ keepDrill: true });
 }));
 $('#btn-heat-up').addEventListener('click', () => { state.drill.heat = null; refresh({ keepDrill: true }); });
@@ -680,6 +685,7 @@ async function loadPerspective() {
     await import('../vendor/perspective/perspective-viewer/dist/cdn/perspective-viewer.js');
     await import('../vendor/perspective/perspective-viewer-datagrid/dist/cdn/perspective-viewer-datagrid.js');
     await import('../vendor/perspective/perspective-viewer-d3fc/dist/cdn/perspective-viewer-d3fc.js');
+    await customElements.whenDefined('perspective-viewer'); await customElements.whenDefined('perspective-viewer-datagrid');
     perspective = mod.default; pivotWorker = await perspective.worker();
   } catch (e) {
     perspective = false; console.warn('Perspective 로드 실패', e);
@@ -692,7 +698,8 @@ async function refreshPivot() {
   const P = await loadPerspective(); if (!P) return;
   const m = whereMarking(); const where = m ? `${whereFilters()} AND (${m})` : whereBase();
   const rows = await query(`SELECT CAST(date AS VARCHAR) date, region, branch, category, product, channel, units, revenue, "cost", round((revenue-"cost")*1.0/revenue, 4) margin, discount_rate, returned FROM sales WHERE ${where}`);
-  const viewer = $('#pivot');
+  let viewer = $('#pivot');
+  if (!viewer) { viewer = document.createElement('perspective-viewer'); viewer.id = 'pivot'; viewer.className = 'xp-pivot'; viewer.setAttribute('theme', 'DS'); $('#pivot-host').appendChild(viewer); await customElements.whenDefined('perspective-viewer'); }
   const saved = pivotTable ? await viewer.save().catch(() => null) : null;
   const tbl = await pivotWorker.table(rows.length ? rows : [{ date: '', region: '', branch: '', category: '', product: '', channel: '', units: 0, revenue: 0, cost: 0, margin: 0, discount_rate: 0, returned: 0 }]);
   await viewer.load(tbl);
@@ -714,7 +721,7 @@ function buildVgPanel() {
       vg.intervalX({ as: discountBrush }),
       vg.xDomain(vg.Fixed), vg.xLabel(null), vg.yLabel(null), vg.yAxis(null), vg.xTickFormat('.0%'), vg.xTicks(4),
       vg.width($('#vg-discount').clientWidth || 200), vg.height(110),
-      vg.marginLeft(4), vg.marginRight(8), vg.marginTop(4), vg.marginBottom(22),
+      vg.marginLeft(14), vg.marginRight(10), vg.marginTop(4), vg.marginBottom(22),
       vg.style({ fontFamily: c.font, fontSize: '11px', color: c.muted, background: 'transparent' }),
     );
     $('#vg-discount').replaceChildren(el);
@@ -767,28 +774,28 @@ async function refresh(opts = {}) {
     renderActiveChips(); renderRegionCrumb(); renderHeatCrumb(); if (!opts.fromBrush) syncVgFilter();
 
     // KPI (+ 전 기간 대비 delta: 같은 길이의 직전 구간)
-    const [k] = await query(`SELECT sum(revenue) rev, sum("cost") cst, sum(units) units, avg(returned) ret, count(*) n, CAST(min(date) AS VARCHAR) mn, CAST(max(date) AS VARCHAR) mx FROM sales WHERE ${base}`);
+    const [k] = await query(`SELECT sum(revenue)::DOUBLE rev, sum("cost")::DOUBLE cst, sum(units)::DOUBLE units, avg(returned) ret, count(*) n, CAST(min(date) AS VARCHAR) mn, CAST(max(date) AS VARCHAR) mx FROM sales WHERE ${base}`);
     $('#k-rev').textContent = fmtKRW(k.rev || 0) + '원'; $('#k-margin').textContent = k.rev ? fmtPct((k.rev - k.cst) / k.rev) : '–';
     $('#k-units').textContent = fmtInt(k.units || 0); $('#k-ret').textContent = k.n ? fmtPct(k.ret) : '–';
     if (k.n && k.mn && k.mx) {
       const days = Math.max(1, Math.round((new Date(k.mx) - new Date(k.mn)) / 86400000) + 1);
       const prevWhere = `${whereFilters(state.filters, { skip: ['date'] })} AND date >= DATE '${String(k.mn).slice(0, 10)}' - INTERVAL ${days} DAY AND date < DATE '${String(k.mn).slice(0, 10)}'`;
-      const [p] = await query(`SELECT sum(revenue) rev, sum("cost") cst, sum(units) units, avg(returned) ret, count(*) n FROM sales WHERE ${prevWhere}`);
+      const [p] = await query(`SELECT sum(revenue)::DOUBLE rev, sum("cost")::DOUBLE cst, sum(units)::DOUBLE units, avg(returned) ret, count(*) n FROM sales WHERE ${prevWhere}`);
       const delta = (el, cur, prev, fmt = v => fmtPct(v)) => { el.className = el.className.replace(/ is-(up|down|flat)/g, ''); el.textContent = ''; if (!prev) return; const d = (cur - prev) / Math.abs(prev); el.classList.add(d > 0.001 ? 'is-up' : d < -0.001 ? 'is-down' : 'is-flat'); el.innerHTML = `${fmt(Math.abs(d))} <span class="ds-stat__delta-ctx">직전 ${days}일 대비</span>`; };
       delta($('#k-rev-d'), k.rev, p.rev); delta($('#k-units-d'), k.units, p.units);
       delta($('#k-margin-d'), (k.rev - k.cst) / (k.rev || 1), (p.rev - p.cst) / (p.rev || 1), v => (v * 100).toFixed(1) + 'pt'); delta($('#k-ret-d'), k.ret, p.ret);
     } else for (const id of ['k-rev-d', 'k-margin-d', 'k-units-d', 'k-ret-d']) $('#' + id).textContent = '';
 
     // 차트 데이터
-    trend = await query(`SELECT CAST(date_trunc('month', date) AS VARCHAR) m, sum(revenue) total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END) marked FROM sales WHERE ${base} GROUP BY 1 ORDER BY 1`);
+    trend = await query(`SELECT CAST(date_trunc('month', date) AS VARCHAR) m, sum(revenue)::DOUBLE total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END)::DOUBLE marked FROM sales WHERE ${base} GROUP BY 1 ORDER BY 1`);
     const rf = regionField(); const d = state.drill.region;
     const rw = d.length === 0 ? base : d.length === 1 ? `${base} AND region = '${esc(d[0])}'` : `${base} AND branch = '${esc(d[1])}'`;
-    regionRows = await query(`SELECT ${rf} k, sum(revenue) total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END) marked FROM sales WHERE ${rw} GROUP BY 1 ORDER BY total DESC`);
-    catRows = await query(`SELECT category k, sum(revenue) total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END) marked FROM sales WHERE ${base} GROUP BY 1 ORDER BY total DESC`);
-    chRows = await query(`SELECT channel, category, sum(units) units, sum(CASE WHEN (${mk})=1 THEN units ELSE 0 END) marked FROM sales WHERE ${base} GROUP BY 1,2 ORDER BY 1,2`);
+    regionRows = await query(`SELECT ${rf} k, sum(revenue)::DOUBLE total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END)::DOUBLE marked FROM sales WHERE ${rw} GROUP BY 1 ORDER BY total DESC`);
+    catRows = await query(`SELECT category k, sum(revenue)::DOUBLE total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END)::DOUBLE marked FROM sales WHERE ${base} GROUP BY 1 ORDER BY total DESC`);
+    chRows = await query(`SELECT channel, category, sum(units)::DOUBLE units, sum(CASE WHEN (${mk})=1 THEN units ELSE 0 END)::DOUBLE marked FROM sales WHERE ${base} GROUP BY 1,2 ORDER BY 1,2`);
     heatRows = state.drill.heat
-      ? await query(`SELECT CAST(date_trunc('month', date) AS VARCHAR) x, category y, sum(revenue) total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END) marked FROM sales WHERE ${base} AND branch = '${esc(state.drill.heat)}' GROUP BY 1,2 ORDER BY 1,2`)
-      : await query(`SELECT category x, branch y, sum(revenue) total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END) marked FROM sales WHERE ${base} GROUP BY 1,2 ORDER BY y, x`);
+      ? await query(`SELECT CAST(date_trunc('month', date) AS VARCHAR) x, category y, sum(revenue)::DOUBLE total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END)::DOUBLE marked FROM sales WHERE ${base} AND branch = '${esc(state.drill.heat)}' GROUP BY 1,2 ORDER BY 1,2`)
+      : await query(`SELECT category x, branch y, sum(revenue)::DOUBLE total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END)::DOUBLE marked FROM sales WHERE ${base} GROUP BY 1,2 ORDER BY y, x`);
     for (const id of ['c-trend', 'c-region', 'c-category', 'c-channel', 'c-heat']) charts[id].setOption(({ 'c-trend': trendOption, 'c-region': regionOption, 'c-category': categoryOption, 'c-channel': channelOption, 'c-heat': heatOption })[id](), { replaceMerge: ['series'] });
 
     // 마킹 바 + 상세 보기
