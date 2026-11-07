@@ -412,7 +412,7 @@ pre code { background: none; border: 0; padding: 0; }
 .ds-dropdown { position: relative; display: inline-block; }
 .ds-menu { position: absolute; top: calc(100% + 4px); left: 0; z-index: var(--z-dropdown); min-width: 180px; max-height: 320px; overflow-y: auto; padding: var(--sp-1); background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); box-shadow: var(--shadow-2); }
 .ds-menu--right { left: auto; right: 0; }
-.ds-menu--static { position: static; box-shadow: none; }
+.ds-menu--static { position: static; z-index: auto; box-shadow: none; }
 .ds-menu[hidden] { display: none; }
 .ds-menu__item { display: flex; align-items: center; gap: var(--sp-2); width: 100%; height: 32px; padding: 0 var(--sp-2); border: 0; border-radius: var(--r-sm); background: none; color: var(--fg); font-size: var(--text-sm); text-align: left; cursor: pointer; white-space: nowrap; text-decoration: none; }
 .ds-menu__item:hover, .ds-menu__item:focus-visible { background: var(--surface-2); text-decoration: none; box-shadow: none; }
@@ -425,11 +425,11 @@ pre code { background: none; border: 0; padding: 0; }
 .ds-menu__label { padding: var(--sp-2) var(--sp-2) var(--sp-1); font-size: 11px; letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--fg-muted); font-weight: var(--weight-semibold); }
 .ds-menu__shortcut { margin-left: auto; color: var(--fg-muted); font-size: var(--text-xs); font-family: var(--font-mono); }
 .ds-tooltip { position: absolute; z-index: var(--z-tooltip); max-width: 280px; padding: var(--sp-1) var(--sp-2); border-radius: var(--r-sm); font-size: var(--text-xs); line-height: var(--lh-xs); background: var(--n-900); color: var(--n-0); pointer-events: none; box-shadow: var(--shadow-2); }
-.ds-tooltip--static { position: static; display: inline-block; }
+.ds-tooltip--static { position: static; z-index: auto; display: inline-block; }
 :root[data-theme="dark"] .ds-tooltip { background: var(--n-200); color: var(--n-1000); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ds-tooltip { background: var(--n-200); color: var(--n-1000); } }
 .ds-popover { position: absolute; z-index: var(--z-dropdown); min-width: 220px; max-width: 360px; padding: var(--sp-3) var(--sp-4); background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); box-shadow: var(--shadow-2); font-size: var(--text-sm); }
-.ds-popover--static { position: static; display: inline-block; }
+.ds-popover--static { position: static; z-index: auto; display: inline-block; }
 .ds-popover__title { font-weight: var(--weight-semibold); margin: 0 0 var(--sp-1); }
 
 /* ---------- 13. 피드백 ---------- */
@@ -495,6 +495,7 @@ pre code { background: none; border: 0; padding: 0; }
 .ds-chart__swatch--dot { border-radius: 50%; width: 8px; height: 8px; }
 .ds-chart__plot { position: relative; min-width: 0; width: 100%; }
 .ds-chart__plot svg { display: block; width: 100%; height: auto; overflow: visible; font-family: var(--font-sans); }
+.ds-chart--h-sm .ds-chart__plot svg, .ds-chart--h-md .ds-chart__plot svg, .ds-chart--h-lg .ds-chart__plot svg { height: 100%; }
 .ds-chart__plot text { fill: var(--chart-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
 .ds-chart__plot .ds-grid-line { stroke: var(--chart-grid); stroke-width: 1; shape-rendering: crispEdges; }
 .ds-chart__plot .ds-axis-line { stroke: var(--chart-axis); stroke-width: 1; shape-rendering: crispEdges; }
@@ -504,7 +505,7 @@ pre code { background: none; border: 0; padding: 0; }
 .ds-chart.is-table .ds-chart__plot, .ds-chart.is-table .ds-chart__legend { display: none; }
 .ds-chart.is-table .ds-chart__table { display: block; }
 .ds-chart__table .ds-table-wrap { max-height: 320px; overflow-y: auto; }
-.ds-chart__tooltip { position: absolute; z-index: var(--z-tooltip); pointer-events: none; min-width: 120px; max-width: 280px; padding: var(--sp-2) var(--sp-3); background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-sm); box-shadow: var(--shadow-2); font-size: var(--text-xs); line-height: var(--lh-xs); color: var(--fg); opacity: 0; transition: opacity var(--dur-fast) var(--ease); }
+.ds-chart__tooltip { position: absolute; z-index: 5; pointer-events: none; min-width: 120px; max-width: 280px; padding: var(--sp-2) var(--sp-3); background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-sm); box-shadow: var(--shadow-2); font-size: var(--text-xs); line-height: var(--lh-xs); color: var(--fg); opacity: 0; transition: opacity var(--dur-fast) var(--ease); }
 .ds-chart__tooltip.is-visible { opacity: 1; }
 .ds-chart__tooltip-title { color: var(--fg-2); margin-bottom: 4px; font-weight: var(--weight-medium); }
 .ds-chart__tooltip-row { display: flex; align-items: center; gap: var(--sp-2); }
@@ -523,6 +524,7 @@ pre code { background: none; border: 0; padding: 0; }
 .is-marked { outline: 2px solid var(--chart-mark); outline-offset: 1px; }
 .ds-marking-bar { position: fixed; left: 50%; bottom: max(var(--sp-6), env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: var(--z-toast); display: inline-flex; align-items: center; gap: var(--sp-3); height: 40px; padding: 0 var(--sp-2) 0 var(--sp-4); background: var(--n-900); color: var(--n-0); border-radius: var(--r-full); box-shadow: var(--shadow-3); font-size: var(--text-sm); font-weight: var(--weight-medium); white-space: nowrap; animation: ds-toast-in var(--dur) var(--ease); }
 .ds-marking-bar[hidden] { display: none; }
+.ds-marking-bar--static { position: static; transform: none; animation: none; z-index: auto; }
 .ds-marking-bar .ds-btn { color: inherit; border-color: transparent; background: rgba(255,255,255,.1); }
 .ds-marking-bar .ds-btn:hover { background: rgba(255,255,255,.2); }
 .ds-marking-bar__count { font-variant-numeric: tabular-nums; color: var(--brand-300); }

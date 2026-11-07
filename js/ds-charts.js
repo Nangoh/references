@@ -144,7 +144,7 @@
       case 'currency': return v => '₩' + nf.format(Math.round(v));
       case 'compact-krw': return v => compactKRW(v);
       case 'compact': return v => compactNum(v);
-      case 'percent': return v => nf1.format(v * 100) + '%';
+      case 'percent': return v => (v * 100).toLocaleString('ko-KR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%';
       case 'percent-point': return v => (v > 0 ? '+' : '') + nf1.format(v) + '%';
       case 'integer': return v => nf.format(Math.round(v));
       default: return v => (Number.isInteger(v) ? nf.format(v) : nf1.format(v));
@@ -262,6 +262,7 @@
     const rowsByCat = new Map();
     const addCat = c => { const k = String(c); if (!catIdx.has(k)) { catIdx.set(k, cats.length); cats.push(k); rowsByCat.set(k, []); } return catIdx.get(k); };
     const addSer = n => { if (!sIdx.has(n)) { sIdx.set(n, seriesNames.length); seriesNames.push(n); vals.push([]); } return sIdx.get(n); };
+    if (opts.seriesOrder) opts.seriesOrder.forEach(n => addSer(String(n))); // 시리즈 순서 고정 (색은 개체를 따른다)
     if (opts.series) { // 롱 포맷
       const yk = Array.isArray(opts.y) ? opts.y[0] : opts.y;
       for (const r of data) { const ci = addCat(r[xk]); const si = addSer(String(r[opts.series])); vals[si][ci] = (vals[si][ci] || 0) + (+r[yk] || 0); rowsByCat.get(String(r[xk])).push(r); }
