@@ -130,9 +130,12 @@ DSCharts.line(el, { data: rows, x: 'month', y: ['revenue', 'cost'], legend: true
 <script src="../vendor/echarts/echarts.min.js"></script>
 <script src="../integrations/echarts-theme.js"></script>
 <script>
-  const chart = echarts.init(document.getElementById('tree'), DSEChartsTheme.current()); // 'ds-light' | 'ds-dark'
-  chart.setOption({ series: [{ type: 'treemap', data, leafDepth: 1 }] });
-  DSTheme.onChange(() => { chart.dispose(); /* 테마 바꿔 다시 init */ });
+  // bind: 'ds' 테마로 init + option 적용 + 테마 토글 시 자동 재구성(ECharts는 테마 핫스왑이 안 됨)
+  const ref = DSEchartsTheme.bind(echarts, document.getElementById('tree'), () => ({
+    series: [{ type: 'treemap', data, leafDepth: 1 }],
+  }));
+  ref.chart.on('click', p => console.log(p.name));   // 이벤트는 ref.chart 에 건다
+  // 단순 사용: echarts.init(el, DSEchartsTheme.register(echarts)) 후 setOption
 </script>
 ```
 축·그리드·툴팁·시리즈 색은 테마가 넣는다. `option`에 `color:`를 직접 쓰지 않는다.

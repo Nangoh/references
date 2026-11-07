@@ -67,6 +67,9 @@ pre code { background: none; border: 0; padding: 0; }
 .ds-row--start { align-items: flex-start; }
 .ds-grow { flex: 1 1 auto; min-width: 0; }
 .ds-grid { display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: var(--gap, var(--sp-4)); }
+.ds-grid > .span-2 { grid-column: span 2; }
+.ds-grid > .span-3 { grid-column: span 3; }
+@media (max-width: 720px) { .ds-grid > .span-2, .ds-grid > .span-3 { grid-column: auto; } }
 .ds-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--gap, var(--sp-4)); }
 @media (max-width: 720px) { .ds-grid, .ds-split { grid-template-columns: minmax(0, 1fr); } }
 .ds-divider { border: 0; border-top: 1px solid var(--border); margin: 0; }
@@ -337,6 +340,8 @@ pre code { background: none; border: 0; padding: 0; }
 .ds-tab:focus-visible { box-shadow: var(--focus-ring); border-radius: var(--r-sm); }
 .ds-tab .ds-count { background: var(--surface-3); color: var(--fg-2); }
 .ds-tab.is-active .ds-count { background: var(--accent-soft-2); color: var(--accent-text); }
+.ds-tab__count { display: inline-block; min-width: 18px; padding: 0 6px; border-radius: var(--r-full); font-size: var(--text-xs); line-height: 18px; font-variant-numeric: tabular-nums; background: var(--surface-3); color: var(--fg-2); }
+.ds-tab.is-active .ds-tab__count { background: var(--accent-soft-2); color: var(--accent-text); }
 .ds-tabs--pills { border-bottom: 0; gap: var(--sp-1); padding: 2px; background: var(--surface-2); border-radius: var(--r-md); display: inline-flex; align-items: center; }
 .ds-tabs--pills .ds-tab { height: 28px; margin: 0; border: 0; border-radius: var(--r-sm); font-size: var(--text-xs); }
 .ds-tabs--pills .ds-tab.is-active { background: var(--surface); color: var(--fg); box-shadow: var(--shadow-1); }
@@ -452,6 +457,8 @@ pre code { background: none; border: 0; padding: 0; }
 .ds-alert--warn { background: var(--warn-soft); border-color: color-mix(in srgb, var(--warn) 35%, transparent); border-left-color: var(--warn); } .ds-alert--warn .ds-alert__icon { color: var(--warn-text); }
 .ds-alert--danger { background: var(--danger-soft); border-color: color-mix(in srgb, var(--danger) 30%, transparent); border-left-color: var(--danger); } .ds-alert--danger .ds-alert__icon { color: var(--danger-text); }
 .ds-alert--info { background: var(--info-soft); border-color: color-mix(in srgb, var(--info) 30%, transparent); border-left-color: var(--info); } .ds-alert--info .ds-alert__icon { color: var(--info-text); }
+.ds-skip { position: absolute; left: var(--sp-2); top: -100px; z-index: calc(var(--z-shell) + 1); padding: var(--sp-2) var(--sp-3); background: var(--accent); color: var(--accent-fg); border-radius: var(--r-md); }
+.ds-skip:focus { top: var(--sp-2); }
 .ds-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: var(--sp-2); padding: var(--sp-10) var(--sp-6); color: var(--fg-2); }
 .ds-empty__icon { width: 40px; height: 40px; color: var(--fg-muted); margin-bottom: var(--sp-1); }
 .ds-empty__title { font-size: var(--text-md); font-weight: var(--weight-semibold); color: var(--fg); margin: 0; }
