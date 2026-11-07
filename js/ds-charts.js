@@ -339,7 +339,7 @@
       const colorOf = (s, i) => s.other ? T.other : T.series[i % SERIES_MAX];
       const fillOf = (s, i) => (o.emphasis && s.name !== o.emphasis) ? T.dim : colorOf(s, i);
       // 범례
-      legendBuild(f, series.map((s, i) => ({ name: s.name, color: colorOf(s, i), off: state.off.has(i) })), 'rect',
+      legendBuild(f, series.map((s, i) => ({ name: s.name, color: fillOf(s, i), off: state.off.has(i) })), 'rect',
         o.legend === false ? null : i => { if (state.off.has(i)) state.off.delete(i); else if (state.off.size < series.length - 1) state.off.add(i); render(); });
       if (o.legend === false) f.legend.hidden = true;
       // 값 범위
@@ -464,7 +464,7 @@
       const visible = series.map((s, i) => !state.off.has(i)); const visIdx = series.map((s, i) => i).filter(i => visible[i]);
       const colorOf = (s, i) => s.other ? T.other : T.series[i % SERIES_MAX];
       const strokeOf = (s, i) => (o.emphasis && s.name !== o.emphasis) ? T.dim : colorOf(s, i);
-      legendBuild(f, series.map((s, i) => ({ name: s.name, color: colorOf(s, i), off: state.off.has(i) })), 'line', o.legend === false ? null : i => { if (state.off.has(i)) state.off.delete(i); else if (state.off.size < series.length - 1) state.off.add(i); render(); });
+      legendBuild(f, series.map((s, i) => ({ name: s.name, color: strokeOf(s, i), off: state.off.has(i) })), 'line', o.legend === false ? null : i => { if (state.off.has(i)) state.off.delete(i); else if (state.off.size < series.length - 1) state.off.add(i); render(); });
       if (o.legend === false) f.legend.hidden = true;
       // x 스케일: 날짜면 시간축, 아니면 순서축
       const xs = cats.map(parseX); const isTime = xs.every(v => v != null) && cats.length > 1;

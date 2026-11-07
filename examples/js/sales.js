@@ -7,10 +7,14 @@
     const lines = text.replace(/\r/g, '').split('\n').filter(Boolean);
     const head = lines[0].split(',');
     const num = new Set(['units', 'revenue', 'cost', 'discount_rate', 'returned']);
-    return lines.slice(1).map(l => { const c = l.split(','); const r = {}; head.forEach((h, i) => { r[h] = num.has(h) ? +c[i] : c[i]; }); r.month = r.date.slice(0, 7); r.year = r.date.slice(0, 4); r.margin = r.revenue - r.cost; return r; });
+    const rows = lines.slice(1).map(l => { const c = l.split(','); const r = {}; head.forEach((h, i) => { r[h] = num.has(h) ? +c[i] : c[i]; }); r.month = r.date.slice(0, 7); r.year = r.date.slice(0, 4); r.margin = r.revenue - r.cost; return r; });
+    // 마지막 달이 15일 미만이면 (미완성 월) 집계가 왜곡되므로 예시에서는 제외한다
+    const lastMonth = rows.reduce((m, r) => r.month > m ? r.month : m, '');
+    const days = new Set(rows.filter(r => r.month === lastMonth).map(r => r.date)).size;
+    return days < 15 ? rows.filter(r => r.month !== lastMonth) : rows;
   }
   async function loadSales() {
-    try { const res = await fetch('data/sales.csv'); if (res.ok) return parseCSV(await res.text()); } catch (e) { /* file:// 등 */ }
+    if (location.protocol !== 'file:') { try { const res = await fetch('data/sales.csv'); if (res.ok) return parseCSV(await res.text()); } catch (e) { /* 서버가 없으면 아래로 */ } }
     if (global.SALES_CSV) return parseCSV(global.SALES_CSV);
     await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'data/sales.js'; s.onload = ok; s.onerror = no; document.head.appendChild(s); });
     return parseCSV(global.SALES_CSV);

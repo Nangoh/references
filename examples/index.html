@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>references · 사내 디자인 시스템</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="../css/ds.css">
+<script src="../js/ds-theme.js"></script>
+<style>
+  .ix-intro { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--sp-8); align-items: start; margin-bottom: var(--sp-8); }
+  .ix-intro p { margin: 0 0 var(--sp-3); color: var(--fg-2); max-width: 62ch; }
+  .ix-rules { counter-reset: r; display: flex; flex-direction: column; gap: var(--sp-2); margin: 0; padding: 0; list-style: none; }
+  .ix-rules li { display: grid; grid-template-columns: 28px minmax(0,1fr); gap: var(--sp-3); align-items: start; padding: var(--sp-3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); font-size: var(--text-sm); line-height: var(--lh-sm); }
+  .ix-rules li::before { counter-increment: r; content: counter(r); width: 28px; height: 28px; border-radius: var(--r-sm); background: var(--accent-soft); color: var(--accent-text); font-weight: var(--weight-semibold); display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-mono); }
+  .ix-rules strong { display: block; color: var(--fg); margin-bottom: 2px; }
+  .ix-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--sp-4); }
+  .ix-card__kicker { font-size: var(--text-xs); color: var(--fg-muted); letter-spacing: var(--tracking-label); text-transform: uppercase; font-weight: var(--weight-semibold); }
+  .ix-card__body p { margin: var(--sp-1) 0 0; font-size: var(--text-sm); color: var(--fg-2); }
+  .ix-files { font-size: var(--text-sm); }
+  .ix-files code { white-space: nowrap; }
+  .ix-swatches { display: flex; gap: 4px; margin-top: var(--sp-3); }
+  .ix-swatches span { flex: 1; height: 28px; border-radius: var(--r-sm); }
+  .ix-section { margin-top: var(--sp-10); }
+  @media (max-width: 860px) { .ix-intro { grid-template-columns: minmax(0,1fr); } }
+</style>
+</head>
+<body>
+<div class="ds-shell ds-shell--no-sidebar">
+  <header class="ds-shell__header">
+    <a class="ds-shell__brand" href="index.html"><span class="ds-shell__mark" aria-hidden="true"></span>references<span class="ds-shell__env">design system</span></a>
+    <nav class="ds-shell__nav" aria-label="주요 메뉴">
+      <a href="index.html" class="is-active">홈</a>
+      <a href="showcase.html">컴포넌트</a>
+      <a href="charts.html">차트</a>
+      <a href="dashboard.html">대시보드</a>
+      <a href="explorer.html">탐색기</a>
+    </nav>
+    <div class="ds-shell__spacer"></div>
+    <div class="ds-shell__actions">
+      <a class="ds-btn ds-btn--sm" href="https://github.com/Nangoh/references" target="_blank" rel="noopener"><svg class="ds-icon" viewBox="0 0 16 16"><path d="M8 1.5a6.5 6.5 0 0 0-2 12.7c.3 0 .4-.1.4-.3v-1.2c-1.8.4-2.2-.8-2.2-.8-.3-.7-.7-.9-.7-.9-.6-.4 0-.4 0-.4.7 0 1 .7 1 .7.6 1 1.5.7 1.9.5 0-.4.2-.7.4-.9-1.4-.2-2.9-.7-2.9-3.2 0-.7.2-1.3.7-1.7-.1-.2-.3-.8 0-1.7 0 0 .6-.2 1.8.7a6 6 0 0 1 3.2 0c1.2-.9 1.8-.7 1.8-.7.4.9.1 1.5 0 1.7.4.4.7 1 .7 1.7 0 2.5-1.5 3-2.9 3.2.2.2.4.6.4 1.1v1.8c0 .2.1.3.4.3A6.5 6.5 0 0 0 8 1.5z"/></svg>GitHub</a>
+      <button class="ds-btn ds-btn--icon ds-theme-toggle" type="button" aria-label="테마 전환">
+        <svg class="ds-icon ds-icon--moon" viewBox="0 0 16 16"><path d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7z"/></svg>
+        <svg class="ds-icon ds-icon--sun" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="ds-main">
+    <div class="ds-container" style="padding-left:0;padding-right:0">
+      <div class="ix-intro">
+        <div>
+          <h1 class="ds-page-title">사내 시스템 공용 디자인 · 차트 레퍼런스</h1>
+          <p class="mt-3">여러 운영 시스템이 한 팀의 것으로 보이게 하는 기준입니다. 어떤 화면을 열어도 같은 헤더, 같은 간격, 같은 차트 색이 나오도록 토큰과 컴포넌트, 차트 규칙을 한곳에 둡니다.</p>
+          <p>사람이 읽는 문서라기보다 <strong>LLM(GPT, GLM, Claude)에 그대로 먹이는 파일</strong>로 만들었습니다. 코딩 에이전트에는 <code>AGENTS.md</code>를, 채팅형 모델에는 <code>prompts/system-prompt.md</code>를 붙이면 모델이 디자인을 새로 짓지 않고 여기 정의된 클래스와 토큰만 씁니다.</p>
+          <div class="ix-swatches" aria-label="브랜드 램프">
+            <span style="background:var(--brand-100)"></span><span style="background:var(--brand-200)"></span><span style="background:var(--brand-300)"></span><span style="background:var(--brand-400)"></span><span style="background:var(--brand-500)"></span><span style="background:var(--brand-600)"></span><span style="background:var(--brand-700)"></span><span style="background:var(--brand-800)"></span><span style="background:var(--brand-900)"></span>
+          </div>
+          <div class="ix-swatches" aria-label="차트 8색">
+            <span style="background:var(--series-1)"></span><span style="background:var(--series-2)"></span><span style="background:var(--series-3)"></span><span style="background:var(--series-4)"></span><span style="background:var(--series-5)"></span><span style="background:var(--series-6)"></span><span style="background:var(--series-7)"></span><span style="background:var(--series-8)"></span>
+          </div>
+        </div>
+        <ol class="ix-rules" aria-label="세 가지 규칙">
+          <li><div><strong>색·글꼴·간격은 토큰만 쓴다</strong><code>tokens/tokens.css</code>의 <code>var(--accent)</code> 같은 변수만. hex 직접 입력 금지. 라이트·다크는 토큰이 알아서 바꾼다.</div></li>
+          <li><div><strong>컴포넌트는 ds.css 클래스만 쓴다</strong>버튼·입력·표·카드·배지·탭은 <code>css/ds.css</code>에 있다. 새 스타일을 짓지 말고 <code>ds-btn ds-btn--primary</code>처럼 조합한다.</div></li>
+          <li><div><strong>차트는 ds-charts 또는 ECharts 테마</strong>간단한 차트는 <code>js/ds-charts.js</code>, 드릴다운·마킹이 필요하면 ECharts + <code>integrations/echarts-theme.json</code>. 색은 series-1~8 고정 순서.</div></li>
+        </ol>
+      </div>
+
+      <div class="ds-label mb-3">예시 페이지</div>
+      <div class="ix-cards">
+        <a class="ds-card ds-card--interactive" href="showcase.html"><div class="ds-card__body ix-card__body"><div class="ix-card__kicker">컴포넌트</div><h2 class="ds-h3 mt-1">쇼케이스</h2><p>토큰, 타이포, 앱 셸, 버튼, 폼, 표, 배지, 탭, KPI, 오버레이, 알림을 운영 화면 맥락으로. 아이덴티티는 여기서 확인.</p></div><div class="ds-card__footer"><span class="ds-badge ds-badge--ok">완료</span></div></a>
+        <a class="ds-card ds-card--interactive" href="charts.html"><div class="ds-card__body ix-card__body"><div class="ix-card__kicker">차트</div><h2 class="ds-h3 mt-1">차트 갤러리</h2><p>ds-charts.js 의 막대·선·누적·스탯 타일·분할 바·히트맵. 툴팁, 범례, 표 보기, 라이트/다크 전부 포함.</p></div><div class="ds-card__footer"><span class="ds-caption">js/ds-charts.js</span></div></a>
+        <a class="ds-card ds-card--interactive" href="dashboard.html"><div class="ds-card__body ix-card__body"><div class="ix-card__kicker">조립 예시</div><h2 class="ds-h3 mt-1">운영 대시보드</h2><p>필터 한 줄, KPI 행, 차트 그리드, 상세 표. ds.css 와 ds-charts.js 를 그대로 조립하면 이렇게 나온다.</p></div><div class="ds-card__footer"><span class="ds-caption">가짜 데이터 4,343행</span></div></a>
+        <a class="ds-card ds-card--interactive" href="explorer.html"><div class="ds-card__body ix-card__body"><div class="ix-card__kicker">Spotfire 대체</div><h2 class="ds-h3 mt-1">데이터 탐색기</h2><p>마킹(한 차트에서 선택 → 전체 강조), 교차 필터, 드릴다운, 상세 표, 피벗. DuckDB-WASM + Mosaic + ECharts.</p></div><div class="ds-card__footer"><span class="ds-caption">브라우저 안에서 SQL 실행</span></div></a>
+        <a class="ds-card ds-card--interactive" href="drilldown.html"><div class="ds-card__body ix-card__body"><div class="ix-card__kicker">패턴</div><h2 class="ds-h3 mt-1">계층 드릴다운</h2><p>권역 → 지점 → 카테고리로 내려가고 브레드크럼으로 올라오는 패턴 하나만 떼어낸 예시.</p></div><div class="ds-card__footer"><span class="ds-caption">ECharts</span></div></a>
+      </div>
+
+      <div class="ix-section">
+        <div class="ds-label mb-3">LLM에 먹이는 파일</div>
+        <div class="ds-grid" style="--cols:3">
+          <div class="ds-card"><div class="ds-card__body ix-files"><div class="ds-row ds-row--between mb-2"><strong>AGENTS.md</strong><span class="ds-badge ds-badge--info">코딩 에이전트</span></div><p class="ds-text-2" style="margin:0 0 var(--sp-2)">GPT·GLM·Claude 코딩 에이전트가 리포에서 읽는 규칙. 짧고 명령형. <code>CLAUDE.md</code>는 같은 내용.</p><a class="ds-link" href="https://github.com/Nangoh/references/blob/main/AGENTS.md" target="_blank" rel="noopener">GitHub에서 보기</a></div></div>
+          <div class="ds-card"><div class="ds-card__body ix-files"><div class="ds-row ds-row--between mb-2"><strong>prompts/system-prompt.md</strong><span class="ds-badge ds-badge--info">채팅형</span></div><p class="ds-text-2" style="margin:0 0 var(--sp-2)">웹 UI에서 모델에 붙여넣는 압축판 1장. 토큰 이름, 클래스 이름, 차트 규칙, 금지 패턴.</p><a class="ds-link" href="https://github.com/Nangoh/references/blob/main/prompts/system-prompt.md" target="_blank" rel="noopener">GitHub에서 보기</a></div></div>
+          <div class="ds-card"><div class="ds-card__body ix-files"><div class="ds-row ds-row--between mb-2"><strong>docs/</strong><span class="ds-badge ds-badge--neutral">사람용</span></div><p class="ds-text-2" style="margin:0 0 var(--sp-2)">원칙, 색, 타이포, 레이아웃, 컴포넌트, 차트, 금지 패턴 체크리스트, Spotfire 기능 대응표.</p><a class="ds-link" href="https://github.com/Nangoh/references/tree/main/docs" target="_blank" rel="noopener">GitHub에서 보기</a></div></div>
+        </div>
+      </div>
+
+      <div class="ix-section">
+        <div class="ds-label mb-3">파일 구조</div>
+        <pre style="margin:0"><code>tokens/tokens.css      색·글꼴·간격·반경 토큰 (라이트+다크). 브랜드 바꿀 때 여기만.
+tokens/tokens.json     같은 값 JSON (Figma, 다른 도구 연동)
+css/ds.css             컴포넌트 CSS. 클래스 접두어 ds-
+js/ds-theme.js         테마 전환 (DSTheme.set / toggle)
+js/ds-charts.js        의존성 없는 SVG 차트 라이브러리
+integrations/          ECharts 테마, Vega 설정, Perspective·AG Grid 테마, Mosaic 초기화
+scripts/validate_palette.js   차트 팔레트 색약 검증기 (node 로 실행)
+examples/              이 사이트. 전부 정적 HTML, 빌드 없음</code></pre>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>
