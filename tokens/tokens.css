@@ -1,0 +1,292 @@
+/* ============================================================
+   Design Tokens — references (사내 공용 디자인 시스템)
+   -------------------------------------------------------------
+   사용법: <link rel="stylesheet" href="tokens/tokens.css"> 후
+   컴포넌트/페이지는 반드시 var(--토큰) 로만 색·글꼴·간격을 쓴다.
+   원시값(hex)을 컴포넌트 CSS에 직접 쓰지 않는다.
+
+   구조
+   1) 원시 팔레트  --brand-*, --n-*            (바꾸는 곳: 브랜드 교체 시 여기만)
+   2) 시맨틱 토큰  --bg, --fg, --accent ...     (컴포넌트가 쓰는 것)
+   3) 차트 토큰    --series-*, --seq-*, --chart-* (ds-charts.js, ECharts 테마가 쓰는 것)
+   4) 타이포/간격/반경/그림자/모션
+
+   라이트가 기본(:root). 다크는 OS 설정(prefers-color-scheme)과
+   명시 토글(html[data-theme="dark"]) 둘 다로 켜진다.
+   차트 색은 scripts/validate_palette.js 로 라이트/다크 모두 검증된 값이다.
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* ---------- 1. 원시 팔레트 ---------- */
+  /* 브랜드: 페트롤 틸 (OKLCH hue 210) */
+  --brand-50:  #eef9fb;
+  --brand-100: #d1f2f8;
+  --brand-200: #a2e1ec;
+  --brand-300: #69c4d4;
+  --brand-400: #32aabc;
+  --brand-500: #0091a3;   /* 라이트 모드 액센트 */
+  --brand-600: #007785;
+  --brand-700: #00616d;
+  --brand-800: #0a4851;
+  --brand-900: #06343b;   /* 앱 셸(헤더) 고정색 */
+  --brand-950: #042429;
+
+  /* 중립색: 틸 쪽으로 아주 살짝 기운 회색 */
+  --n-0:   #ffffff;
+  --n-50:  #f8fbfb;
+  --n-100: #f0f4f5;
+  --n-200: #e3e9ea;
+  --n-300: #d1d9db;
+  --n-400: #b6c0c2;
+  --n-500: #909a9c;
+  --n-600: #6f7a7c;
+  --n-700: #535d5f;
+  --n-800: #394243;
+  --n-900: #232a2c;
+  --n-950: #131a1b;
+  --n-1000: #090e0f;
+
+  /* ---------- 2. 시맨틱 토큰 ---------- */
+  --bg:            var(--n-50);      /* 페이지 바닥 */
+  --surface:       var(--n-0);       /* 카드, 패널, 테이블 */
+  --surface-2:     var(--n-100);     /* 가라앉은 영역: 테이블 헤더, 입력 비활성, 코드 */
+  --surface-3:     var(--n-200);     /* 호버 워시 */
+  --border:        var(--n-200);
+  --border-strong: var(--n-300);
+  --fg:            var(--n-950);     /* 본문 */
+  --fg-2:          var(--n-700);     /* 보조 텍스트 */
+  --fg-muted:      var(--n-600);     /* 라벨, 캡션, 비활성 (흰 배경 4.5:1) */
+  --fg-inverse:    var(--n-0);
+
+  --accent:        var(--brand-500);
+  --accent-hover:  var(--brand-600);
+  --accent-active: var(--brand-700);
+  --accent-fg:     #ffffff;          /* 액센트 위 글자 */
+  --accent-soft:   var(--brand-50);  /* 액센트 틴트 배경 (선택 행, 활성 탭 배경) */
+  --accent-soft-2: var(--brand-100);
+  --accent-text:   var(--brand-700); /* 틴트 배경 위 액센트 글자 (대비 확보용) */
+  --link:          var(--brand-600);
+  --focus-ring:    0 0 0 3px color-mix(in srgb, var(--brand-500) 35%, transparent);
+  --selection:     var(--brand-100);
+
+  /* 앱 셸: 테마와 무관하게 항상 어두운 페트롤 — 시그니처 */
+  --shell-bg:      var(--brand-900);
+  --shell-bg-2:    var(--brand-800);
+  --shell-fg:      #e6f4f6;
+  --shell-fg-2:    #9ccbd3;
+  --shell-accent:  var(--brand-300);
+  --shell-border:  rgba(255,255,255,.10);
+
+  /* 상태색: 의미가 고정. 시리즈 색으로 재사용 금지. 항상 아이콘+텍스트와 함께 */
+  --ok:            #299236;
+  --ok-text:       #1f7a2c;
+  --ok-soft:       #e6f4e8;
+  --warn:          #da950b;
+  --warn-text:     #8a5a00;
+  --warn-soft:     #fdf3dd;
+  --danger:        #cc3336;
+  --danger-text:   #b02a2d;
+  --danger-soft:   #fbe7e7;
+  --info:          var(--brand-500);
+  --info-text:     var(--brand-700);
+  --info-soft:     var(--brand-50);
+
+  /* ---------- 3. 차트 토큰 ---------- */
+  --chart-surface: var(--n-0);
+  --chart-grid:    var(--n-200);     /* 헤어라인 1px, 실선 */
+  --chart-axis:    var(--n-300);
+  --chart-ink:     var(--n-950);
+  --chart-ink-2:   var(--n-700);
+  --chart-muted:   var(--n-600);     /* 축 눈금 라벨 */
+  --chart-dim:     var(--n-300);     /* 강조 차트에서 가라앉힌 시리즈 */
+  --chart-mark:    var(--brand-500); /* 마킹(선택) 하이라이트 */
+
+  /* 범주형 8색 — 고정 순서, 순환 금지, 9번째 색 생성 금지 */
+  --series-1: #0091a3;   /* 틸 (브랜드) */
+  --series-2: #e36a2e;   /* 오렌지 */
+  --series-3: #6b5bd6;   /* 바이올렛 */
+  --series-4: #e0a000;   /* 옐로 — 라이트 모드 대비 2.3:1, 직접 라벨 또는 표 뷰 필수 */
+  --series-5: #d6578e;   /* 마젠타 */
+  --series-6: #3e8e1f;   /* 그린 */
+  --series-7: #2a78d6;   /* 블루 */
+  --series-8: #e34948;   /* 레드 */
+  --series-other: var(--n-400);
+
+  /* 순차형(크기) — 틸 한 색, 연함→진함. 100이 "거의 0" */
+  --seq-100: #d1f2f8; --seq-200: #a2e1ec; --seq-300: #69c4d4; --seq-400: #32aabc;
+  --seq-500: #0091a3; --seq-600: #007785; --seq-700: #00616d;
+
+  /* 발산형(극성) — 틸 ↔ 오렌지, 중앙은 중립 회색 */
+  --div-neg-3: #00616d; --div-neg-2: #0091a3; --div-neg-1: #69c4d4;
+  --div-mid:   var(--n-200);
+  --div-pos-1: #f3b58f; --div-pos-2: #e36a2e; --div-pos-3: #a8441a;
+
+  /* ---------- 4. 타이포 ---------- */
+  --font-sans: "IBM Plex Sans KR", "IBM Plex Sans", "Pretendard", -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --text-xs:  12px;  --lh-xs:  16px;
+  --text-sm:  13px;  --lh-sm:  18px;
+  --text-md:  14px;  --lh-md:  20px;   /* 기본 */
+  --text-lg:  16px;  --lh-lg:  24px;
+  --text-xl:  20px;  --lh-xl:  28px;
+  --text-2xl: 24px;  --lh-2xl: 32px;
+  --text-3xl: 32px;  --lh-3xl: 40px;
+  --text-hero: 48px; --lh-hero: 56px;  /* 대시보드 대표 숫자, 화면당 1개 */
+
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold: 600;
+  --tracking-label: 0.04em;            /* 대문자/작은 라벨 */
+
+  /* ---------- 간격 (4px 그리드) ---------- */
+  --sp-0: 0;  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px; --sp-12: 48px; --sp-16: 64px;
+
+  /* ---------- 반경 ---------- */
+  --r-sm: 4px;   /* 배지, 체크박스, 차트 막대 끝 */
+  --r-md: 6px;   /* 버튼, 입력, 카드 (기본) */
+  --r-lg: 10px;  /* 모달, 드로어 */
+  --r-full: 999px;
+
+  /* ---------- 그림자 (라이트는 옅게, 다크는 테두리로 대체) ---------- */
+  --shadow-1: 0 1px 2px rgba(9,14,15,.06), 0 1px 1px rgba(9,14,15,.04);
+  --shadow-2: 0 4px 12px rgba(9,14,15,.10), 0 1px 3px rgba(9,14,15,.06);
+  --shadow-3: 0 12px 32px rgba(9,14,15,.16), 0 2px 6px rgba(9,14,15,.08);
+
+  /* ---------- 레이아웃 ---------- */
+  --shell-h: 48px;        /* 상단 헤더 높이 */
+  --sidebar-w: 240px;
+  --sidebar-w-collapsed: 56px;
+  --content-max: 1440px;
+  --control-h: 32px;      /* 버튼/입력 기본 높이 (compact 운영툴) */
+  --control-h-lg: 40px;
+
+  /* ---------- 모션 ---------- */
+  --dur-fast: 120ms;
+  --dur: 180ms;
+  --ease: cubic-bezier(.2,.8,.2,1);
+
+  /* ---------- z-index ---------- */
+  --z-shell: 100; --z-dropdown: 200; --z-drawer: 300; --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
+}
+
+/* ============================================================
+   다크 모드 — 같은 램프에서 별도로 고른 단계. 단순 반전이 아니다.
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg:            var(--n-1000);
+    --surface:       var(--n-950);
+    --surface-2:     var(--n-900);
+    --surface-3:     var(--n-800);
+    --border:        var(--n-800);
+    --border-strong: var(--n-700);
+    --fg:            #eef3f4;
+    --fg-2:          var(--n-400);
+    --fg-muted:      var(--n-500);
+    --fg-inverse:    var(--n-1000);
+
+    --accent:        var(--brand-400);
+    --accent-hover:  var(--brand-300);
+    --accent-active: var(--brand-200);
+    --accent-fg:     var(--brand-950);
+    --accent-soft:   #0b2d33;
+    --accent-soft-2: var(--brand-900);
+    --accent-text:   var(--brand-300);
+    --link:          var(--brand-300);
+    --selection:     var(--brand-800);
+
+    --shell-bg:      var(--brand-950);
+    --shell-bg-2:    var(--brand-900);
+    --shell-border:  rgba(255,255,255,.08);
+
+    --ok:            #4ea954;  --ok-text:     #6fc274;  --ok-soft:     #11301a;
+    --warn:          #e6ac3d;  --warn-text:   #f0c061;  --warn-soft:   #3a2a08;
+    --danger:        #e45d58;  --danger-text: #f08480;  --danger-soft: #3d1618;
+    --info:          var(--brand-400); --info-text: var(--brand-300); --info-soft: #0b2d33;
+
+    --chart-surface: var(--n-950);
+    --chart-grid:    #232a2c;
+    --chart-axis:    #394243;
+    --chart-ink:     #eef3f4;
+    --chart-ink-2:   var(--n-400);
+    --chart-muted:   var(--n-500);
+    --chart-dim:     var(--n-800);
+    --chart-mark:    var(--brand-300);
+
+    --series-1: #11a1b4; --series-2: #d8662a; --series-3: #8771de; --series-4: #c98500;
+    --series-5: #ca5e96; --series-6: #4f9b3e; --series-7: #3986e4; --series-8: #da534f;
+    --series-other: var(--n-700);
+
+    --seq-100: #06343b; --seq-200: #0a4851; --seq-300: #00616d; --seq-400: #007785;
+    --seq-500: #0091a3; --seq-600: #32aabc; --seq-700: #69c4d4;
+
+    --div-neg-3: #69c4d4; --div-neg-2: #11a1b4; --div-neg-1: #007785;
+    --div-mid:   var(--n-800);
+    --div-pos-1: #8a3d1c; --div-pos-2: #d8662a; --div-pos-3: #f3a07a;
+
+    --shadow-1: 0 0 0 1px rgba(255,255,255,.06);
+    --shadow-2: 0 0 0 1px rgba(255,255,255,.08), 0 8px 24px rgba(0,0,0,.5);
+    --shadow-3: 0 0 0 1px rgba(255,255,255,.10), 0 16px 48px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg:            var(--n-1000);
+  --surface:       var(--n-950);
+  --surface-2:     var(--n-900);
+  --surface-3:     var(--n-800);
+  --border:        var(--n-800);
+  --border-strong: var(--n-700);
+  --fg:            #eef3f4;
+  --fg-2:          var(--n-400);
+  --fg-muted:      var(--n-500);
+  --fg-inverse:    var(--n-1000);
+
+  --accent:        var(--brand-400);
+  --accent-hover:  var(--brand-300);
+  --accent-active: var(--brand-200);
+  --accent-fg:     var(--brand-950);
+  --accent-soft:   #0b2d33;
+  --accent-soft-2: var(--brand-900);
+  --accent-text:   var(--brand-300);
+  --link:          var(--brand-300);
+  --selection:     var(--brand-800);
+
+  --shell-bg:      var(--brand-950);
+  --shell-bg-2:    var(--brand-900);
+  --shell-border:  rgba(255,255,255,.08);
+
+  --ok:            #4ea954;  --ok-text:     #6fc274;  --ok-soft:     #11301a;
+  --warn:          #e6ac3d;  --warn-text:   #f0c061;  --warn-soft:   #3a2a08;
+  --danger:        #e45d58;  --danger-text: #f08480;  --danger-soft: #3d1618;
+  --info:          var(--brand-400); --info-text: var(--brand-300); --info-soft: #0b2d33;
+
+  --chart-surface: var(--n-950);
+  --chart-grid:    #232a2c;
+  --chart-axis:    #394243;
+  --chart-ink:     #eef3f4;
+  --chart-ink-2:   var(--n-400);
+  --chart-muted:   var(--n-500);
+  --chart-dim:     var(--n-800);
+  --chart-mark:    var(--brand-300);
+
+  --series-1: #11a1b4; --series-2: #d8662a; --series-3: #8771de; --series-4: #c98500;
+  --series-5: #ca5e96; --series-6: #4f9b3e; --series-7: #3986e4; --series-8: #da534f;
+  --series-other: var(--n-700);
+
+  --seq-100: #06343b; --seq-200: #0a4851; --seq-300: #00616d; --seq-400: #007785;
+  --seq-500: #0091a3; --seq-600: #32aabc; --seq-700: #69c4d4;
+
+  --div-neg-3: #69c4d4; --div-neg-2: #11a1b4; --div-neg-1: #007785;
+  --div-mid:   var(--n-800);
+  --div-pos-1: #8a3d1c; --div-pos-2: #d8662a; --div-pos-3: #f3a07a;
+
+  --shadow-1: 0 0 0 1px rgba(255,255,255,.06);
+  --shadow-2: 0 0 0 1px rgba(255,255,255,.08), 0 8px 24px rgba(0,0,0,.5);
+  --shadow-3: 0 0 0 1px rgba(255,255,255,.10), 0 16px 48px rgba(0,0,0,.6);
+}

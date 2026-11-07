@@ -1,0 +1,125 @@
+{
+  "background": "transparent",
+  "font": "\"IBM Plex Sans KR\", \"IBM Plex Sans\", \"Pretendard\", -apple-system, \"Segoe UI\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif",
+  "padding": 8,
+  "view": {
+    "stroke": null
+  },
+  "range": {
+    "category": [
+      "#11a1b4",
+      "#d8662a",
+      "#8771de",
+      "#c98500",
+      "#ca5e96",
+      "#4f9b3e",
+      "#3986e4",
+      "#da534f"
+    ],
+    "ordinal": [
+      "#06343b",
+      "#0a4851",
+      "#00616d",
+      "#007785",
+      "#0091a3",
+      "#32aabc",
+      "#69c4d4"
+    ],
+    "heatmap": [
+      "#06343b",
+      "#0a4851",
+      "#00616d",
+      "#007785",
+      "#0091a3",
+      "#32aabc",
+      "#69c4d4"
+    ],
+    "diverging": [
+      "#69c4d4",
+      "#11a1b4",
+      "#007785",
+      "#394243",
+      "#8a3d1c",
+      "#d8662a",
+      "#f3a07a"
+    ],
+    "ramp": [
+      "#06343b",
+      "#0a4851",
+      "#00616d",
+      "#007785",
+      "#0091a3",
+      "#32aabc",
+      "#69c4d4"
+    ]
+  },
+  "axis": {
+    "domainColor": "#394243",
+    "gridColor": "#232a2c",
+    "gridDash": [],
+    "ticks": false,
+    "labelColor": "#909a9c",
+    "labelFont": "\"IBM Plex Sans KR\", \"IBM Plex Sans\", \"Pretendard\", -apple-system, \"Segoe UI\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif",
+    "labelFontSize": 12,
+    "titleColor": "#909a9c",
+    "titleFont": "\"IBM Plex Sans KR\", \"IBM Plex Sans\", \"Pretendard\", -apple-system, \"Segoe UI\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif",
+    "titleFontSize": 12,
+    "titleFontWeight": 400
+  },
+  "axisX": {
+    "grid": false
+  },
+  "axisY": {
+    "domain": false
+  },
+  "legend": {
+    "labelColor": "#b6c0c2",
+    "labelFont": "\"IBM Plex Sans KR\", \"IBM Plex Sans\", \"Pretendard\", -apple-system, \"Segoe UI\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif",
+    "labelFontSize": 12,
+    "titleColor": "#909a9c",
+    "titleFont": "\"IBM Plex Sans KR\", \"IBM Plex Sans\", \"Pretendard\", -apple-system, \"Segoe UI\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif",
+    "symbolType": "square",
+    "orient": "top",
+    "direction": "horizontal"
+  },
+  "title": {
+    "color": "#eef3f4",
+    "font": "\"IBM Plex Sans KR\", \"IBM Plex Sans\", \"Pretendard\", -apple-system, \"Segoe UI\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif",
+    "fontSize": 14,
+    "fontWeight": 600,
+    "anchor": "start",
+    "subtitleColor": "#909a9c"
+  },
+  "bar": {
+    "cornerRadiusEnd": 4,
+    "binSpacing": 2
+  },
+  "rect": {
+    "stroke": "#131a1b",
+    "strokeWidth": 2
+  },
+  "line": {
+    "strokeWidth": 2,
+    "strokeCap": "round"
+  },
+  "area": {
+    "opacity": 0.1
+  },
+  "point": {
+    "size": 64,
+    "filled": true,
+    "stroke": "#131a1b",
+    "strokeWidth": 2
+  },
+  "rule": {
+    "color": "#b6c0c2"
+  },
+  "text": {
+    "color": "#b6c0c2",
+    "font": "\"IBM Plex Sans KR\", \"IBM Plex Sans\", \"Pretendard\", -apple-system, \"Segoe UI\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif",
+    "fontSize": 11
+  },
+  "mark": {
+    "tooltip": true
+  }
+}

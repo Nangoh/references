@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>컴포넌트 쇼케이스 · references</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="../css/ds.css">
+<script src="../js/ds-theme.js"></script>
+<style>
+  /* 쇼케이스 전용 보조 스타일 — 실제 시스템에서는 필요 없음 */
+  .sc-section { padding-block: var(--sp-8); border-top: 1px solid var(--border); scroll-margin-top: calc(var(--shell-h) + var(--sp-4)); }
+  .sc-section:first-of-type { border-top: 0; padding-top: 0; }
+  .sc-section__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-3); margin-bottom: var(--sp-4); flex-wrap: wrap; }
+  .sc-section__head p { margin: 0; color: var(--fg-2); font-size: var(--text-sm); max-width: 68ch; }
+  .sc-demo { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3); padding: var(--sp-4); border: 1px dashed var(--border-strong); border-radius: var(--r-md); background: var(--surface); min-width: 0; }
+  .sc-demo--col { flex-direction: column; align-items: stretch; }
+  .sc-demo--plain { border: 0; padding: 0; background: transparent; }
+  .sc-demo + .sc-demo { margin-top: var(--sp-3); }
+  .sc-sub { font-size: var(--text-xs); color: var(--fg-muted); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-label); text-transform: uppercase; margin: var(--sp-4) 0 var(--sp-2); }
+  .sc-ramp { display: grid; grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); gap: var(--sp-2); }
+  .sc-sw { display: flex; flex-direction: column; gap: 4px; font-size: var(--text-xs); color: var(--fg-2); min-width: 0; }
+  .sc-sw__chip { height: 44px; border-radius: var(--r-sm); border: 1px solid var(--border); }
+  .sc-sw__hex { font-family: var(--font-mono); color: var(--fg-muted); font-size: 11px; }
+  .sc-type-row { display: grid; grid-template-columns: 120px minmax(0,1fr); gap: var(--sp-4); align-items: baseline; padding: var(--sp-2) 0; border-bottom: 1px solid var(--border); }
+  .sc-type-row:last-child { border-bottom: 0; }
+  .sc-space { display: flex; align-items: flex-end; gap: var(--sp-3); flex-wrap: wrap; }
+  .sc-space div { background: var(--accent-soft-2); border: 1px solid var(--accent); }
+  .sc-space span { display: block; font-size: 11px; color: var(--fg-muted); font-family: var(--font-mono); margin-top: 4px; }
+  .sc-note { font-size: var(--text-xs); color: var(--fg-muted); }
+  .sc-relative { position: relative; min-height: 120px; }
+  @media (max-width: 720px) { .sc-type-row { grid-template-columns: minmax(0,1fr); gap: var(--sp-1); } }
+</style>
+</head>
+<body>
+<div class="ds-shell">
+  <header class="ds-shell__header">
+    <a class="ds-shell__brand" href="index.html"><span class="ds-shell__mark" aria-hidden="true"></span>references<span class="ds-shell__env">design system</span></a>
+    <nav class="ds-shell__nav" aria-label="주요 메뉴">
+      <a href="index.html">홈</a>
+      <a href="showcase.html" class="is-active">컴포넌트</a>
+      <a href="charts.html">차트</a>
+      <a href="dashboard.html">대시보드</a>
+      <a href="explorer.html">탐색기</a>
+    </nav>
+    <div class="ds-shell__spacer"></div>
+    <div class="ds-shell__actions">
+      <label class="ds-search"><svg class="ds-icon" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg><input class="ds-input" type="search" placeholder="검색 (⌘K)" aria-label="검색"></label>
+      <button class="ds-btn ds-btn--icon ds-theme-toggle" type="button" aria-label="테마 전환">
+        <svg class="ds-icon ds-icon--moon" viewBox="0 0 16 16"><path d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7z"/></svg>
+        <svg class="ds-icon ds-icon--sun" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/></svg>
+      </button>
+      <span class="ds-avatar" title="홍길동">홍</span>
+    </div>
+  </header>
+
+  <aside class="ds-sidebar" aria-label="섹션">
+    <div class="ds-sidebar__group">기초</div>
+    <a class="ds-sidebar__item is-active" href="#tokens">토큰</a>
+    <a class="ds-sidebar__item" href="#type">타이포그래피</a>
+    <a class="ds-sidebar__item" href="#shell">앱 셸</a>
+    <div class="ds-sidebar__group">입력</div>
+    <a class="ds-sidebar__item" href="#buttons">버튼</a>
+    <a class="ds-sidebar__item" href="#forms">폼</a>
+    <a class="ds-sidebar__item" href="#filters">필터 · 칩</a>
+    <div class="ds-sidebar__group">표시</div>
+    <a class="ds-sidebar__item" href="#cards">카드</a>
+    <a class="ds-sidebar__item" href="#tables">테이블</a>
+    <a class="ds-sidebar__item" href="#badges">배지 · 상태</a>
+    <a class="ds-sidebar__item" href="#tabs">탭</a>
+    <a class="ds-sidebar__item" href="#kpi">KPI · 스탯</a>
+    <a class="ds-sidebar__item" href="#chart-chrome">차트 크롬</a>
+    <div class="ds-sidebar__group">피드백</div>
+    <a class="ds-sidebar__item" href="#overlays">오버레이</a>
+    <a class="ds-sidebar__item" href="#feedback">알림 · 상태</a>
+    <a class="ds-sidebar__item" href="#marking">마킹</a>
+    <div class="ds-sidebar__footer">v0.1 · 토큰은 <code>tokens/tokens.css</code></div>
+  </aside>
+
+  <main class="ds-main">
+    <div class="ds-breadcrumb"><a href="index.html">references</a><span class="ds-breadcrumb__sep">/</span><span aria-current="page">컴포넌트 쇼케이스</span></div>
+    <div class="ds-page-header">
+      <div>
+        <h1 class="ds-page-title">컴포넌트 쇼케이스</h1>
+        <p class="ds-page-sub">ds.css 의 모든 컴포넌트를 실제 운영 화면 맥락으로 보여줍니다. 오른쪽 위 토글로 라이트/다크를 비교하세요. 헤더는 테마와 무관하게 항상 같은 색입니다.</p>
+      </div>
+      <div class="ds-page-header__actions">
+        <a class="ds-btn" href="https://github.com/Nangoh/references/blob/main/css/ds.css" target="_blank" rel="noopener">ds.css 소스</a>
+        <a class="ds-btn ds-btn--primary" href="https://github.com/Nangoh/references/blob/main/AGENTS.md" target="_blank" rel="noopener">LLM 규칙 (AGENTS.md)</a>
+      </div>
+    </div>
+
+    <!-- ===== 토큰 ===== -->
+    <section class="sc-section" id="tokens">
+      <div class="sc-section__head"><h2 class="ds-h2">토큰</h2><p>모든 색은 아래 램프에서만 나옵니다. 값은 현재 테마의 계산값을 실시간으로 읽은 것이라 테마를 바꾸면 함께 바뀝니다.</p></div>
+      <div class="sc-sub">브랜드 (페트롤 틸)</div>
+      <div class="sc-ramp" data-ramp="brand-50,brand-100,brand-200,brand-300,brand-400,brand-500,brand-600,brand-700,brand-800,brand-900,brand-950"></div>
+      <div class="sc-sub">중립색</div>
+      <div class="sc-ramp" data-ramp="n-0,n-50,n-100,n-200,n-300,n-400,n-500,n-600,n-700,n-800,n-900,n-950,n-1000"></div>
+      <div class="sc-sub">시맨틱 (테마에 따라 바뀜)</div>
+      <div class="sc-ramp" data-ramp="bg,surface,surface-2,surface-3,border,border-strong,fg,fg-2,fg-muted,accent,accent-soft,accent-text,shell-bg,shell-accent"></div>
+      <div class="sc-sub">상태색 — 항상 아이콘·텍스트와 함께</div>
+      <div class="sc-ramp" data-ramp="ok,ok-text,ok-soft,warn,warn-text,warn-soft,danger,danger-text,danger-soft,info,info-text,info-soft"></div>
+      <div class="sc-sub">차트 범주형 8색 — 고정 순서, 색약 검증 통과</div>
+      <div class="sc-ramp" data-ramp="series-1,series-2,series-3,series-4,series-5,series-6,series-7,series-8,series-other"></div>
+      <div class="sc-sub">순차형(틸) · 발산형(틸↔오렌지)</div>
+      <div class="sc-ramp" data-ramp="seq-100,seq-200,seq-300,seq-400,seq-500,seq-600,seq-700"></div>
+      <div class="sc-ramp mt-2" data-ramp="div-neg-3,div-neg-2,div-neg-1,div-mid,div-pos-1,div-pos-2,div-pos-3"></div>
+      <div class="sc-sub">간격 (4px 그리드)</div>
+      <div class="sc-space">
+        <div style="width:4px;height:24px"><span>sp-1</span></div><div style="width:8px;height:24px"><span>sp-2</span></div><div style="width:12px;height:24px"><span>sp-3</span></div><div style="width:16px;height:24px"><span>sp-4</span></div><div style="width:20px;height:24px"><span>sp-5</span></div><div style="width:24px;height:24px"><span>sp-6</span></div><div style="width:32px;height:24px"><span>sp-8</span></div><div style="width:40px;height:24px"><span>sp-10</span></div><div style="width:48px;height:24px"><span>sp-12</span></div><div style="width:64px;height:24px"><span>sp-16</span></div>
+      </div>
+      <div class="sc-sub">반경</div>
+      <div class="sc-space">
+        <div style="width:48px;height:32px;border-radius:var(--r-sm)"><span>r-sm 4</span></div>
+        <div style="width:48px;height:32px;border-radius:var(--r-md)"><span>r-md 6</span></div>
+        <div style="width:48px;height:32px;border-radius:var(--r-lg)"><span>r-lg 10</span></div>
+        <div style="width:48px;height:32px;border-radius:var(--r-full)"><span>r-full</span></div>
+      </div>
+      <div class="ds-alert ds-alert--info mt-6">
+        <svg class="ds-icon ds-alert__icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="M8 7v4M8 5v.5"/></svg>
+        <div class="ds-alert__body"><p class="ds-alert__title">두 테마 비교</p>다크 모드는 라이트를 반전한 것이 아니라 같은 램프에서 따로 고른 단계입니다. 액센트는 다크에서 한 단계 밝아지고(brand-400), 카드 그림자는 1px 테두리로 바뀌고, 차트 8색도 어두운 바닥에 맞춰 다시 고른 값입니다. 헤더만 두 테마에서 같은 색을 유지합니다.</div>
+      </div>
+    </section>
+
+    <!-- ===== 타이포 ===== -->
+    <section class="sc-section" id="type">
+      <div class="sc-section__head"><h2 class="ds-h2">타이포그래피</h2><p>IBM Plex Sans KR 본문, IBM Plex Mono 숫자·코드. 기본 14px/20px. 큰 숫자는 비례 숫자, 표의 숫자 열만 tabular.</p></div>
+      <div class="ds-card"><div class="ds-card__body">
+        <div class="sc-type-row"><span class="ds-caption ds-mono">hero 48/56</span><span class="ds-hero-number">1,284,300<small class="ds-stat__unit">원</small></span></div>
+        <div class="sc-type-row"><span class="ds-caption ds-mono">3xl 32/40</span><span class="ds-stat__value">98.4%</span></div>
+        <div class="sc-type-row"><span class="ds-caption ds-mono">2xl 24/32 · h1</span><span class="ds-h1">지점 정산 현황</span></div>
+        <div class="sc-type-row"><span class="ds-caption ds-mono">xl 20/28 · h2</span><span class="ds-h2">11월 1주차 마감 대기 건</span></div>
+        <div class="sc-type-row"><span class="ds-caption ds-mono">lg 16/24 · h3</span><span class="ds-h3">수도권 · 서울 강남</span></div>
+        <div class="sc-type-row"><span class="ds-caption ds-mono">md 14/20 · body</span><span>정산은 매월 1일 00:00에 자동 집계되며, 전표 상태가 승인 완료인 건만 포함됩니다. 반려된 건은 사유와 함께 담당자에게 알림이 갑니다.</span></div>
+        <div class="sc-type-row"><span class="ds-caption ds-mono">sm 13/18</span><span class="ds-text-sm ds-text-2">마지막 집계 2026-11-07 02:00 · 다음 집계 12월 1일</span></div>
+        <div class="sc-type-row"><span class="ds-caption ds-mono">xs 12/16 · label</span><span class="ds-label">승인 대기</span></div>
+        <div class="sc-type-row"><span class="ds-caption ds-mono">mono</span><span class="ds-mono ds-num">TXN-2026-1107-000418 &nbsp; 3,197,397 &nbsp; 0.087</span></div>
+        <div class="sc-type-row"><span class="ds-caption ds-mono">code</span><span>토큰은 <code>var(--accent)</code> 로만 쓰고, 단축키 <kbd>⌘</kbd> <kbd>K</kbd> 는 kbd 로 표기합니다.</span></div>
+      </div></div>
+    </section>
+
+    <!-- ===== 앱 셸 ===== -->
+    <section class="sc-section" id="shell">
+      <div class="sc-section__head"><h2 class="ds-h2">앱 셸</h2><p>이 페이지 전체가 셸 예시입니다. 헤더 48px 고정 페트롤, 왼쪽 사이드바 240px, 본문은 bg 위에 카드. 960px 아래에서는 사이드바가 숨고 헤더 메뉴는 접습니다.</p></div>
+      <div class="sc-demo sc-demo--col">
+        <div class="ds-shell__header" style="position:static;border-radius:var(--r-md);border:1px solid var(--shell-border)">
+          <span class="ds-shell__brand"><span class="ds-shell__mark" aria-hidden="true"></span>정산시스템<span class="ds-shell__env ds-shell__env--prod">운영</span></span>
+          <nav class="ds-shell__nav"><a href="#shell" class="is-active">정산</a><a href="#shell">전표</a><a href="#shell">지점</a><a href="#shell">리포트</a></nav>
+          <div class="ds-shell__spacer"></div>
+          <div class="ds-shell__actions"><button class="ds-btn ds-btn--icon" type="button" aria-label="알림"><svg class="ds-icon" viewBox="0 0 16 16"><path d="M4 11V7a4 4 0 1 1 8 0v4l1 1.5H3z"/><path d="M6.5 14a1.5 1.5 0 0 0 3 0"/></svg></button><span class="ds-avatar">김</span></div>
+        </div>
+        <div class="ds-shell__header" style="position:static;border-radius:var(--r-md);border:1px solid var(--shell-border)">
+          <span class="ds-shell__brand"><span class="ds-shell__mark" aria-hidden="true"></span>재고관리<span class="ds-shell__env">개발</span></span>
+          <div class="ds-shell__spacer"></div>
+          <div class="ds-shell__actions"><span class="ds-avatar">박</span></div>
+        </div>
+        <p class="sc-note">제품이 달라도 헤더의 색·높이·마크·배지 위치는 같다. 바뀌는 건 제품명과 메뉴만.</p>
+      </div>
+    </section>
+
+    <!-- ===== 버튼 ===== -->
+    <section class="sc-section" id="buttons">
+      <div class="sc-section__head"><h2 class="ds-h2">버튼</h2><p>화면당 primary 는 하나. 기본은 secondary. 위험한 동작은 danger 를 쓰고 확인 모달을 거친다.</p></div>
+      <div class="sc-demo">
+        <button class="ds-btn ds-btn--primary" type="button">정산 확정</button>
+        <button class="ds-btn" type="button">임시 저장</button>
+        <button class="ds-btn ds-btn--ghost" type="button">취소</button>
+        <button class="ds-btn ds-btn--danger" type="button">반려</button>
+        <button class="ds-btn ds-btn--danger-solid" type="button">삭제</button>
+        <button class="ds-btn ds-btn--primary" type="button" disabled>정산 확정</button>
+        <button class="ds-btn" type="button" disabled>비활성</button>
+        <button class="ds-btn ds-btn--primary is-loading" type="button">처리 중</button>
+      </div>
+      <div class="sc-demo">
+        <button class="ds-btn ds-btn--sm" type="button">작게 28</button>
+        <button class="ds-btn" type="button">기본 32</button>
+        <button class="ds-btn ds-btn--lg ds-btn--primary" type="button">크게 40</button>
+        <button class="ds-btn ds-btn--icon" type="button" aria-label="새로고침"><svg class="ds-icon" viewBox="0 0 16 16"><path d="M13 8A5 5 0 1 1 11.5 4.5"/><path d="M11.5 1.5v3h-3"/></svg></button>
+        <button class="ds-btn ds-btn--icon ds-btn--sm ds-btn--ghost" type="button" aria-label="더보기"><svg class="ds-icon" viewBox="0 0 16 16"><circle cx="3.5" cy="8" r="1"/><circle cx="8" cy="8" r="1"/><circle cx="12.5" cy="8" r="1"/></svg></button>
+        <button class="ds-btn" type="button"><svg class="ds-icon" viewBox="0 0 16 16"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13h10"/></svg>CSV 내려받기</button>
+        <div class="ds-btn-group" role="group" aria-label="보기 전환"><button class="ds-btn is-active" type="button">표</button><button class="ds-btn" type="button">차트</button><button class="ds-btn" type="button">지도</button></div>
+        <span class="ds-text-sm ds-text-2">저장 <span class="ds-kbd">⌘</span><span class="ds-kbd">S</span></span>
+      </div>
+    </section>
+
+    <!-- ===== 폼 ===== -->
+    <section class="sc-section" id="forms">
+      <div class="sc-section__head"><h2 class="ds-h2">폼</h2><p>라벨은 위, 도움말은 아래, 오류는 도움말 자리에 대체. 높이 32px, 숫자 입력은 오른쪽 정렬 모노.</p></div>
+      <div class="ds-card"><div class="ds-card__header"><h3 class="ds-card__title">지점 등록</h3><div class="ds-card__actions"><span class="ds-badge ds-badge--warn"><svg class="ds-icon" viewBox="0 0 16 16"><path d="M8 2 14.5 13.5H1.5z"/><path d="M8 7v3M8 11.5v.5"/></svg>미저장</span></div></div>
+      <div class="ds-card__body">
+        <div class="ds-form-grid">
+          <div class="ds-field"><label class="ds-field__label" for="f-name">지점명 <span class="req">*</span></label><input class="ds-input" id="f-name" value="서울 강남"><div class="ds-field__help">사업자등록증의 상호와 동일하게 입력</div></div>
+          <div class="ds-field"><label class="ds-field__label" for="f-region">권역</label><select class="ds-select" id="f-region"><option>수도권</option><option>영남</option><option>호남</option><option>중부</option><option>강원</option></select></div>
+          <div class="ds-field is-invalid"><label class="ds-field__label" for="f-code">지점 코드 <span class="req">*</span></label><input class="ds-input ds-mono" id="f-code" value="GN-01" aria-invalid="true" aria-describedby="f-code-err"><div class="ds-field__help">영문 2자 + 숫자 3자</div><div class="ds-field__error" id="f-code-err"><svg class="ds-icon ds-icon--sm" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v4M8 11v.5"/></svg>형식이 맞지 않습니다. 예: GN-001</div></div>
+          <div class="ds-field"><label class="ds-field__label" for="f-limit">월 한도</label><div class="ds-input-group"><input class="ds-input ds-input--num" id="f-limit" value="50,000,000"><span class="ds-input-group__addon">원</span></div></div>
+          <div class="ds-field"><label class="ds-field__label" for="f-rate">수수료율</label><div class="ds-input-group"><span class="ds-input-group__addon">%</span><input class="ds-input ds-input--num" id="f-rate" value="2.35"></div></div>
+          <div class="ds-field"><label class="ds-field__label" for="f-open">개점일</label><input class="ds-input" id="f-open" type="date" value="2026-11-07"></div>
+          <div class="ds-field"><label class="ds-field__label" for="f-ro">담당자 (읽기 전용)</label><input class="ds-input" id="f-ro" value="홍길동 · 영업1팀" readonly></div>
+          <div class="ds-field"><label class="ds-field__label" for="f-dis">정산 주기</label><select class="ds-select" id="f-dis" disabled><option>월간 (변경 불가)</option></select><div class="ds-field__help">계약 변경 시에만 수정 가능</div></div>
+          <div class="ds-field ds-field--full"><label class="ds-field__label" for="f-memo">메모</label><textarea class="ds-textarea" id="f-memo" placeholder="내부 공유용 메모. 지점에는 보이지 않습니다."></textarea></div>
+          <div class="ds-field ds-field--full">
+            <span class="ds-field__label">채널</span>
+            <div class="ds-choice-group">
+              <label class="ds-checkbox"><input type="checkbox" checked><span class="ds-checkbox__box"></span>매장</label>
+              <label class="ds-checkbox"><input type="checkbox" checked><span class="ds-checkbox__box"></span>온라인</label>
+              <label class="ds-checkbox"><input type="checkbox"><span class="ds-checkbox__box"></span>B2B</label>
+              <label class="ds-checkbox"><input type="checkbox" id="indet"><span class="ds-checkbox__box"></span>전체 (일부 선택)</label>
+              <label class="ds-checkbox"><input type="checkbox" disabled><span class="ds-checkbox__box"></span>해외 (준비 중)</label>
+            </div>
+          </div>
+          <div class="ds-field">
+            <span class="ds-field__label">정산 방식</span>
+            <div class="ds-choice-group ds-choice-group--col">
+              <label class="ds-radio"><input type="radio" name="pay" checked><span class="ds-radio__dot"></span>계좌 이체</label>
+              <label class="ds-radio"><input type="radio" name="pay"><span class="ds-radio__dot"></span>상계 처리</label>
+              <label class="ds-radio"><input type="radio" name="pay" disabled><span class="ds-radio__dot"></span>수표 (중단)</label>
+            </div>
+          </div>
+          <div class="ds-field">
+            <span class="ds-field__label">알림</span>
+            <div class="ds-choice-group ds-choice-group--col">
+              <label class="ds-switch"><input type="checkbox" checked><span class="ds-switch__track"></span>마감 전 알림</label>
+              <label class="ds-switch"><input type="checkbox"><span class="ds-switch__track"></span>반려 시 SMS</label>
+              <label class="ds-switch"><input type="checkbox" disabled><span class="ds-switch__track"></span>주간 리포트 (권한 없음)</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ds-card__footer ds-card__footer--between"><span class="ds-caption">마지막 수정 2026-11-06 17:42 · 김영업</span><div class="ds-row"><button class="ds-btn ds-btn--ghost" type="button">취소</button><button class="ds-btn ds-btn--primary" type="button">저장</button></div></div>
+      </div>
+    </section>
+
+    <!-- ===== 필터 ===== -->
+    <section class="sc-section" id="filters">
+      <div class="sc-section__head"><h2 class="ds-h2">필터 · 칩</h2><p>필터는 콘텐츠 위 한 줄. 기간이 맨 앞. 아래 모든 카드·차트·표가 같은 조각을 본다. 차트 카드 안에 필터를 넣지 않는다.</p></div>
+      <div class="sc-demo sc-demo--col">
+        <div class="ds-filter-row" style="margin:0">
+          <div class="ds-date-range" role="group" aria-label="기간"><button type="button">오늘</button><button type="button">7일</button><button type="button" class="is-active">30일</button><button type="button">90일</button><button type="button">올해</button><button type="button" class="ds-date-range__custom">사용자 지정</button></div>
+          <select class="ds-select ds-select--sm" aria-label="권역"><option>권역: 전체</option><option>수도권</option><option>영남</option></select>
+          <select class="ds-select ds-select--sm" aria-label="채널"><option>채널: 전체</option><option>매장</option><option>온라인</option><option>B2B</option></select>
+          <span class="ds-filter-row__spacer"></span>
+          <button class="ds-btn ds-btn--sm ds-btn--ghost" type="button">초기화</button>
+        </div>
+        <div class="ds-row ds-row--wrap">
+          <span class="ds-filter-row__label">적용된 필터</span>
+          <span class="ds-chip ds-chip--filter is-active"><span class="ds-chip__key">권역</span>수도권<button class="ds-chip__remove" type="button" aria-label="권역 필터 제거">×</button></span>
+          <span class="ds-chip ds-chip--filter is-active"><span class="ds-chip__key">카테고리</span>가전, 모바일<button class="ds-chip__remove" type="button" aria-label="카테고리 필터 제거">×</button></span>
+          <span class="ds-chip ds-chip--filter is-active"><span class="ds-chip__key">반품</span>제외<button class="ds-chip__remove" type="button" aria-label="반품 필터 제거">×</button></span>
+        </div>
+        <div class="ds-row ds-row--wrap">
+          <span class="ds-filter-row__label">토글 칩</span>
+          <button class="ds-chip is-active" type="button">가전 <span class="ds-chip__count">1,204</span></button>
+          <button class="ds-chip is-active" type="button">모바일 <span class="ds-chip__count">988</span></button>
+          <button class="ds-chip" type="button">컴퓨터 <span class="ds-chip__count">731</span></button>
+          <button class="ds-chip" type="button">생활 <span class="ds-chip__count">412</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 카드 ===== -->
+    <section class="sc-section" id="cards">
+      <div class="sc-section__head"><h2 class="ds-h2">카드</h2><p>기본은 테두리만, 그림자 없음. 떠 있어야 하는 것(드롭다운, 모달)만 그림자. 상태 카드는 왼쪽 3px 띠.</p></div>
+      <div class="ds-grid" style="--cols:3">
+        <div class="ds-card">
+          <div class="ds-card__header"><div><h3 class="ds-card__title">서울 강남</h3><p class="ds-card__sub">GN-001 · 수도권</p></div><div class="ds-card__actions"><span class="ds-badge ds-badge--ok">정상</span><button class="ds-btn ds-btn--icon ds-btn--sm ds-btn--ghost" type="button" aria-label="더보기"><svg class="ds-icon" viewBox="0 0 16 16"><circle cx="3.5" cy="8" r="1"/><circle cx="8" cy="8" r="1"/><circle cx="12.5" cy="8" r="1"/></svg></button></div></div>
+          <div class="ds-card__body"><dl class="ds-dl"><dt>이번 달 매출</dt><dd class="ds-num">184,300,000원</dd><dt>정산 예정</dt><dd class="ds-num">12월 1일</dd><dt>담당</dt><dd>홍길동</dd></dl></div>
+          <div class="ds-card__footer"><a class="ds-link" href="#cards">상세 보기</a></div>
+        </div>
+        <div class="ds-card ds-card--status is-warn">
+          <div class="ds-card__header"><div><h3 class="ds-card__title">인천 송도</h3><p class="ds-card__sub">SD-003 · 수도권</p></div><span class="ds-badge ds-badge--warn"><svg class="ds-icon" viewBox="0 0 16 16"><path d="M8 2 14.5 13.5H1.5z"/><path d="M8 7v3M8 11.5v.5"/></svg>한도 92%</span></div>
+          <div class="ds-card__body"><div class="ds-progress-label"><span>월 한도 사용</span><span>46.0M / 50.0M</span></div><div class="ds-progress ds-progress--warn"><div class="ds-progress__bar" style="--value:92%"></div></div><p class="ds-text-sm ds-text-2 mt-3">이 속도면 11월 24일경 한도에 도달합니다.</p></div>
+          <div class="ds-card__footer"><button class="ds-btn ds-btn--sm" type="button">한도 조정 요청</button></div>
+        </div>
+        <a class="ds-card ds-card--interactive" href="#cards">
+          <div class="ds-card__body"><div class="ds-row ds-row--between mb-2"><span class="ds-label">승인 대기</span><span class="ds-count ds-count--danger">7</span></div><p class="ds-text-sm ds-text-2" style="margin:0">전표 7건이 48시간 이상 대기 중입니다. 가장 오래된 건은 11월 3일 접수.</p></div>
+          <div class="ds-card__footer"><span class="ds-caption">클릭하면 대기 목록으로</span></div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== 테이블 ===== -->
+    <section class="sc-section" id="tables">
+      <div class="sc-section__head"><h2 class="ds-h2">테이블</h2><p>헤더는 고정, 숫자는 오른쪽 정렬 모노, 행 높이 36px. 정렬 가능한 열은 헤더 클릭 (아래 표는 실제로 정렬됨).</p></div>
+      <div class="ds-table-wrap">
+        <div class="ds-table-toolbar">
+          <label class="ds-search"><svg class="ds-icon" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg><input class="ds-input ds-input--sm" type="search" placeholder="전표번호, 지점명" aria-label="전표 검색"></label>
+          <div class="ds-tabs ds-tabs--pills" role="tablist"><button class="ds-tab is-active" type="button">전체 <span class="ds-count">24</span></button><button class="ds-tab" type="button">대기 <span class="ds-count">7</span></button><button class="ds-tab" type="button">반려 <span class="ds-count">2</span></button></div>
+          <span class="ds-grow"></span>
+          <button class="ds-btn ds-btn--sm" type="button">열 설정</button>
+          <button class="ds-btn ds-btn--sm ds-btn--primary" type="button">선택 승인 (2)</button>
+        </div>
+        <table class="ds-table" id="sort-table">
+          <thead><tr>
+            <th class="check"><label class="ds-checkbox"><input type="checkbox" id="th-check" aria-label="전체 선택"><span class="ds-checkbox__box"></span></label></th>
+            <th class="is-sortable" data-key="id">전표번호</th>
+            <th class="is-sortable" data-key="branch">지점</th>
+            <th>카테고리</th>
+            <th class="is-sortable num" data-key="amount" data-type="num">금액</th>
+            <th class="is-sortable num" data-key="rate" data-type="num">할인율</th>
+            <th class="is-sortable" data-key="date">접수일</th>
+            <th>상태</th>
+            <th></th>
+          </tr></thead>
+          <tbody>
+            <tr class="is-selected"><td class="check"><label class="ds-checkbox"><input type="checkbox" checked><span class="ds-checkbox__box"></span></label></td><td class="ds-mono">TXN-000418</td><td>서울 강남<span class="ds-table__cell-sub">수도권</span></td><td>가전</td><td class="num">3,197,397</td><td class="num">8.7%</td><td>2026-11-03</td><td><span class="ds-badge ds-badge--warn">대기</span></td><td><button class="ds-btn ds-btn--sm ds-btn--ghost" type="button">보기</button></td></tr>
+            <tr class="is-selected"><td class="check"><label class="ds-checkbox"><input type="checkbox" checked><span class="ds-checkbox__box"></span></label></td><td class="ds-mono">TXN-000419</td><td>인천 송도<span class="ds-table__cell-sub">수도권</span></td><td>모바일</td><td class="num">1,240,000</td><td class="num">3.0%</td><td>2026-11-04</td><td><span class="ds-badge ds-badge--warn">대기</span></td><td><button class="ds-btn ds-btn--sm ds-btn--ghost" type="button">보기</button></td></tr>
+            <tr><td class="check"><label class="ds-checkbox"><input type="checkbox"><span class="ds-checkbox__box"></span></label></td><td class="ds-mono">TXN-000420</td><td>부산 해운대<span class="ds-table__cell-sub">영남</span></td><td>컴퓨터</td><td class="num">5,880,120</td><td class="num">12.5%</td><td>2026-11-04</td><td><span class="ds-badge ds-badge--ok">승인</span></td><td><button class="ds-btn ds-btn--sm ds-btn--ghost" type="button">보기</button></td></tr>
+            <tr><td class="check"><label class="ds-checkbox"><input type="checkbox"><span class="ds-checkbox__box"></span></label></td><td class="ds-mono">TXN-000421</td><td>대전 둔산<span class="ds-table__cell-sub">중부</span></td><td>생활</td><td class="num">399,280</td><td class="num">9.2%</td><td>2026-11-05</td><td><span class="ds-badge ds-badge--danger">반려</span></td><td><button class="ds-btn ds-btn--sm ds-btn--ghost" type="button">보기</button></td></tr>
+            <tr><td class="check"><label class="ds-checkbox"><input type="checkbox"><span class="ds-checkbox__box"></span></label></td><td class="ds-mono">TXN-000422</td><td>광주 상무<span class="ds-table__cell-sub">호남</span></td><td>가전</td><td class="num">2,015,500</td><td class="num">0.0%</td><td>2026-11-06</td><td><span class="ds-badge ds-badge--ok">승인</span></td><td><button class="ds-btn ds-btn--sm ds-btn--ghost" type="button">보기</button></td></tr>
+            <tr class="is-muted"><td class="check"><label class="ds-checkbox"><input type="checkbox" disabled><span class="ds-checkbox__box"></span></label></td><td class="ds-mono">TXN-000423</td><td>춘천 석사<span class="ds-table__cell-sub">강원</span></td><td>모바일</td><td class="num">0</td><td class="num">–</td><td>2026-11-06</td><td><span class="ds-badge ds-badge--neutral">취소</span></td><td></td></tr>
+          </tbody>
+          <tfoot><tr><td></td><td colspan="3">합계 (취소 제외)</td><td class="num">12,732,297</td><td class="num">6.7%</td><td colspan="3"></td></tr></tfoot>
+        </table>
+        <div class="ds-table-footer"><span>24건 중 1–6 · 2건 선택</span><div class="ds-pagination"><button class="ds-btn ds-btn--sm ds-btn--ghost" type="button" disabled>‹</button><button class="ds-btn ds-btn--sm ds-btn-group is-active" type="button" style="background:var(--accent-soft);color:var(--accent-text);border-color:var(--accent)">1</button><button class="ds-btn ds-btn--sm ds-btn--ghost" type="button">2</button><button class="ds-btn ds-btn--sm ds-btn--ghost" type="button">3</button><button class="ds-btn ds-btn--sm ds-btn--ghost" type="button">4</button><button class="ds-btn ds-btn--sm ds-btn--ghost" type="button">›</button></div></div>
+      </div>
+      <div class="sc-sub">컴팩트 · 줄무늬 (밀도 높은 조회 화면)</div>
+      <div class="ds-table-wrap">
+        <table class="ds-table ds-table--compact ds-table--striped">
+          <thead><tr><th>권역</th><th class="num">지점 수</th><th class="num">매출</th><th class="num">전월 대비</th><th class="num">반품률</th></tr></thead>
+          <tbody>
+            <tr><td>수도권</td><td class="num">5</td><td class="num">1,843,120,000</td><td class="num"><span class="ds-stat__delta is-up">4.2%</span></td><td class="num">3.1%</td></tr>
+            <tr><td>영남</td><td class="num">4</td><td class="num">1,102,448,000</td><td class="num"><span class="ds-stat__delta is-down">1.8%</span></td><td class="num">3.6%</td></tr>
+            <tr><td>호남</td><td class="num">3</td><td class="num">612,930,000</td><td class="num"><span class="ds-stat__delta is-up">0.9%</span></td><td class="num">2.9%</td></tr>
+            <tr><td>중부</td><td class="num">3</td><td class="num">598,201,000</td><td class="num"><span class="ds-stat__delta is-flat">0.0%</span></td><td class="num">3.4%</td></tr>
+            <tr><td>강원</td><td class="num">2</td><td class="num">301,775,000</td><td class="num"><span class="ds-stat__delta is-up">6.5%</span></td><td class="num">4.0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== 배지 ===== -->
+    <section class="sc-section" id="badges">
+      <div class="sc-section__head"><h2 class="ds-h2">배지 · 상태</h2><p>상태색 4종(ok/warn/danger/info)은 의미가 고정. 색만으로 전달하지 않고 글자 또는 아이콘이 함께 간다. 차트 시리즈 색으로 재사용 금지.</p></div>
+      <div class="sc-demo">
+        <span class="ds-badge ds-badge--ok">승인</span><span class="ds-badge ds-badge--warn">대기</span><span class="ds-badge ds-badge--danger">반려</span><span class="ds-badge ds-badge--info">검토 중</span><span class="ds-badge ds-badge--neutral">취소</span><span class="ds-badge ds-badge--accent">신규</span><span class="ds-badge ds-badge--outline">초안</span><span class="ds-badge ds-badge--mono">v2.4.1</span>
+        <span class="ds-badge ds-badge--ok"><svg class="ds-icon" viewBox="0 0 16 16"><path d="M3 8.5 6.5 12 13 4.5"/></svg>동기화됨</span>
+        <span class="ds-badge ds-badge--danger"><svg class="ds-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v4M8 11v.5"/></svg>실패 3</span>
+      </div>
+      <div class="sc-demo">
+        <span class="ds-status-dot ds-status-dot--ok">정산 서버 정상</span>
+        <span class="ds-status-dot ds-status-dot--warn">배치 지연 12분</span>
+        <span class="ds-status-dot ds-status-dot--danger">외부 API 오류</span>
+        <span class="ds-status-dot ds-status-dot--info ds-status-dot--pulse">집계 진행 중</span>
+        <span class="ds-status-dot">미연결</span>
+        <span class="ds-tag">#11월마감</span><span class="ds-tag">#수도권</span>
+        <span class="ds-count">3</span><span class="ds-count ds-count--neutral">12</span><span class="ds-count ds-count--danger">99+</span>
+      </div>
+    </section>
+
+    <!-- ===== 탭 ===== -->
+    <section class="sc-section" id="tabs">
+      <div class="sc-section__head"><h2 class="ds-h2">탭</h2><p>기본은 밑줄형. 카드 안이나 툴바에서는 필(pill)형. 아래 탭은 실제로 전환됩니다.</p></div>
+      <div class="ds-card"><div class="ds-card__body">
+        <div class="ds-tabs" role="tablist" id="demo-tabs">
+          <button class="ds-tab is-active" role="tab" type="button" data-panel="p1">개요</button>
+          <button class="ds-tab" role="tab" type="button" data-panel="p2">전표 <span class="ds-count">24</span></button>
+          <button class="ds-tab" role="tab" type="button" data-panel="p3">정산 이력</button>
+          <button class="ds-tab" role="tab" type="button" data-panel="p4">설정</button>
+        </div>
+        <div class="ds-tab-panel" id="p1"><p class="ds-text-sm ds-text-2" style="margin:0">서울 강남 지점의 이번 달 요약입니다. 매출 184.3M, 반품률 3.1%, 승인 대기 전표 2건.</p></div>
+        <div class="ds-tab-panel" id="p2" hidden><p class="ds-text-sm ds-text-2" style="margin:0">전표 24건. 필터와 표는 위 테이블 섹션과 같은 컴포넌트를 씁니다.</p></div>
+        <div class="ds-tab-panel" id="p3" hidden><p class="ds-text-sm ds-text-2" style="margin:0">최근 정산: 2026-11-01 (정상), 2026-10-01 (정상), 2026-09-01 (지연 2일).</p></div>
+        <div class="ds-tab-panel" id="p4" hidden><p class="ds-text-sm ds-text-2" style="margin:0">정산 주기 월간 · 계좌 이체 · 마감 전 알림 켜짐.</p></div>
+      </div></div>
+      <div class="sc-demo mt-3">
+        <div class="ds-tabs ds-tabs--pills"><button class="ds-tab is-active" type="button">일</button><button class="ds-tab" type="button">주</button><button class="ds-tab" type="button">월</button><button class="ds-tab" type="button">분기</button></div>
+        <div class="ds-tabs ds-tabs--pills"><button class="ds-tab is-active" type="button">금액</button><button class="ds-tab" type="button">수량</button></div>
+      </div>
+    </section>
+
+    <!-- ===== KPI ===== -->
+    <section class="sc-section" id="kpi">
+      <div class="sc-section__head"><h2 class="ds-h2">KPI · 스탯</h2><p>값은 비례 숫자 32px, 증감은 방향 × 좋은 방향으로 색. 올라가면 나쁜 지표(반품률)는 is-bad 를 붙여 색을 뒤집는다. 대표 숫자(hero 48px)는 화면당 하나.</p></div>
+      <div class="ds-kpi-row">
+        <div class="ds-stat"><div class="ds-stat__label">이번 달 매출<span class="ds-badge ds-badge--neutral">11월</span></div><div class="ds-stat__value">4.46<small class="ds-stat__unit">억원</small></div><div class="ds-stat__delta is-up">8.3% <span class="ds-stat__delta-ctx">전월 대비</span></div><div class="ds-stat__trend"><svg viewBox="0 0 120 32" preserveAspectRatio="none"><path d="M0 24 L12 22 L24 25 L36 18 L48 20 L60 14 L72 16 L84 10 L96 12 L108 7 L120 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/><circle cx="120" cy="5" r="3" fill="currentColor"/></svg></div></div>
+        <div class="ds-stat"><div class="ds-stat__label">주문 건수</div><div class="ds-stat__value">1,284</div><div class="ds-stat__delta is-down">2.1% <span class="ds-stat__delta-ctx">전월 대비</span></div><div class="ds-stat__trend"><svg viewBox="0 0 120 32" preserveAspectRatio="none"><path d="M0 10 L12 12 L24 9 L36 14 L48 13 L60 17 L72 15 L84 19 L96 18 L108 21 L120 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/><circle cx="120" cy="20" r="3" fill="currentColor"/></svg></div></div>
+        <div class="ds-stat"><div class="ds-stat__label">반품률</div><div class="ds-stat__value">3.4<small class="ds-stat__unit">%</small></div><div class="ds-stat__delta is-bad is-up">0.3pt <span class="ds-stat__delta-ctx">전월 대비 · 나쁨</span></div></div>
+        <div class="ds-stat"><div class="ds-stat__label">승인 대기</div><div class="ds-stat__value">7<small class="ds-stat__unit">건</small></div><div class="ds-stat__delta is-flat">변동 없음</div></div>
+        <div class="ds-stat ds-stat--compact"><div class="ds-stat__label">평균 처리 시간</div><div class="ds-stat__value">6.2<small class="ds-stat__unit">h</small></div><div class="ds-stat__delta is-bad is-down">1.1h <span class="ds-stat__delta-ctx">빨라짐</span></div></div>
+      </div>
+      <div class="ds-card mt-4"><div class="ds-card__body ds-row ds-row--between ds-row--wrap"><div><div class="ds-label">전사 11월 누적 매출</div><div class="ds-hero-number">44.6<small class="ds-stat__unit">억원</small></div><div class="ds-stat__delta is-up">8.3% <span class="ds-stat__delta-ctx">전년 동월 대비</span></div></div><div class="ds-stat-inline"><span class="ds-text-sm ds-text-2">목표 달성률</span><span class="ds-stat__value">87<small class="ds-stat__unit">%</small></span></div><div style="min-width:220px;flex:1"><div class="ds-progress-label"><span>목표 51.0억</span><span>44.6 / 51.0</span></div><div class="ds-progress ds-progress--lg"><div class="ds-progress__bar" style="--value:87%"></div></div></div></div></div>
+    </section>
+
+    <!-- ===== 차트 크롬 ===== -->
+    <section class="sc-section" id="chart-chrome">
+      <div class="sc-section__head"><h2 class="ds-h2">차트 크롬</h2><p>차트 라이브러리와 무관하게 공유하는 틀: 제목·범례·표 보기 토글·툴팁. 실제 차트는 <a class="ds-link" href="charts.html">차트 갤러리</a>에서. 아래 플롯은 모양만 보여주는 정적 SVG.</p></div>
+      <div class="ds-chart-grid">
+        <div class="ds-card"><div class="ds-card__body">
+          <div class="ds-chart ds-chart--h-sm">
+            <div class="ds-chart__header"><div><h3 class="ds-chart__title">권역별 매출</h3><p class="ds-chart__subtitle">11월 1–7일 · 단위 백만원</p></div><div class="ds-chart__actions"><button class="ds-chart__toggle" type="button">표 보기</button></div></div>
+            <div class="ds-chart__legend"><span class="ds-chart__legend-item"><span class="ds-chart__swatch" style="background:var(--series-1)"></span>매장</span><span class="ds-chart__legend-item"><span class="ds-chart__swatch" style="background:var(--series-2)"></span>온라인</span><span class="ds-chart__legend-item"><span class="ds-chart__swatch" style="background:var(--series-3)"></span>B2B</span></div>
+            <div class="ds-chart__plot"><svg viewBox="0 0 400 160" preserveAspectRatio="none" aria-hidden="true">
+              <line class="ds-grid-line" x1="40" x2="400" y1="20" y2="20"/><line class="ds-grid-line" x1="40" x2="400" y1="60" y2="60"/><line class="ds-grid-line" x1="40" x2="400" y1="100" y2="100"/><line class="ds-axis-line" x1="40" x2="400" y1="140" y2="140"/>
+              <text x="34" y="24" text-anchor="end">600</text><text x="34" y="64" text-anchor="end">400</text><text x="34" y="104" text-anchor="end">200</text><text x="34" y="144" text-anchor="end">0</text>
+              <g fill="var(--series-1)"><rect x="60" y="48" width="18" height="92" rx="0"/><rect x="130" y="70" width="18" height="70"/><rect x="200" y="96" width="18" height="44"/><rect x="270" y="98" width="18" height="42"/><rect x="340" y="118" width="18" height="22"/></g>
+              <g fill="var(--series-2)"><rect x="80" y="66" width="18" height="74"/><rect x="150" y="90" width="18" height="50"/><rect x="220" y="108" width="18" height="32"/><rect x="290" y="112" width="18" height="28"/><rect x="360" y="126" width="18" height="14"/></g>
+              <g fill="var(--series-3)"><rect x="100" y="100" width="18" height="40"/><rect x="170" y="112" width="18" height="28"/><rect x="240" y="124" width="18" height="16"/><rect x="310" y="122" width="18" height="18"/><rect x="380" y="132" width="18" height="8"/></g>
+              <text x="89" y="156" text-anchor="middle">수도권</text><text x="159" y="156" text-anchor="middle">영남</text><text x="229" y="156" text-anchor="middle">호남</text><text x="299" y="156" text-anchor="middle">중부</text><text x="369" y="156" text-anchor="middle">강원</text>
+            </svg></div>
+            <div class="ds-chart__table"><div class="ds-table-wrap"><table class="ds-table ds-table--compact"><thead><tr><th>권역</th><th class="num">매장</th><th class="num">온라인</th><th class="num">B2B</th></tr></thead><tbody><tr><td>수도권</td><td class="num">460</td><td class="num">370</td><td class="num">200</td></tr><tr><td>영남</td><td class="num">350</td><td class="num">250</td><td class="num">140</td></tr><tr><td>호남</td><td class="num">220</td><td class="num">160</td><td class="num">80</td></tr><tr><td>중부</td><td class="num">210</td><td class="num">140</td><td class="num">90</td></tr><tr><td>강원</td><td class="num">110</td><td class="num">70</td><td class="num">40</td></tr></tbody></table></div></div>
+          </div>
+        </div></div>
+        <div class="ds-card"><div class="ds-card__body">
+          <div class="ds-chart ds-chart--h-sm">
+            <div class="ds-chart__header"><div><h3 class="ds-chart__title">일별 주문</h3><p class="ds-chart__subtitle">최근 14일</p></div></div>
+            <div class="ds-chart__plot sc-relative"><svg viewBox="0 0 400 160" preserveAspectRatio="none" aria-hidden="true">
+              <line class="ds-grid-line" x1="40" x2="400" y1="20" y2="20"/><line class="ds-grid-line" x1="40" x2="400" y1="80" y2="80"/><line class="ds-axis-line" x1="40" x2="400" y1="140" y2="140"/>
+              <text x="34" y="24" text-anchor="end">200</text><text x="34" y="84" text-anchor="end">100</text><text x="34" y="144" text-anchor="end">0</text>
+              <path d="M40 100 L68 92 L96 98 L124 80 L152 84 L180 70 L208 76 L236 60 L264 64 L292 50 L320 56 L348 44 L376 40 L400 36 V140 H40 Z" fill="var(--series-1)" opacity=".1"/>
+              <path d="M40 100 L68 92 L96 98 L124 80 L152 84 L180 70 L208 76 L236 60 L264 64 L292 50 L320 56 L348 44 L376 40 L400 36" fill="none" stroke="var(--series-1)" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+              <line class="ds-crosshair" x1="292" x2="292" y1="16" y2="140"/>
+              <circle cx="292" cy="50" r="4" fill="var(--series-1)" stroke="var(--chart-surface)" stroke-width="2"/>
+              <text class="ds-value-label" x="396" y="30" text-anchor="end">173</text>
+            </svg>
+              <div class="ds-chart__tooltip is-visible" style="left:62%;top:8px"><div class="ds-chart__tooltip-title">11월 3일 (월)</div><div class="ds-chart__tooltip-row"><span class="ds-chart__tooltip-key" style="background:var(--series-1)"></span><span class="ds-chart__tooltip-name">주문</span><span class="ds-chart__tooltip-value">150</span></div><div class="ds-chart__tooltip-row"><span class="ds-chart__tooltip-key" style="background:var(--chart-dim)"></span><span class="ds-chart__tooltip-name">전주 같은 요일</span><span class="ds-chart__tooltip-value">132</span></div></div>
+            </div>
+            <p class="ds-chart__footer">툴팁은 보강용. 모든 값은 표 보기나 직접 라벨로도 읽을 수 있어야 한다.</p>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ===== 오버레이 ===== -->
+    <section class="sc-section" id="overlays">
+      <div class="sc-section__head"><h2 class="ds-h2">오버레이</h2><p>모달은 확인이 필요한 결정에만. 상세 보기는 드로어. 메뉴·팁은 그림자를 가진 유일한 요소들.</p></div>
+      <div class="sc-demo">
+        <button class="ds-btn ds-btn--primary" type="button" id="open-modal">정산 확정 (모달)</button>
+        <button class="ds-btn" type="button" id="open-drawer">전표 상세 (드로어)</button>
+        <div class="ds-dropdown"><button class="ds-btn" type="button" id="open-menu" aria-haspopup="menu">내보내기 ▾</button>
+          <div class="ds-menu" id="demo-menu" hidden role="menu">
+            <div class="ds-menu__label">형식</div>
+            <button class="ds-menu__item" type="button" role="menuitem"><svg class="ds-icon" viewBox="0 0 16 16"><path d="M4 2h6l3 3v9H4z"/><path d="M10 2v3h3"/></svg>CSV<span class="ds-menu__shortcut">⌘E</span></button>
+            <button class="ds-menu__item" type="button" role="menuitem"><svg class="ds-icon" viewBox="0 0 16 16"><path d="M4 2h6l3 3v9H4z"/><path d="M10 2v3h3"/></svg>Excel</button>
+            <button class="ds-menu__item is-active" type="button" role="menuitem"><svg class="ds-icon" viewBox="0 0 16 16"><path d="M4 2h6l3 3v9H4z"/><path d="M10 2v3h3"/></svg>PDF (기본)</button>
+            <hr class="ds-menu__sep">
+            <button class="ds-menu__item" type="button" role="menuitem" disabled>구글 시트 (권한 없음)</button>
+            <button class="ds-menu__item is-danger" type="button" role="menuitem">내보내기 기록 삭제</button>
+          </div>
+        </div>
+        <span class="ds-row"><span class="ds-text-sm ds-text-2">툴팁 →</span><span class="ds-tooltip ds-tooltip--static">정산 마감 후에는 수정할 수 없습니다</span></span>
+      </div>
+      <div class="sc-demo sc-demo--plain mt-3">
+        <div class="ds-popover ds-popover--static"><p class="ds-popover__title">팝오버</p><p class="ds-text-sm ds-text-2" style="margin:0 0 var(--sp-2)">할인율은 전표 금액 기준이며 반품 건은 제외됩니다.</p><a class="ds-link ds-text-sm" href="#overlays">정산 기준 문서</a></div>
+      </div>
+    </section>
+
+    <!-- ===== 피드백 ===== -->
+    <section class="sc-section" id="feedback">
+      <div class="sc-section__head"><h2 class="ds-h2">알림 · 상태</h2><p>토스트는 오른쪽 아래, 4초 뒤 사라짐. 인라인 알림은 상황을 설명하고 할 일을 말한다. 재조회 중에는 스켈레톤이 아니라 이전 화면을 흐리게 유지.</p></div>
+      <div class="sc-demo">
+        <button class="ds-btn" type="button" data-toast="ok">성공 토스트</button>
+        <button class="ds-btn" type="button" data-toast="warn">경고 토스트</button>
+        <button class="ds-btn" type="button" data-toast="danger">오류 토스트</button>
+        <button class="ds-btn" type="button" data-toast="info">안내 토스트</button>
+      </div>
+      <div class="ds-stack mt-3" style="--gap:var(--sp-2)">
+        <div class="ds-alert ds-alert--ok"><svg class="ds-icon ds-alert__icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="M5 8.5 7 10.5 11 6"/></svg><div class="ds-alert__body"><p class="ds-alert__title">11월 정산이 확정되었습니다</p>지점 17곳, 총 44.6억원. 이체는 12월 1일 09:00에 실행됩니다.</div></div>
+        <div class="ds-alert ds-alert--warn"><svg class="ds-icon ds-alert__icon" viewBox="0 0 16 16"><path d="M8 2 14.5 13.5H1.5z"/><path d="M8 7v3M8 11.5v.5"/></svg><div class="ds-alert__body"><p class="ds-alert__title">배치 집계가 12분 지연되고 있습니다</p>표시된 수치는 02:00 기준입니다. 자동으로 다시 시도합니다.</div><button class="ds-btn ds-btn--sm" type="button">지금 재시도</button></div>
+        <div class="ds-alert ds-alert--danger"><svg class="ds-icon ds-alert__icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v4M8 11v.5"/></svg><div class="ds-alert__body"><p class="ds-alert__title">전표 3건을 저장하지 못했습니다</p>TXN-000418, 000419, 000421의 지점 코드가 유효하지 않습니다. 각 행의 코드를 확인한 뒤 다시 저장하세요.</div></div>
+        <div class="ds-alert ds-alert--info"><svg class="ds-icon ds-alert__icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="M8 7v4M8 5v.5"/></svg><div class="ds-alert__body">12월부터 B2B 채널의 기본 할인율이 8%에서 10%로 바뀝니다. 기존 계약 건에는 적용되지 않습니다.</div></div>
+      </div>
+      <div class="ds-grid mt-4" style="--cols:3">
+        <div class="ds-card"><div class="ds-card__body"><div class="ds-empty ds-empty--compact"><svg class="ds-empty__icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25"><rect x="2.5" y="3.5" width="11" height="9" rx="1"/><path d="M2.5 6.5h11M5.5 9.5h3"/></svg><p class="ds-empty__title">승인 대기 전표가 없습니다</p><p class="ds-empty__hint">새 전표가 접수되면 여기에 표시됩니다.</p><button class="ds-btn ds-btn--sm ds-empty__action" type="button">전표 등록</button></div></div></div>
+        <div class="ds-card"><div class="ds-card__body"><div class="ds-label mb-2">로딩 (스켈레톤)</div><span class="ds-skeleton ds-skeleton--title"></span><span class="ds-skeleton ds-skeleton--text"></span><span class="ds-skeleton ds-skeleton--text" style="width:80%"></span><span class="ds-skeleton ds-skeleton--text" style="width:60%"></span><div class="ds-row mt-3"><span class="ds-skeleton ds-skeleton--circle"></span><span class="ds-skeleton ds-skeleton--text" style="width:120px"></span></div></div></div>
+        <div class="ds-card"><div class="ds-card__body"><div class="ds-label mb-2">재조회 중 (is-refreshing)</div><div class="is-refreshing"><dl class="ds-dl"><dt>매출</dt><dd class="ds-num">184,300,000</dd><dt>주문</dt><dd class="ds-num">1,284</dd><dt>반품률</dt><dd class="ds-num">3.1%</dd></dl></div><div class="ds-row mt-3"><span class="ds-spinner"></span><span class="ds-text-sm ds-text-2">최신 데이터 불러오는 중</span></div></div></div>
+      </div>
+      <div class="sc-sub">진행률 (같은 램프의 연한 단계가 트랙)</div>
+      <div class="ds-grid" style="--cols:3">
+        <div><div class="ds-progress-label"><span>배치 진행</span><span>64%</span></div><div class="ds-progress"><div class="ds-progress__bar" style="--value:64%"></div></div></div>
+        <div><div class="ds-progress-label"><span>한도 사용</span><span>92%</span></div><div class="ds-progress ds-progress--warn"><div class="ds-progress__bar" style="--value:92%"></div></div></div>
+        <div><div class="ds-progress-label"><span>디스크</span><span>98%</span></div><div class="ds-progress ds-progress--danger"><div class="ds-progress__bar" style="--value:98%"></div></div></div>
+      </div>
+    </section>
+
+    <!-- ===== 마킹 ===== -->
+    <section class="sc-section" id="marking">
+      <div class="sc-section__head"><h2 class="ds-h2">마킹 (Spotfire식 선택)</h2><p>한 차트에서 고른 항목이 다른 차트·표에서 강조되고 나머지는 가라앉는다. 선택 수와 해제 버튼은 화면 아래 중앙 바에. 실제 동작은 <a class="ds-link" href="explorer.html">탐색기</a>에서.</p></div>
+      <div class="sc-demo">
+        <span class="ds-chip is-marked">서울 강남</span>
+        <span class="ds-chip is-marked">인천 송도</span>
+        <span class="ds-chip ds-dim">부산 해운대</span>
+        <span class="ds-chip ds-dim">대전 둔산</span>
+        <span class="ds-marking-bar ds-marking-bar--static"><span><span class="ds-marking-bar__count">2</span>개 선택</span><button class="ds-btn ds-btn--sm" type="button">상세 보기</button><button class="ds-btn ds-btn--sm" type="button">해제</button></span>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 모달 -->
+<div class="ds-modal-backdrop" id="demo-modal" hidden>
+  <div class="ds-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="ds-modal__header"><h2 class="ds-modal__title" id="modal-title">11월 정산을 확정할까요?</h2><button class="ds-btn ds-btn--icon ds-btn--ghost ds-btn--sm" type="button" data-close aria-label="닫기">✕</button></div>
+    <div class="ds-modal__body">
+      <p class="ds-text-sm" style="margin:0 0 var(--sp-3)">지점 17곳, 총 <strong class="ds-num">4,460,000,000원</strong>이 12월 1일 09:00에 이체됩니다. 확정 후에는 전표를 수정할 수 없습니다.</p>
+      <div class="ds-alert ds-alert--warn"><svg class="ds-icon ds-alert__icon" viewBox="0 0 16 16"><path d="M8 2 14.5 13.5H1.5z"/><path d="M8 7v3M8 11.5v.5"/></svg><div class="ds-alert__body">승인 대기 전표 7건은 이번 정산에서 제외되고 12월로 넘어갑니다.</div></div>
+      <label class="ds-checkbox mt-3"><input type="checkbox"><span class="ds-checkbox__box"></span>제외 전표 담당자에게 알림 보내기</label>
+    </div>
+    <div class="ds-modal__footer"><button class="ds-btn ds-btn--ghost" type="button" data-close>취소</button><button class="ds-btn ds-btn--primary" type="button" data-close data-toast="ok">정산 확정</button></div>
+  </div>
+</div>
+<!-- 드로어 -->
+<div class="ds-drawer-backdrop" id="demo-drawer-bd" hidden></div>
+<aside class="ds-drawer" id="demo-drawer" hidden aria-label="전표 상세">
+  <div class="ds-drawer__header"><div><h2 class="ds-drawer__title">TXN-000418</h2><p class="ds-card__sub">서울 강남 · 가전 · 세탁기</p></div><div class="ds-row"><span class="ds-badge ds-badge--warn">대기</span><button class="ds-btn ds-btn--icon ds-btn--ghost ds-btn--sm" type="button" data-close-drawer aria-label="닫기">✕</button></div></div>
+  <div class="ds-drawer__body">
+    <dl class="ds-dl"><dt>금액</dt><dd class="ds-num">3,197,397원</dd><dt>원가</dt><dd class="ds-num">2,395,131원</dd><dt>할인율</dt><dd class="ds-num">8.7%</dd><dt>수량</dt><dd class="ds-num">3</dd><dt>채널</dt><dd>매장</dd><dt>접수</dt><dd>2026-11-03 14:02 · 김영업</dd></dl>
+    <hr>
+    <div class="ds-label mb-2">이력</div>
+    <div class="ds-stack" style="--gap:var(--sp-2)">
+      <div class="ds-row ds-row--start"><span class="ds-status-dot ds-status-dot--warn"></span><div class="ds-text-sm"><div>승인 대기로 전환</div><div class="ds-caption">11-03 14:05 · 시스템</div></div></div>
+      <div class="ds-row ds-row--start"><span class="ds-status-dot ds-status-dot--info"></span><div class="ds-text-sm"><div>전표 접수</div><div class="ds-caption">11-03 14:02 · 김영업</div></div></div>
+    </div>
+  </div>
+  <div class="ds-drawer__footer"><button class="ds-btn ds-btn--danger" type="button" data-close-drawer>반려</button><button class="ds-btn ds-btn--primary" type="button" data-close-drawer data-toast="ok">승인</button></div>
+</aside>
+<div class="ds-toast-stack" id="toasts" aria-live="polite"></div>
+
+<script>
+(function(){
+  // --- 토큰 스와치: 계산값을 읽어서 표시 (테마 바뀌면 갱신)
+  var cs = getComputedStyle(document.documentElement);
+  function toHex(c){ var m = c.match(/\d+(\.\d+)?/g); if(!m) return c; if (m.length>=3) { var h = '#'+[0,1,2].map(function(i){return ('0'+Math.round(+m[i]).toString(16)).slice(-2)}).join(''); return m.length===4 && +m[3]<1 ? h+' α'+m[3] : h; } return c; }
+  function renderRamps(){
+    cs = getComputedStyle(document.documentElement);
+    var probe = document.getElementById('sc-probe') || (function(){ var p=document.createElement('span'); p.id='sc-probe'; p.style.cssText='position:absolute;width:0;height:0;overflow:hidden'; document.body.appendChild(p); return p; })();
+    document.querySelectorAll('.sc-ramp').forEach(function(r){
+      r.textContent='';
+      r.dataset.ramp.split(',').forEach(function(name){
+        probe.style.color = 'var(--'+name+')'; var val = toHex(getComputedStyle(probe).color);
+        var sw = document.createElement('div'); sw.className='sc-sw';
+        var chip = document.createElement('div'); chip.className='sc-sw__chip'; chip.style.background='var(--'+name+')';
+        var lab = document.createElement('span'); lab.textContent=name; var hex=document.createElement('span'); hex.className='sc-sw__hex'; hex.textContent=val;
+        sw.appendChild(chip); sw.appendChild(lab); sw.appendChild(hex); r.appendChild(sw);
+      });
+    });
+  }
+  renderRamps(); window.addEventListener('ds-themechange', renderRamps);
+  document.getElementById('indet').indeterminate = true;
+
+  // --- 사이드바 현재 섹션 표시
+  var items = Array.prototype.slice.call(document.querySelectorAll('.ds-sidebar__item[href^="#"]'));
+  var secs = items.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ items.forEach(function(a){ a.classList.toggle('is-active', a.getAttribute('href')==='#'+e.target.id); }); } }); }, { rootMargin: '-45% 0px -50% 0px' });
+    secs.forEach(function(s){ if(s) io.observe(s); });
+  }
+
+  // --- 탭
+  var tabs = document.getElementById('demo-tabs');
+  tabs.addEventListener('click', function(e){ var t = e.target.closest('.ds-tab'); if(!t) return; tabs.querySelectorAll('.ds-tab').forEach(function(x){ x.classList.toggle('is-active', x===t); x.setAttribute('aria-selected', x===t); }); ['p1','p2','p3','p4'].forEach(function(id){ document.getElementById(id).hidden = id!==t.dataset.panel; }); });
+  document.querySelectorAll('.ds-tabs--pills').forEach(function(g){ g.addEventListener('click', function(e){ var t=e.target.closest('.ds-tab'); if(!t) return; g.querySelectorAll('.ds-tab').forEach(function(x){ x.classList.toggle('is-active', x===t); }); }); });
+  document.querySelectorAll('.ds-date-range').forEach(function(g){ g.addEventListener('click', function(e){ var t=e.target.closest('button'); if(!t) return; g.querySelectorAll('button').forEach(function(x){ x.classList.toggle('is-active', x===t); }); }); });
+  document.querySelectorAll('.ds-chip:not(.ds-chip--filter):not(.is-marked):not(.ds-dim)').forEach(function(c){ if(c.tagName==='BUTTON') c.addEventListener('click', function(){ c.classList.toggle('is-active'); }); });
+
+  // --- 표 정렬
+  var table = document.getElementById('sort-table'); var tbody = table.tBodies[0];
+  table.querySelectorAll('th.is-sortable').forEach(function(th, i){
+    th.addEventListener('click', function(){
+      var idx = Array.prototype.indexOf.call(th.parentNode.children, th); var asc = !th.classList.contains('is-asc');
+      table.querySelectorAll('th.is-sortable').forEach(function(x){ x.classList.remove('is-asc','is-desc'); }); th.classList.add(asc?'is-asc':'is-desc');
+      var rows = Array.prototype.slice.call(tbody.rows); var num = th.dataset.type==='num';
+      rows.sort(function(a,b){ var x=a.cells[idx].textContent.trim(), y=b.cells[idx].textContent.trim(); if(num){ x=parseFloat(x.replace(/[^\d.-]/g,''))||0; y=parseFloat(y.replace(/[^\d.-]/g,''))||0; return asc?x-y:y-x; } return asc?x.localeCompare(y,'ko'):y.localeCompare(x,'ko'); });
+      rows.forEach(function(r){ tbody.appendChild(r); });
+    });
+  });
+  document.getElementById('th-check').addEventListener('change', function(e){ tbody.querySelectorAll('input[type=checkbox]:not(:disabled)').forEach(function(c){ c.checked=e.target.checked; c.closest('tr').classList.toggle('is-selected', e.target.checked); }); });
+  tbody.addEventListener('change', function(e){ if(e.target.type==='checkbox') e.target.closest('tr').classList.toggle('is-selected', e.target.checked); });
+  // 차트 표 보기 토글
+  document.querySelectorAll('.ds-chart__toggle').forEach(function(b){ b.addEventListener('click', function(){ var c=b.closest('.ds-chart'); var on=c.classList.toggle('is-table'); b.classList.toggle('is-active', on); b.textContent = on?'차트 보기':'표 보기'; }); });
+
+  // --- 토스트
+  var icons = { ok:'<svg class="ds-icon ds-toast__icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="M5 8.5 7 10.5 11 6"/></svg>', warn:'<svg class="ds-icon ds-toast__icon" viewBox="0 0 16 16"><path d="M8 2 14.5 13.5H1.5z"/><path d="M8 7v3M8 11.5v.5"/></svg>', danger:'<svg class="ds-icon ds-toast__icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v4M8 11v.5"/></svg>', info:'<svg class="ds-icon ds-toast__icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="M8 7v4M8 5v.5"/></svg>' };
+  var msgs = { ok:['정산이 확정되었습니다','지점 17곳 · 4,460,000,000원'], warn:['배치가 지연되고 있습니다','표시 수치는 02:00 기준입니다'], danger:['저장에 실패했습니다','지점 코드를 확인한 뒤 다시 시도하세요'], info:['내보내기를 시작했습니다','완료되면 알림으로 알려드립니다'] };
+  function toast(kind){ var el=document.createElement('div'); el.className='ds-toast ds-toast--'+kind; el.setAttribute('role','status'); el.innerHTML = icons[kind] + '<div class="ds-toast__body"><div class="ds-toast__title"></div><div class="ds-toast__msg"></div></div><button class="ds-btn ds-btn--icon ds-btn--ghost ds-btn--sm ds-toast__close" type="button" aria-label="닫기">✕</button>'; el.querySelector('.ds-toast__title').textContent=msgs[kind][0]; el.querySelector('.ds-toast__msg').textContent=msgs[kind][1]; el.querySelector('.ds-toast__close').onclick=function(){ el.remove(); }; document.getElementById('toasts').appendChild(el); setTimeout(function(){ el.remove(); }, 4000); }
+  document.addEventListener('click', function(e){ var b=e.target.closest('[data-toast]'); if(b) toast(b.dataset.toast); });
+
+  // --- 모달 / 드로어 / 메뉴
+  var modal=document.getElementById('demo-modal'); document.getElementById('open-modal').onclick=function(){ modal.hidden=false; modal.querySelector('.ds-btn--primary').focus(); };
+  modal.addEventListener('click', function(e){ if(e.target===modal || e.target.closest('[data-close]')) modal.hidden=true; });
+  var drawer=document.getElementById('demo-drawer'), dbd=document.getElementById('demo-drawer-bd'); function closeDrawer(){ drawer.hidden=true; dbd.hidden=true; }
+  document.getElementById('open-drawer').onclick=function(){ drawer.hidden=false; dbd.hidden=false; }; dbd.onclick=closeDrawer; drawer.addEventListener('click', function(e){ if(e.target.closest('[data-close-drawer]')) closeDrawer(); });
+  var menu=document.getElementById('demo-menu'); document.getElementById('open-menu').onclick=function(e){ e.stopPropagation(); menu.hidden=!menu.hidden; }; document.addEventListener('click', function(e){ if(!e.target.closest('#demo-menu')) menu.hidden=true; });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ modal.hidden=true; closeDrawer(); menu.hidden=true; } });
+})();
+</script>
+</body>
+</html>

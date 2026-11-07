@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>차트 레퍼런스 — references</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<script src="../js/ds-theme.js"></script>
+<link rel="stylesheet" href="../css/ds.css">
+<style>
+  /* 페이지 전용 보조 스타일 — 토큰만 사용 */
+  .gallery { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--sp-4); }
+  .gallery > * { grid-column: span 6; min-width: 0; }
+  .gallery > .span-12 { grid-column: span 12; }
+  .gallery > .span-4 { grid-column: span 4; }
+  .gallery > .span-8 { grid-column: span 8; }
+  @media (max-width: 960px) { .gallery > * { grid-column: span 12 !important; } }
+  .rule { display: flex; gap: var(--sp-2); align-items: flex-start; padding: var(--sp-3) var(--sp-4); border-top: 1px solid var(--border); font-size: var(--text-xs); line-height: var(--lh-xs); color: var(--fg-2); }
+  .rule b { color: var(--accent-text); font-weight: var(--weight-semibold); flex: 0 0 auto; }
+  .section-title { display: flex; align-items: baseline; gap: var(--sp-3); margin: var(--sp-8) 0 var(--sp-4); }
+  .section-title:first-of-type { margin-top: 0; }
+  .section-title .ds-caption { font-size: var(--text-sm); }
+  .fig-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--sp-2); font-size: var(--text-sm); }
+  .fig-list li { display: flex; align-items: center; gap: var(--sp-2); }
+  .fig-list .sw { width: 10px; height: 10px; border-radius: 2px; flex: 0 0 auto; }
+  .fig-list .v { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--fg); }
+  .fig-list .p { width: 48px; text-align: right; font-variant-numeric: tabular-nums; color: var(--fg-muted); }
+  .dont { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--sp-3); }
+  .dont .item { padding: var(--sp-3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); font-size: var(--text-sm); line-height: var(--lh-sm); }
+  .dont .item .no { color: var(--danger-text); font-weight: var(--weight-semibold); }
+  .dont .item .yes { color: var(--ok-text); font-weight: var(--weight-semibold); }
+  .palette { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: var(--sp-2); }
+  .palette .sw { height: 40px; border-radius: var(--r-sm); display: flex; align-items: flex-end; padding: 4px 6px; font-size: 11px; font-family: var(--font-mono); color: #fff; }
+  .palette .sw.dark-ink { color: #0b0b0b; }
+  .palette .nm { font-size: var(--text-xs); color: var(--fg-2); margin-top: 4px; }
+  @media (max-width: 640px) { .palette { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .code { font-family: var(--font-mono); font-size: var(--text-xs); line-height: 18px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: var(--sp-2) var(--sp-3); overflow-x: auto; white-space: pre; margin: 0; color: var(--fg-2); }
+</style>
+</head>
+<body>
+<div class="ds-shell ds-shell--no-sidebar">
+  <header class="ds-shell__header">
+    <a class="ds-shell__brand" href="index.html"><span class="ds-shell__mark" aria-hidden="true"></span>references</a>
+    <span class="ds-shell__env">design system</span>
+    <nav class="ds-shell__nav" aria-label="예시">
+      <a href="showcase.html">컴포넌트</a>
+      <a href="charts.html" class="is-active" aria-current="page">차트</a>
+      <a href="dashboard.html">대시보드</a>
+      <a href="explorer.html">탐색기</a>
+    </nav>
+    <span class="ds-shell__spacer"></span>
+    <div class="ds-shell__actions">
+      <button type="button" class="ds-btn ds-btn--icon ds-theme-toggle" aria-label="다크 모드로 전환">
+        <svg class="ds-icon ds-icon--moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="ds-icon ds-icon--sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="ds-main">
+    <div class="ds-page-header">
+      <div>
+        <h1 class="ds-page-title">차트 레퍼런스</h1>
+        <p class="ds-page-sub">ds-charts.js 로 그리는 모든 차트 형태와 그 규칙. 모든 차트는 아래 필터를 함께 따르고, 표로 보기 쌍둥이를 가진다.</p>
+      </div>
+      <div class="ds-page-header__actions">
+        <a class="ds-btn ds-btn--sm" href="../docs/06-charts.md">문서: 06-charts.md</a>
+      </div>
+    </div>
+
+    <!-- 필터 행: 차트 위에 한 줄. 아래 모든 차트와 수치가 같은 슬라이스를 본다. -->
+    <div class="ds-filter-row" role="group" aria-label="필터">
+      <span class="ds-filter-row__label">기간</span>
+      <div class="ds-date-range" id="f-range">
+        <button type="button" data-range="all" class="is-active">전체</button>
+        <button type="button" data-range="30d">최근 30일</button>
+        <button type="button" data-range="90d">최근 90일</button>
+        <button type="button" data-range="ytd">올해</button>
+        <button type="button" data-range="2025">2025년</button>
+      </div>
+      <span class="ds-filter-row__label">지역</span>
+      <div id="f-regions" class="ds-row ds-row--wrap" style="--gap: var(--sp-1)"></div>
+      <span class="ds-filter-row__label">채널</span>
+      <select class="ds-select" id="f-channel" aria-label="채널">
+        <option value="">전체 채널</option><option>매장</option><option>온라인</option><option>B2B</option>
+      </select>
+      <span class="ds-filter-row__spacer"></span>
+      <span class="ds-caption" id="f-count">—</span>
+    </div>
+
+    <!-- 1. 숫자가 주인공인 형태 -->
+    <div class="section-title"><h2 class="ds-h2">1. 숫자가 주인공일 때</h2><span class="ds-caption">스탯 타일 · KPI 행 — 막대 하나짜리 차트나 2조각 파이 대신</span></div>
+    <div class="ds-kpi-row" id="kpis">
+      <div id="k1"></div><div id="k2"></div><div id="k3"></div><div id="k4"></div>
+    </div>
+    <p class="ds-caption" style="margin: var(--sp-2) 0 0">큰 숫자는 비례 숫자(기본), 표와 축 눈금에만 tabular-nums. 델타 색은 "방향 × 오르면 좋은가"로 정한다 — 반품률은 올라가면 빨강.</p>
+
+    <!-- 2. 시간 추이 -->
+    <div class="section-title"><h2 class="ds-h2">2. 시간에 따른 추이</h2><span class="ds-caption">선 · 영역 — 단일 시리즈는 범례 없이, 여러 시리즈는 범례 + 끝값 라벨</span></div>
+    <div class="gallery">
+      <div class="ds-card"><div class="ds-card__body"><div id="c-month"></div></div>
+        <div class="rule"><b>규칙</b><span>단일 시리즈 → 범례 없음(제목이 설명). 영역 채움은 시리즈 색 10%. 끝점 마커 8px + 표면색 2px 링. 크로스헤어가 가장 가까운 x에 스냅.</span></div></div>
+      <div class="ds-card"><div class="ds-card__body"><div id="c-channel-month"></div></div>
+        <div class="rule"><b>규칙</b><span>2개 이상 → 범례 항상. 끝값 라벨은 4개 이하이고 서로 안 겹칠 때만. 겹치면 범례+툴팁으로 후퇴한다. 두 번째 y축은 절대 쓰지 않는다.</span></div></div>
+      <div class="ds-card"><div class="ds-card__body"><div id="c-emphasis"></div></div>
+        <div class="rule"><b>강조</b><span>"이 하나가 올랐다"가 이야기면 범주색 5개가 아니라 강조 형태: 주인공 한 색, 나머지는 --chart-dim. 가장 덜 쓰이지만 가장 정직한 형태.</span></div></div>
+      <div class="ds-card"><div class="ds-card__body"><div id="c-fold"></div></div>
+        <div class="rule"><b>9번째 색 없음</b><span>제품 13종을 월별로 누적하면 합계가 작은 것부터 "기타"로 접혀 8색 안에서 끝난다. 색을 생성하거나 순환하지 않는다.</span></div></div>
+    </div>
+
+    <!-- 3. 크기 비교 -->
+    <div class="section-title"><h2 class="ds-h2">3. 크기 비교와 구성</h2><span class="ds-caption">막대 · 누적 · 순위 · 분할 막대</span></div>
+    <div class="gallery">
+      <div class="ds-card"><div class="ds-card__body"><div id="c-region"></div></div>
+        <div class="rule"><b>규칙</b><span>명목 범주(지역)는 전부 1번 색 하나. 값이 크다고 더 진하게 칠하지 않는다(막대 길이가 이미 말한다). 막대 ≤24px, 끝 4px 라운드, 기준선은 직각. 최댓값만 직접 라벨.</span></div></div>
+      <div class="ds-card"><div class="ds-card__body"><div id="c-stacked"></div></div>
+        <div class="rule"><b>규칙</b><span>누적 조각 사이 2px 표면색 간격. 테두리로 구분하지 않는다. 툴팁은 그 x의 모든 시리즈와 합계를 한 번에.</span></div></div>
+      <div class="ds-card span-8"><div class="ds-card__body"><div id="c-top10"></div></div>
+        <div class="rule"><b>순위</b><span>부분-전체를 "비교"해야 하면 파이가 아니라 순위 막대. 한 기준선 위에 놓인 막대가 잇대어 놓은 조각보다 정확하게 읽힌다.</span></div></div>
+      <div class="span-4 ds-stack"><div class="ds-card"><div class="ds-card__header"><h3 class="ds-card__title">카테고리 구성</h3><span class="ds-caption">얇은 분할 막대</span></div>
+        <div class="ds-card__body ds-stack" style="--gap: var(--sp-3)">
+          <div id="c-seg-thin"></div>
+          <ul class="fig-list" id="seg-thin-list"></ul>
+        </div>
+        <div class="rule"><b>얇은 바</b><span>수치가 옆에 적혀 있으면 막대엔 글자를 쓰지 않는다. 8px, 끝 완전 라운드.</span></div></div>
+      <div class="ds-card"><div class="ds-card__body"><div id="c-seg-tall"></div></div>
+        <div class="rule"><b>키 큰 바</b><span>한 전체가 어떻게 나뉘는지 한눈에. 28px 블록, 4px 모서리, 비중은 들어갈 때만 안에 인쇄. 조각 ≤6, 나머지는 "기타".</span></div></div></div>
+      <div class="ds-card span-12"><div class="ds-card__body"><div id="c-channel-bar"></div></div>
+        <div class="rule"><b>그룹 막대</b><span>지역×채널. 같은 그룹 안 막대 사이도 2px 표면색 간격. 범례 색 순서 = 시리즈 고정 순서(매장=1, 온라인=2, B2B=3) — 필터로 하나가 빠져도 남은 것의 색은 바뀌지 않는다.</span></div></div>
+    </div>
+
+    <!-- 4. 크기 그리드 / 극성 -->
+    <div class="section-title"><h2 class="ds-h2">4. 크기 그리드와 극성</h2><span class="ds-caption">히트맵(순차형 한 색) · 발산 막대(두 색 + 회색 중앙)</span></div>
+    <div class="gallery">
+      <div class="ds-card"><div class="ds-card__body"><div id="c-heat"></div></div>
+        <div class="rule"><b>순차형</b><span>크기는 한 색(틸) 연함→진함. 무지개 금지. 스케일 범례 필수, 값은 툴팁과 표에.</span></div></div>
+      <div class="ds-card"><div class="ds-card__body"><div id="c-div"></div></div>
+        <div class="rule"><b>발산형</b><span>기준선 위/아래는 따뜻한 색 ↔ 차가운 색(오렌지 ↔ 틸), 중앙은 중립 회색. 중앙에 색을 두지 않는다. 양 극 모두 차가운 색(틸↔블루)도 금지.</span></div></div>
+    </div>
+
+    <!-- 5. 마킹 -->
+    <div class="section-title"><h2 class="ds-h2">5. 마킹 (Spotfire식 선택)</h2><span class="ds-caption">차트에서 고르면 다른 뷰가 따라온다 — onSelect</span></div>
+    <div class="gallery">
+      <div class="ds-card span-4"><div class="ds-card__body"><div id="c-mark"></div></div>
+        <div class="rule"><b>조작</b><span>막대 클릭 = 마킹, Shift+클릭 = 추가 선택, 다시 클릭 = 해제. 키보드: Tab으로 막대 이동, Enter로 선택. 선택되지 않은 막대는 가라앉고 선택된 막대엔 --chart-mark 링.</span></div></div>
+      <div class="ds-card span-8">
+        <div class="ds-card__header"><h3 class="ds-card__title">상세 보기 (Details-on-demand)</h3><span class="ds-caption" id="mark-count">마킹된 행 없음 — 왼쪽 차트에서 지역을 고르세요</span></div>
+        <div class="ds-card__body" style="padding:0">
+          <div class="ds-table-wrap ds-table-wrap--scroll" style="--table-max-h: 300px; border: 0; border-radius: 0">
+            <table class="ds-table ds-table--compact" id="mark-table">
+              <thead><tr><th>지점</th><th>카테고리</th><th>채널</th><th class="num">건수</th><th class="num">매출</th><th class="num">마진율</th><th>상태</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="rule"><b>연결</b><span>onSelect(rows)로 받은 원본 행을 표에 뿌린다. 마킹이 비면 전체 대신 안내 문구. 탐색기(explorer.html)는 이 패턴을 DuckDB + Mosaic 으로 수천만 행까지 확장한 것.</span></div>
+      </div>
+    </div>
+
+    <!-- 6. 팔레트 -->
+    <div class="section-title"><h2 class="ds-h2">6. 팔레트</h2><span class="ds-caption">범주형 8색 고정 순서 · 라이트/다크 각각 색약 검증 통과</span></div>
+    <div class="ds-card"><div class="ds-card__body ds-stack">
+      <div class="palette" id="palette"></div>
+      <p class="ds-caption">4번(옐로)은 라이트 모드에서 흰 표면 대비 2.3:1 — 직접 라벨이나 표 뷰를 반드시 같이 둔다. 상태색(ok/warn/danger)은 시리즈에 쓰지 않는다. 검증: <code>node scripts/validate_palette.js "…" --mode light</code></p>
+      <pre class="code">// 테마가 바뀌면 자동 재렌더. 색을 코드에 적지 않는다.
+DSCharts.bar(el, { data, x: 'region', y: 'revenue', title: '지역별 매출', format: 'compact-krw', sort: 'desc' });
+DSCharts.line(el, { data, x: 'month', y: ['매장','온라인','B2B'], title: '채널별 월 매출', format: 'compact-krw' });
+DSCharts.stat(el, { label: '반품률', value: 0.034, format: 'percent', delta: 0.4, deltaLabel: '전월 대비', upIsGood: false });</pre>
+    </div></div>
+
+    <!-- 7. 하지 말 것 -->
+    <div class="section-title"><h2 class="ds-h2">7. 하지 말 것</h2><span class="ds-caption">실제 대시보드에서 잡힌 것들</span></div>
+    <div class="dont">
+      <div class="item"><span class="no">✕ 이중 y축.</span> 두 눈금의 정렬은 임의라서 없는 상관관계를 만든다. <span class="yes">○</span> 차트 둘로 나누거나 공통 기준(=100)으로 지수화.</div>
+      <div class="item"><span class="no">✕ 순위대로 색 다시 칠하기.</span> 필터하면 살아남은 시리즈 색이 바뀐다. <span class="yes">○</span> 색은 개체를 따른다.</div>
+      <div class="item"><span class="no">✕ 모든 점에 숫자.</span> 아무도 안 읽는다. <span class="yes">○</span> 끝점·극값만, 나머지는 축·툴팁·표.</div>
+      <div class="item"><span class="no">✕ 점선 격자.</span> 투영선/임계선으로 오독. <span class="yes">○</span> 표면보다 한 단계 짙은 1px 실선.</div>
+      <div class="item"><span class="no">✕ 가까운 값 비교에 도넛.</span> <span class="yes">○</span> 순위 막대 또는 숫자 자체.</div>
+      <div class="item"><span class="no">✕ 시리즈 색으로 글자 칠하기.</span> 옐로 글자는 안 보인다. <span class="yes">○</span> 글자는 ink 토큰, 옆에 색 스와치.</div>
+      <div class="item"><span class="no">✕ 상태색을 시리즈 4번으로.</span> <span class="yes">○</span> 좋다/나쁘다를 뜻할 때만 상태색, 아이콘+라벨과 함께.</div>
+      <div class="item"><span class="no">✕ 툴팁에만 있는 값.</span> <span class="yes">○</span> 모든 값은 직접 라벨 또는 표 뷰로도 닿는다.</div>
+    </div>
+  </main>
+</div>
+
+<script src="../js/ds-charts.js"></script>
+<script src="js/sales.js"></script>
+<script>
+(async function () {
+  const all = await Sales.loadSales();
+  const regions = ['수도권', '영남', '호남', '중부', '강원'];
+  const filter = { from: null, to: null, regions: new Set(), channel: '' };
+  const maxDate = all.reduce((m, r) => r.date > m ? r.date : m, '');
+  const charts = {};
+  const $ = id => document.getElementById(id);
+
+  // ---- 필터 UI ----
+  const regionWrap = $('f-regions');
+  regions.forEach(r => { const b = document.createElement('button'); b.type = 'button'; b.className = 'ds-chip'; b.textContent = r; b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', () => { if (filter.regions.has(r)) filter.regions.delete(r); else filter.regions.add(r); b.classList.toggle('is-active', filter.regions.has(r)); b.setAttribute('aria-pressed', String(filter.regions.has(r))); renderAll(); }); regionWrap.appendChild(b); });
+  $('f-range').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; $('f-range').querySelectorAll('button').forEach(x => x.classList.toggle('is-active', x === b));
+    const d = new Date(maxDate); const iso = x => x.toISOString().slice(0, 10); filter.from = null; filter.to = null;
+    if (b.dataset.range === '30d') filter.from = iso(new Date(d - 30 * 864e5)); if (b.dataset.range === '90d') filter.from = iso(new Date(d - 90 * 864e5));
+    if (b.dataset.range === 'ytd') filter.from = maxDate.slice(0, 4) + '-01-01'; if (b.dataset.range === '2025') { filter.from = '2025-01-01'; filter.to = '2025-12-31'; }
+    renderAll(); });
+  $('f-channel').addEventListener('change', e => { filter.channel = e.target.value; renderAll(); });
+
+  function renderAll() {
+    const rows = Sales.filterRows(all, filter);
+    $('f-count').textContent = rows.length.toLocaleString('ko-KR') + '건 · ' + (rows[0] ? rows[0].date : '') + ' ~ ' + (rows.length ? rows[rows.length - 1].date : '');
+    const months = Sales.monthsBetween(rows);
+    const byMonth = Sales.groupSum(rows, 'month', 'revenue', ['units', 'cost', 'returned']).sort((a, b) => a.month < b.month ? -1 : 1);
+    // KPI (마지막 달 vs 그 전 달)
+    const last = byMonth[byMonth.length - 1] || { revenue: 0, units: 0, n: 0, returned: 0 }; const prev = byMonth[byMonth.length - 2] || last;
+    const pct = (a, b) => b ? Math.round((a - b) / b * 1000) / 10 : 0;
+    const trend = byMonth.slice(-12).map(m => m.revenue);
+    const retRate = m => m.n ? m.returned / m.n : 0; const disc = rows.length ? rows.reduce((s, r) => s + r.discount_rate, 0) / rows.length : 0;
+    upd('k1', 'stat', { label: '매출 (' + (last.month || '—') + ')', value: last.revenue, format: 'compact-krw', delta: pct(last.revenue, prev.revenue), deltaLabel: '전월 대비', trend });
+    upd('k2', 'stat', { label: '주문 건수', value: last.n, format: 'number', delta: pct(last.n, prev.n), deltaLabel: '전월 대비', trend: byMonth.slice(-12).map(m => m.n) });
+    upd('k3', 'stat', { label: '평균 할인율', value: disc, format: 'percent', delta: Math.round((disc - 0.056) * 1000) / 10, deltaLabel: '목표 5.6% 대비', upIsGood: false });
+    upd('k4', 'stat', { label: '반품률', value: retRate(last), format: 'percent', delta: Math.round((retRate(last) - retRate(prev)) * 1000) / 10, deltaLabel: '전월 대비', upIsGood: false, trend: byMonth.slice(-12).map(retRate) });
+    // 2. 추이
+    upd('c-month', 'line', { data: byMonth, x: 'month', y: 'revenue', xLabel: '월', yLabel: '매출', area: true, title: '월별 매출', subtitle: '단일 시리즈 — 범례 없음', format: 'compact-krw' });
+    const chM = pivot(Sales.groupSum2(rows, 'month', 'channel', 'revenue'), 'month', 'channel', 'revenue', ['매장', '온라인', 'B2B']);
+    upd('c-channel-month', 'line', { data: chM, x: 'month', y: ['매장', '온라인', 'B2B'], xLabel: '월', title: '채널별 월 매출', subtitle: '3개 시리즈 — 범례 + 끝값 라벨', format: 'compact-krw' });
+    const regM = pivot(Sales.groupSum2(rows, 'month', 'region', 'revenue'), 'month', 'region', 'revenue', regions);
+    upd('c-emphasis', 'line', { data: regM, x: 'month', y: regions.filter(r => !filter.regions.size || filter.regions.has(r)), xLabel: '월', title: '지역별 월 매출 — 수도권 강조', subtitle: 'emphasis: "수도권"', format: 'compact-krw', emphasis: '수도권', markers: 'none' });
+    const prodM = Sales.groupSum2(rows, 'month', 'product', 'revenue');
+    upd('c-fold', 'bar', { data: prodM, x: 'month', y: 'revenue', series: 'product', stacked: true, xLabel: '월', title: '제품별 월 매출 (13종 → 8색 + 기타)', format: 'compact-krw', labels: 'none' });
+    // 3. 크기
+    upd('c-region', 'bar', { data: Sales.groupSum(rows, 'region', 'revenue'), x: 'region', y: 'revenue', xLabel: '지역', yLabel: '매출', title: '지역별 매출', subtitle: '명목 범주 — 한 색, 내림차순', format: 'compact-krw', sort: 'desc' });
+    upd('c-stacked', 'bar', { data: Sales.groupSum2(rows, 'category', 'channel', 'revenue'), x: 'category', y: 'revenue', series: 'channel', seriesOrder: ['매장', '온라인', 'B2B'], stacked: true, xLabel: '카테고리', title: '카테고리 × 채널 매출', subtitle: '누적 — 2px 표면색 간격', format: 'compact-krw' });
+    upd('c-top10', 'bar', { data: Sales.groupSum(rows, 'branch', 'revenue'), x: 'branch', y: 'revenue', xLabel: '지점', yLabel: '매출', horizontal: true, sort: 'desc', limit: 10, title: '지점 Top 10', subtitle: '순위 막대 — 가로, 최댓값 라벨', format: 'compact-krw', height: 300 });
+    const catTot = Sales.groupSum(rows, 'category', 'revenue').sort((a, b) => b.revenue - a.revenue); const catSum = catTot.reduce((s, c) => s + c.revenue, 0) || 1;
+    upd('c-seg-thin', 'segmented', { parts: catTot.map(c => ({ name: c.category, value: c.revenue })), size: 'thin', legend: false, tableView: false, format: 'compact-krw' });
+    const T = getComputedStyle(document.documentElement); $('seg-thin-list').innerHTML = ''; catTot.forEach((c, i) => { const li = document.createElement('li'); const sw = document.createElement('span'); sw.className = 'sw'; sw.style.background = T.getPropertyValue('--series-' + (i + 1)); li.appendChild(sw); li.appendChild(document.createTextNode(c.category)); const v = document.createElement('span'); v.className = 'v'; v.textContent = Sales.fmtKRW(c.revenue); li.appendChild(v); const p = document.createElement('span'); p.className = 'p'; p.textContent = (c.revenue / catSum * 100).toFixed(1) + '%'; li.appendChild(p); $('seg-thin-list').appendChild(li); });
+    const chOrder = ['매장', '온라인', 'B2B'];
+    upd('c-seg-tall', 'segmented', { parts: Sales.groupSum(rows, 'channel', 'revenue').sort((a, b) => chOrder.indexOf(a.channel) - chOrder.indexOf(b.channel)).map(c => ({ name: c.channel, value: c.revenue })), size: 'tall', title: '채널 구성', subtitle: '키 큰 분할 막대 — 비중이 들어갈 때만 인쇄', format: 'compact-krw' });
+    upd('c-channel-bar', 'bar', { data: Sales.groupSum2(rows, 'region', 'channel', 'revenue'), x: 'region', y: 'revenue', series: 'channel', seriesOrder: ['매장', '온라인', 'B2B'], xLabel: '지역', title: '지역 × 채널 매출', subtitle: '그룹 막대', format: 'compact-krw', labels: 'none', height: 220 });
+    // 4. 그리드/극성
+    upd('c-heat', 'heatmap', { data: Sales.groupSum2(rows, 'region', 'month', 'revenue').map(r => ({ region: r.region, month: r.month.slice(2).replace('-', '.'), revenue: r.revenue })), x: 'month', y: 'region', value: 'revenue', valueLabel: '매출', yLabel: '지역', title: '지역 × 월 매출', subtitle: '순차형 — 틸 한 색', format: 'compact-krw', cell: 26 });
+    const yoy = yoyByRegion(rows);
+    upd('c-div', 'diverging', { data: yoy, x: 'region', y: 'yoy', xLabel: '지역', yLabel: '전년 대비', title: '지역별 전년 대비 증감 (1~10월)', subtitle: '발산형 — 오렌지 ↔ 틸', format: 'percent', sort: 'desc' });
+    // 5. 마킹
+    upd('c-mark', 'bar', { data: rows /* 원본 행을 그대로 — onSelect 가 원본 행을 돌려준다 */, x: 'region', y: 'revenue', xLabel: '지역', yLabel: '매출', title: '지역별 매출 — 클릭해서 마킹', format: 'compact-krw', sort: 'desc', labels: 'none', onSelect: fillMarkTable });
+    fillMarkTable(charts['c-mark'] ? charts['c-mark'].selection.length ? null : [] : []);
+  }
+  function upd(id, kind, opts) { if (charts[id]) charts[id].update(opts); else charts[id] = DSCharts[kind]($(id), opts); }
+  function pivot(rows, xk, sk, vk, order) { const m = new Map(); for (const r of rows) { let o = m.get(r[xk]); if (!o) { o = { [xk]: r[xk] }; order.forEach(k => o[k] = 0); m.set(r[xk], o); } o[r[sk]] = (o[r[sk]] || 0) + r[vk]; } return Array.from(m.values()).sort((a, b) => a[xk] < b[xk] ? -1 : 1); }
+  function yoyByRegion(rows) { const a = new Map(), b = new Map(); for (const r of rows) { const mm = +r.date.slice(5, 7); if (mm > 10) continue; const t = r.year === '2026' ? b : r.year === '2025' ? a : null; if (!t) continue; t.set(r.region, (t.get(r.region) || 0) + r.revenue); } return Array.from(new Set([...a.keys(), ...b.keys()])).map(reg => ({ region: reg, yoy: a.get(reg) ? ((b.get(reg) || 0) - a.get(reg)) / a.get(reg) : 0 })); }
+  function fillMarkTable(sel) {
+    const tb = document.querySelector('#mark-table tbody'); tb.innerHTML = '';
+    if (!sel) return;
+    if (!sel.length) { $('mark-count').textContent = '마킹된 행 없음 — 왼쪽 차트에서 지역을 고르세요'; const tr = tb.insertRow(); const td = tr.insertCell(); td.colSpan = 7; td.className = 'ds-text-muted'; td.textContent = '마킹된 데이터가 없습니다'; return; }
+    // 지점×카테고리×채널로 요약
+    const m = new Map(); for (const r of sel) { const k = r.branch + '|' + r.category + '|' + r.channel; let o = m.get(k); if (!o) { o = { branch: r.branch, category: r.category, channel: r.channel, n: 0, revenue: 0, cost: 0 }; m.set(k, o); } o.n++; o.revenue += r.revenue; o.cost += r.cost; }
+    const list = Array.from(m.values()).sort((x, y) => y.revenue - x.revenue).slice(0, 60);
+    $('mark-count').textContent = sel.length.toLocaleString('ko-KR') + '행 마킹 · 상위 ' + list.length + '개 조합';
+    list.forEach(o => { const tr = tb.insertRow(); const mr = (o.revenue - o.cost) / o.revenue;
+      [o.branch, o.category, o.channel].forEach(v => { tr.insertCell().textContent = v; });
+      const c1 = tr.insertCell(); c1.className = 'num'; c1.textContent = o.n; const c2 = tr.insertCell(); c2.className = 'num'; c2.textContent = Sales.fmtKRW(o.revenue); const c3 = tr.insertCell(); c3.className = 'num'; c3.textContent = (mr * 100).toFixed(1) + '%';
+      const c4 = tr.insertCell(); const b = document.createElement('span'); b.className = 'ds-badge ' + (mr >= 0.3 ? 'ds-badge--ok' : mr >= 0.22 ? 'ds-badge--warn' : 'ds-badge--danger'); b.textContent = mr >= 0.3 ? '양호' : mr >= 0.22 ? '주의' : '저마진'; c4.appendChild(b); });
+  }
+  // 팔레트 표
+  function paletteSwatches() { const cs = getComputedStyle(document.documentElement); const el = $('palette'); el.innerHTML = ''; const names = ['틸(브랜드)', '오렌지', '바이올렛', '옐로', '마젠타', '그린', '블루', '레드']; for (let i = 1; i <= 8; i++) { const v = cs.getPropertyValue('--series-' + i).trim(); const d = document.createElement('div'); const sw = document.createElement('div'); sw.className = 'sw' + (i === 4 ? ' dark-ink' : ''); sw.style.background = v; sw.textContent = v; d.appendChild(sw); const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = i + ' · ' + names[i - 1]; d.appendChild(nm); el.appendChild(d); } }
+  paletteSwatches(); window.addEventListener('ds-themechange', paletteSwatches);
+  renderAll();
+})();
+</script>
+</body>
+</html>
