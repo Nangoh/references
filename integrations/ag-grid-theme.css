@@ -1,0 +1,31 @@
+/* AG Grid 레거시 CSS 테마용 (ag-grid.css + ag-theme-quartz.css 를 쓰는 기존 화면)
+   <div class="ag-theme-quartz ag-theme-ds"> 처럼 덧붙인다. Theming API 를 쓰면 이 파일은 불필요. */
+.ag-theme-ds, .ag-theme-quartz.ag-theme-ds, .ag-theme-quartz-dark.ag-theme-ds {
+  --ag-font-family: var(--font-sans);
+  --ag-font-size: 13px;
+  --ag-background-color: var(--surface);
+  --ag-foreground-color: var(--fg);
+  --ag-secondary-foreground-color: var(--fg-2);
+  --ag-disabled-foreground-color: var(--fg-muted);
+  --ag-header-background-color: var(--surface-2);
+  --ag-header-foreground-color: var(--fg-2);
+  --ag-odd-row-background-color: var(--surface);
+  --ag-row-hover-color: var(--surface-3);
+  --ag-selected-row-background-color: var(--accent-soft);
+  --ag-border-color: var(--border);
+  --ag-row-border-color: var(--border);
+  --ag-active-color: var(--accent);
+  --ag-range-selection-border-color: var(--accent);
+  --ag-range-selection-background-color: color-mix(in srgb, var(--accent) 12%, transparent);
+  --ag-input-focus-border-color: var(--accent);
+  --ag-checkbox-checked-color: var(--accent);
+  --ag-control-panel-background-color: var(--surface-2);
+  --ag-chip-background-color: var(--accent-soft);
+  --ag-border-radius: 4px;
+  --ag-wrapper-border-radius: 6px;
+  --ag-row-height: 36px;
+  --ag-header-height: 36px;
+  --ag-grid-size: 6px;
+  --ag-cell-horizontal-padding: 12px;
+  --ag-icon-size: 14px;
+}
