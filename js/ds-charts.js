@@ -356,9 +356,9 @@
         const band = (W - mL - mR) / Math.max(1, cats.length);
         if (catW + 6 > band) { if (cats.length > 12 && catW + 6 > band * 2) { skip = Math.ceil((catW + 6) / band); } else { rotate = true; mB = Math.min(Math.ceil(catW * 0.72) + 16, 90); } }
       }
-      const H = H0, pw = W - mL - mR, ph = H - mT - mB;
+      const HH = H0, pw = W - mL - mR, ph = HH - mT - mB;
       f.plot.querySelectorAll('svg').forEach(n => n.remove());
-      const svg = S('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' }, null); f.plot.insertBefore(svg, f.tip);
+      const svg = S('svg', { viewBox: `0 0 ${W} ${HH}`, width: W, height: HH, role: 'img' }, null); f.plot.insertBefore(svg, f.tip);
       if (o.title) { const t = S('title', null, svg); t.textContent = o.title; }
       const g = S('g', { transform: `translate(${mL},${mT})` }, svg);
       const scale = v => horizontal ? (v - lo) / (hi - lo) * pw : ph - (v - lo) / (hi - lo) * ph;
@@ -475,9 +475,9 @@
       const endLabel = o.labels !== 'none' && visIdx.length <= 4;
       const endTexts = endLabel ? visIdx.map(i => fmt(series[i].values[series[i].values.length - 1])) : [];
       const mR = endLabel ? Math.min(Math.ceil(Math.max(0, ...endTexts.map(t => textW(t, fs)))) + 14, Math.floor(W * 0.3)) : 12;
-      const mL = Math.ceil(tickW) + 12, mT = 10, mB = 24; const H = o.height, pw = W - mL - mR, ph = H - mT - mB;
+      const mL = Math.ceil(tickW) + 12, mT = 10, mB = 24; const HH = o.height, pw = W - mL - mR, ph = HH - mT - mB;
       f.plot.querySelectorAll('svg').forEach(n => n.remove());
-      const svg = S('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' }, null); f.plot.insertBefore(svg, f.tip);
+      const svg = S('svg', { viewBox: `0 0 ${W} ${HH}`, width: W, height: HH, role: 'img' }, null); f.plot.insertBefore(svg, f.tip);
       if (o.title) { const t = S('title', null, svg); t.textContent = o.title; }
       const g = S('g', { transform: `translate(${mL},${mT})` }, svg);
       const sx = i => (xpos[i] - xmin) / span * pw; const sy = v => ph - (v - lo) / (hi - lo) * ph;
@@ -628,9 +628,9 @@
       const W = f.plot.clientWidth || 600; const fs = 11;
       const yW = Math.ceil(Math.max(...ys.map(t => textW(t, fs)))) + 12; const mT = 4, mB = 22;
       const cw = Math.max(16, Math.min(o.cell * 1.6, (W - yW - 8) / Math.max(1, xs.length))); const ch = o.cell;
-      const H = mT + ys.length * ch + mB;
+      const HH = mT + ys.length * ch + mB;
       f.plot.querySelectorAll('svg').forEach(n => n.remove());
-      const svg = S('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' }, null); f.plot.insertBefore(svg, f.tip);
+      const svg = S('svg', { viewBox: `0 0 ${W} ${HH}`, width: W, height: HH, role: 'img' }, null); f.plot.insertBefore(svg, f.tip);
       if (o.title) { const t = S('title', null, svg); t.textContent = o.title; }
       const g = S('g', { transform: `translate(${yW},${mT})` }, svg);
       const step = v => T.seq[Math.min(6, Math.floor((v - vmin) / span * 7))];
@@ -668,11 +668,11 @@
       const vals = cats.map(c => agg.get(c)); const amax = Math.max(1e-9, ...vals.map(Math.abs));
       const W = f.plot.clientWidth || 600; const fs = 11; const rowH = 26;
       const catW = Math.ceil(Math.max(...cats.map(c => textW(c, fs)))) + 12; const mL = Math.min(catW, Math.floor(W * .35)), mR = 12, mT = 8, mB = 24;
-      const H = mT + cats.length * rowH + mB; const pw = W - mL - mR;
+      const HH = mT + cats.length * rowH + mB; const pw = W - mL - mR;
       const nt = niceTicks(-amax, amax, 6); const ticks = nt.ticks.filter(t => Math.abs(t) <= amax * 1.0001 || t === 0); const lim = Math.max(Math.abs(nt.lo), Math.abs(nt.hi));
       const afmt = axisFormatter(o.format, lim);
       f.plot.querySelectorAll('svg').forEach(n => n.remove());
-      const svg = S('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' }, null); f.plot.insertBefore(svg, f.tip);
+      const svg = S('svg', { viewBox: `0 0 ${W} ${HH}`, width: W, height: HH, role: 'img' }, null); f.plot.insertBefore(svg, f.tip);
       const g = S('g', { transform: `translate(${mL},${mT})` }, svg);
       const sx = v => (v + lim) / (2 * lim) * pw; const ph = cats.length * rowH;
       nt.ticks.forEach(t => { const x = sx(t); S('line', { x1: x, x2: x, y1: 0, y2: ph, stroke: t === 0 ? T.axis : T.grid, 'stroke-width': 1, 'shape-rendering': 'crispEdges' }, g); const tx = S('text', { x, y: ph + 16, 'text-anchor': 'middle', 'font-size': fs, fill: T.muted, class: 'tick' }, g); tx.textContent = (t > 0 ? '+' : '') + afmt(t); });
