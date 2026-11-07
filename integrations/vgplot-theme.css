@@ -1,0 +1,15 @@
+/* Mosaic vgplot (Observable Plot SVG) 스킨 — SVG 가 인라인 색을 쓰므로 공통 크롬만 토큰으로 맞춘다.
+   시리즈 색은 mosaic-setup.js 의 dsVgplotTheme() 가 plot 속성(colorRange 등)으로 넘긴다. */
+.ds-vgplot, .ds-vgplot svg { font-family: var(--font-sans); font-size: 12px; color: var(--chart-ink-2); background: transparent; }
+.ds-vgplot svg [aria-label^="x-axis"] text, .ds-vgplot svg [aria-label^="y-axis"] text { fill: var(--chart-muted); }
+.ds-vgplot svg [aria-label^="x-axis"] line, .ds-vgplot svg [aria-label^="y-axis"] line,
+.ds-vgplot svg [aria-label^="x-axis"] path, .ds-vgplot svg [aria-label^="y-axis"] path { stroke: var(--chart-axis); }
+.ds-vgplot svg [aria-label^="y-grid"] line, .ds-vgplot svg [aria-label^="x-grid"] line { stroke: var(--chart-grid); stroke-opacity: 1; }
+.ds-vgplot svg [aria-label="title"] { fill: var(--chart-ink); font-weight: 600; font-size: 14px; }
+.ds-vgplot svg [aria-label="subtitle"] { fill: var(--chart-muted); }
+.ds-vgplot [aria-label="legend"] { color: var(--fg-2); }
+/* interval 브러시 (interactor) */
+.ds-vgplot svg .selection { fill: var(--accent); fill-opacity: .12; stroke: var(--accent); stroke-width: 1; }
+/* vgplot 입력 컴포넌트 (menu/slider/search/table) */
+.ds-vgplot .input, .ds-vgplot input, .ds-vgplot select { font: inherit; color: var(--fg); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--r-md); }
+.ds-vgplot input[type=range] { accent-color: var(--accent); border: 0; }
