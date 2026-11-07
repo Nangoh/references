@@ -1,0 +1,28 @@
+{
+  "name": "references",
+  "version": "0.1.0",
+  "private": true,
+  "description": "사내 공용 디자인 시스템 + 차트 레퍼런스 (토큰, 컴포넌트 CSS, 차트 라이브러리, Spotfire식 탐색기 예시)",
+  "scripts": {
+    "vendor": "node scripts/vendor.js",
+    "tokens": "node scripts/build-tokens-json.js",
+    "validate:palette": "node scripts/validate-tokens-palette.js",
+    "test": "node tests/screenshots.js",
+    "serve": "node scripts/serve.js"
+  },
+  "devDependencies": {
+    "@duckdb/duckdb-wasm": "1.33.1-dev57.0",
+    "@finos/perspective": "3.8.0",
+    "@finos/perspective-viewer": "3.8.0",
+    "@finos/perspective-viewer-d3fc": "3.8.0",
+    "@finos/perspective-viewer-datagrid": "3.8.0",
+    "@uwdata/vgplot": "0.35.0",
+    "ag-grid-community": "36.3.0",
+    "apache-arrow": "21.2.0",
+    "echarts": "6.1.0",
+    "esbuild": "^0.25.4",
+    "vega": "6.4.0",
+    "vega-embed": "7.3.0",
+    "vega-lite": "6.5.0"
+  }
+}

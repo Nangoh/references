@@ -1,0 +1,45 @@
+# GitHub Pages 배포 — main에 머지되면 레퍼런스 사이트가 https://nangoh.github.io/references/ 로 올라간다.
+# 리포 Settings → Pages → Source 를 "GitHub Actions" 로 한 번만 바꿔주면 된다.
+name: pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run vendor
+      - name: 사이트 디렉터리 구성 (리포 구조 그대로 + 루트 index는 examples/index.html 로 리다이렉트)
+        run: |
+          mkdir -p _site
+          cp -r tokens css js integrations examples vendor docs _site/
+          cp README.md AGENTS.md _site/
+          cat > _site/index.html <<'HTML'
+          <!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=examples/index.html"><title>references</title><a href="examples/index.html">examples/index.html</a>
+          HTML
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
