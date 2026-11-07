@@ -23,7 +23,7 @@ const ALLOW = [/favicon/i, /fonts\.g(oogleapis|static)\.com/i, /ERR_INTERNET_DIS
     pg.on('console', m => { if (m.type() === 'error' && !ALLOW.some(a => a.test(m.text()))) errors.push(m.text()); });
     pg.on('pageerror', e => errors.push('pageerror: ' + e.message));
     pg.on('requestfailed', r => { if (!ALLOW.some(a => a.test(r.url()))) errors.push('requestfailed: ' + r.url()); });
-    await pg.addInitScript(t => { try { localStorage.setItem('ds-theme', t); } catch {} document.documentElement.setAttribute('data-theme', t); }, theme);
+    await pg.addInitScript(t => { try { localStorage.setItem('ds-theme', t); } catch {} const apply = () => document.documentElement && document.documentElement.setAttribute('data-theme', t); if (document.documentElement) apply(); else document.addEventListener('DOMContentLoaded', apply); }, theme);
     try { await pg.goto(`http://localhost:${port}/examples/${page}.html`, { waitUntil: 'networkidle', timeout: 60000 }); } catch (e) { errors.push('goto: ' + e.message); }
     await pg.waitForTimeout(page === 'explorer' ? 4000 : 800);
     const overflow = await pg.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);

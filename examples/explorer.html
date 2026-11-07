@@ -284,7 +284,7 @@ const t0 = performance.now();
 const mosaic = await initMosaic({ csvUrl: './data/sales.csv', table: 'sales', vendorBase: '../vendor' }).catch(e => { $('#boot-msg').textContent = '로딩 실패: ' + e.message; throw e; });
 const { vg, query, conn } = mosaic;
 await conn.query(`ALTER TABLE sales ALTER date TYPE DATE`).catch(() => {});
-const total = (await query(`SELECT count(*) n, min(date) mn, max(date) mx FROM sales`))[0];
+const total = (await query(`SELECT count(*) n, CAST(min(date) AS VARCHAR) mn, CAST(max(date) AS VARCHAR) mx FROM sales`))[0];
 $('#rowcount').textContent = fmtInt(total.n);
 $('#loadtime').textContent = `${Math.round(performance.now() - t0)}ms`;
 const dateMin = String(total.mn).slice(0, 10), dateMax = String(total.mx).slice(0, 10);
@@ -539,7 +539,7 @@ bindChart('c-category', categoryOption, ch => ch.on('click', p => { if (p.compon
 let chRows = [];   // [{channel, category, units, marked}]
 function channelOption() {
   const c = C(); const hasMark = state.marking.length > 0;
-  const chans = [...new Set(chRows.map(r => r.channel))]; const cats = dims.category.map(r => r.v);
+  const chans = [...new Set(chRows.map(r => r.channel))]; const cats = (dims.category || []).map(r => r.v);
   const at = (ch, ca) => chRows.find(r => r.channel === ch && r.category === ca) || { units: 0, marked: 0 };
   const series = [];
   cats.forEach((ca, i) => {
@@ -565,7 +565,7 @@ bindChart('c-channel', channelOption, ch => ch.on('click', p => {
 let heatRows = [];
 function heatOption() {
   const c = C(); const hasMark = state.marking.length > 0; const drilled = !!state.drill.heat;
-  const ys = [...new Set(heatRows.map(r => r.y))]; const xs = drilled ? [...new Set(heatRows.map(r => r.x))].sort() : dims.category.map(r => r.v);
+  const ys = [...new Set(heatRows.map(r => r.y))]; const xs = drilled ? [...new Set(heatRows.map(r => r.x))].sort() : (dims.category || []).map(r => r.v);
   const max = Math.max(1, ...heatRows.map(r => r.total));
   const data = heatRows.map(r => ({ value: [xs.indexOf(r.x), ys.indexOf(r.y), r.total], marked: r.marked, itemStyle: hasMark && r.marked === 0 ? { color: dim(), opacity: .5 } : undefined }));
   return {
@@ -691,7 +691,7 @@ async function refreshPivot() {
   pivotDirty = false;
   const P = await loadPerspective(); if (!P) return;
   const m = whereMarking(); const where = m ? `${whereFilters()} AND (${m})` : whereBase();
-  const rows = await query(`SELECT CAST(date AS VARCHAR) date, region, branch, category, product, channel, units, revenue, cost, round((revenue-cost)*1.0/revenue, 4) margin, discount_rate, returned FROM sales WHERE ${where}`);
+  const rows = await query(`SELECT CAST(date AS VARCHAR) date, region, branch, category, product, channel, units, revenue, "cost", round((revenue-"cost")*1.0/revenue, 4) margin, discount_rate, returned FROM sales WHERE ${where}`);
   const viewer = $('#pivot');
   const saved = pivotTable ? await viewer.save().catch(() => null) : null;
   const tbl = await pivotWorker.table(rows.length ? rows : [{ date: '', region: '', branch: '', category: '', product: '', channel: '', units: 0, revenue: 0, cost: 0, margin: 0, discount_rate: 0, returned: 0 }]);
@@ -710,7 +710,7 @@ function buildVgPanel() {
     vgFilter = vg.Selection.single();
     const c = C();
     const el = vg.plot(
-      vg.rectY(vg.from('sales', { filterBy: vgFilter }), vg.binX({ x: 'discount_rate' }, { steps: 20 }), vg.fill(c.series[0]), vg.inset(1)),
+      vg.rectY(vg.from('sales', { filterBy: vgFilter }), { x: vg.bin('discount_rate', { steps: 20 }), y: vg.count(), fill: c.series[0], inset: 0.5 }),
       vg.intervalX({ as: discountBrush }),
       vg.xDomain(vg.Fixed), vg.xLabel(null), vg.yLabel(null), vg.yAxis(null), vg.xTickFormat('.0%'), vg.xTicks(4),
       vg.width($('#vg-discount').clientWidth || 200), vg.height(110),
@@ -767,16 +767,16 @@ async function refresh(opts = {}) {
     renderActiveChips(); renderRegionCrumb(); renderHeatCrumb(); if (!opts.fromBrush) syncVgFilter();
 
     // KPI (+ 전 기간 대비 delta: 같은 길이의 직전 구간)
-    const [k] = await query(`SELECT sum(revenue) rev, sum(cost) cost, sum(units) units, avg(returned) ret, count(*) n, min(date) mn, max(date) mx FROM sales WHERE ${base}`);
-    $('#k-rev').textContent = fmtKRW(k.rev || 0) + '원'; $('#k-margin').textContent = k.rev ? fmtPct((k.rev - k.cost) / k.rev) : '–';
+    const [k] = await query(`SELECT sum(revenue) rev, sum("cost") cst, sum(units) units, avg(returned) ret, count(*) n, CAST(min(date) AS VARCHAR) mn, CAST(max(date) AS VARCHAR) mx FROM sales WHERE ${base}`);
+    $('#k-rev').textContent = fmtKRW(k.rev || 0) + '원'; $('#k-margin').textContent = k.rev ? fmtPct((k.rev - k.cst) / k.rev) : '–';
     $('#k-units').textContent = fmtInt(k.units || 0); $('#k-ret').textContent = k.n ? fmtPct(k.ret) : '–';
     if (k.n && k.mn && k.mx) {
       const days = Math.max(1, Math.round((new Date(k.mx) - new Date(k.mn)) / 86400000) + 1);
       const prevWhere = `${whereFilters(state.filters, { skip: ['date'] })} AND date >= DATE '${String(k.mn).slice(0, 10)}' - INTERVAL ${days} DAY AND date < DATE '${String(k.mn).slice(0, 10)}'`;
-      const [p] = await query(`SELECT sum(revenue) rev, sum(cost) cost, sum(units) units, avg(returned) ret, count(*) n FROM sales WHERE ${prevWhere}`);
+      const [p] = await query(`SELECT sum(revenue) rev, sum("cost") cst, sum(units) units, avg(returned) ret, count(*) n FROM sales WHERE ${prevWhere}`);
       const delta = (el, cur, prev, fmt = v => fmtPct(v)) => { el.className = el.className.replace(/ is-(up|down|flat)/g, ''); el.textContent = ''; if (!prev) return; const d = (cur - prev) / Math.abs(prev); el.classList.add(d > 0.001 ? 'is-up' : d < -0.001 ? 'is-down' : 'is-flat'); el.innerHTML = `${fmt(Math.abs(d))} <span class="ds-stat__delta-ctx">직전 ${days}일 대비</span>`; };
       delta($('#k-rev-d'), k.rev, p.rev); delta($('#k-units-d'), k.units, p.units);
-      delta($('#k-margin-d'), (k.rev - k.cost) / (k.rev || 1), (p.rev - p.cost) / (p.rev || 1), v => (v * 100).toFixed(1) + 'pt'); delta($('#k-ret-d'), k.ret, p.ret);
+      delta($('#k-margin-d'), (k.rev - k.cst) / (k.rev || 1), (p.rev - p.cst) / (p.rev || 1), v => (v * 100).toFixed(1) + 'pt'); delta($('#k-ret-d'), k.ret, p.ret);
     } else for (const id of ['k-rev-d', 'k-margin-d', 'k-units-d', 'k-ret-d']) $('#' + id).textContent = '';
 
     // 차트 데이터
@@ -796,7 +796,7 @@ async function refresh(opts = {}) {
     const [mc] = await query(`SELECT count(*) n FROM sales WHERE ${mwhere}`);
     $('#marking-bar').hidden = !hasMark; $('#mark-count').textContent = fmtInt(mc.n);
     const CAP = 5000;
-    const rows = await query(`SELECT CAST(date AS VARCHAR) date, region, branch, category, product, channel, units, revenue, cost, round((revenue-cost)*1.0/revenue, 4) margin, discount_rate, returned FROM sales WHERE ${mwhere} ORDER BY date DESC, revenue DESC LIMIT ${CAP}`);
+    const rows = await query(`SELECT CAST(date AS VARCHAR) date, region, branch, category, product, channel, units, revenue, "cost", round((revenue-"cost")*1.0/revenue, 4) margin, discount_rate, returned FROM sales WHERE ${mwhere} ORDER BY date DESC, revenue DESC LIMIT ${CAP}`);
     gridApi.setGridOption('rowData', rows);
     $('#detail-count').textContent = fmtInt(mc.n);
     $('#detail-note').textContent = hasMark ? `마킹된 ${fmtInt(mc.n)}행` : `필터된 ${fmtInt(mc.n)}행${mc.n > CAP ? ` (상위 ${fmtInt(CAP)}행만 표시)` : ''}`;

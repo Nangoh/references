@@ -39,9 +39,20 @@ export async function initMosaic({ csvUrl, table = 'data', vendorBase = '../vend
   coordinator.databaseConnector(connector);
 
   /** Arrow → plain object rows */
+  const plain = (v) => {
+    if (typeof v === 'bigint') return Number(v);
+    if (v && typeof v === 'object') {
+      if (typeof v.toArray === 'function') return Array.from(v.toArray(), plain);   // Arrow Vector / List
+      if (v instanceof Date) return v;
+      if (typeof v.toJSON === 'function' && !Array.isArray(v)) { const o = v.toJSON(); return o === v ? o : plain(o); }
+      if (Array.isArray(v)) return v.map(plain);
+      const o = {}; for (const k in v) o[k] = plain(v[k]); return o;
+    }
+    return v;
+  };
   async function query(sql) {
     const t = await conn.query(sql);
-    return t.toArray().map(r => { const o = r.toJSON ? r.toJSON() : { ...r }; for (const k in o) if (typeof o[k] === 'bigint') o[k] = Number(o[k]); return o; });
+    return t.toArray().map(r => plain(r.toJSON ? r.toJSON() : { ...r }));
   }
   async function arrow(sql) { return conn.query(sql); }
 

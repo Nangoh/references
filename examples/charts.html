@@ -222,7 +222,7 @@ DSCharts.stat(el, { label: '반품률', value: 0.034, format: 'percent', delta: 
     upd('k3', 'stat', { label: '평균 할인율', value: disc, format: 'percent', delta: Math.round((disc - 0.056) * 1000) / 10, deltaLabel: '목표 5.6% 대비', upIsGood: false });
     upd('k4', 'stat', { label: '반품률', value: retRate(last), format: 'percent', delta: Math.round((retRate(last) - retRate(prev)) * 1000) / 10, deltaLabel: '전월 대비', upIsGood: false, trend: byMonth.slice(-12).map(retRate) });
     // 2. 추이
-    upd('c-month', 'line', { data: byMonth, x: 'month', y: 'revenue', xLabel: '월', area: true, title: '월별 매출', subtitle: '단일 시리즈 — 범례 없음', format: 'compact-krw' });
+    upd('c-month', 'line', { data: byMonth, x: 'month', y: 'revenue', xLabel: '월', yLabel: '매출', area: true, title: '월별 매출', subtitle: '단일 시리즈 — 범례 없음', format: 'compact-krw' });
     const chM = pivot(Sales.groupSum2(rows, 'month', 'channel', 'revenue'), 'month', 'channel', 'revenue', ['매장', '온라인', 'B2B']);
     upd('c-channel-month', 'line', { data: chM, x: 'month', y: ['매장', '온라인', 'B2B'], xLabel: '월', title: '채널별 월 매출', subtitle: '3개 시리즈 — 범례 + 끝값 라벨', format: 'compact-krw' });
     const regM = pivot(Sales.groupSum2(rows, 'month', 'region', 'revenue'), 'month', 'region', 'revenue', regions);
@@ -230,9 +230,9 @@ DSCharts.stat(el, { label: '반품률', value: 0.034, format: 'percent', delta: 
     const prodM = Sales.groupSum2(rows, 'month', 'product', 'revenue');
     upd('c-fold', 'bar', { data: prodM, x: 'month', y: 'revenue', series: 'product', stacked: true, xLabel: '월', title: '제품별 월 매출 (13종 → 8색 + 기타)', format: 'compact-krw', labels: 'none' });
     // 3. 크기
-    upd('c-region', 'bar', { data: Sales.groupSum(rows, 'region', 'revenue'), x: 'region', y: 'revenue', xLabel: '지역', title: '지역별 매출', subtitle: '명목 범주 — 한 색, 내림차순', format: 'compact-krw', sort: 'desc' });
+    upd('c-region', 'bar', { data: Sales.groupSum(rows, 'region', 'revenue'), x: 'region', y: 'revenue', xLabel: '지역', yLabel: '매출', title: '지역별 매출', subtitle: '명목 범주 — 한 색, 내림차순', format: 'compact-krw', sort: 'desc' });
     upd('c-stacked', 'bar', { data: Sales.groupSum2(rows, 'category', 'channel', 'revenue'), x: 'category', y: 'revenue', series: 'channel', seriesOrder: ['매장', '온라인', 'B2B'], stacked: true, xLabel: '카테고리', title: '카테고리 × 채널 매출', subtitle: '누적 — 2px 표면색 간격', format: 'compact-krw' });
-    upd('c-top10', 'bar', { data: Sales.groupSum(rows, 'branch', 'revenue'), x: 'branch', y: 'revenue', xLabel: '지점', horizontal: true, sort: 'desc', limit: 10, title: '지점 Top 10', subtitle: '순위 막대 — 가로, 최댓값 라벨', format: 'compact-krw', height: 300 });
+    upd('c-top10', 'bar', { data: Sales.groupSum(rows, 'branch', 'revenue'), x: 'branch', y: 'revenue', xLabel: '지점', yLabel: '매출', horizontal: true, sort: 'desc', limit: 10, title: '지점 Top 10', subtitle: '순위 막대 — 가로, 최댓값 라벨', format: 'compact-krw', height: 300 });
     const catTot = Sales.groupSum(rows, 'category', 'revenue').sort((a, b) => b.revenue - a.revenue); const catSum = catTot.reduce((s, c) => s + c.revenue, 0) || 1;
     upd('c-seg-thin', 'segmented', { parts: catTot.map(c => ({ name: c.category, value: c.revenue })), size: 'thin', legend: false, tableView: false, format: 'compact-krw' });
     const T = getComputedStyle(document.documentElement); $('seg-thin-list').innerHTML = ''; catTot.forEach((c, i) => { const li = document.createElement('li'); const sw = document.createElement('span'); sw.className = 'sw'; sw.style.background = T.getPropertyValue('--series-' + (i + 1)); li.appendChild(sw); li.appendChild(document.createTextNode(c.category)); const v = document.createElement('span'); v.className = 'v'; v.textContent = Sales.fmtKRW(c.revenue); li.appendChild(v); const p = document.createElement('span'); p.className = 'p'; p.textContent = (c.revenue / catSum * 100).toFixed(1) + '%'; li.appendChild(p); $('seg-thin-list').appendChild(li); });
@@ -244,7 +244,7 @@ DSCharts.stat(el, { label: '반품률', value: 0.034, format: 'percent', delta: 
     const yoy = yoyByRegion(rows);
     upd('c-div', 'diverging', { data: yoy, x: 'region', y: 'yoy', xLabel: '지역', yLabel: '전년 대비', title: '지역별 전년 대비 증감 (1~10월)', subtitle: '발산형 — 오렌지 ↔ 틸', format: 'percent', sort: 'desc' });
     // 5. 마킹
-    upd('c-mark', 'bar', { data: Sales.groupSum(rows, 'region', 'revenue'), x: 'region', y: 'revenue', xLabel: '지역', title: '지역별 매출 — 클릭해서 마킹', format: 'compact-krw', sort: 'desc', labels: 'none', onSelect: fillMarkTable });
+    upd('c-mark', 'bar', { data: rows /* 원본 행을 그대로 — onSelect 가 원본 행을 돌려준다 */, x: 'region', y: 'revenue', xLabel: '지역', yLabel: '매출', title: '지역별 매출 — 클릭해서 마킹', format: 'compact-krw', sort: 'desc', labels: 'none', onSelect: fillMarkTable });
     fillMarkTable(charts['c-mark'] ? charts['c-mark'].selection.length ? null : [] : []);
   }
   function upd(id, kind, opts) { if (charts[id]) charts[id].update(opts); else charts[id] = DSCharts[kind]($(id), opts); }

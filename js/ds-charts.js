@@ -418,7 +418,8 @@
         hit.setAttribute('aria-label', cat + ': ' + visIdx.map(i => series[i].name + ' ' + fmt(series[i].values[c])).join(', '));
         const show = (ev) => {
           marks.querySelectorAll(`[data-c="${c}"]`).forEach(p => p.setAttribute('filter', 'brightness(1.08)'));
-          const rows = visIdx.map(i => ({ name: series[i].name, value: fmt(series[i].values[c]), color: fillOf(series[i], i), square: true }));
+          const nameOf = i => (series.length === 1 && o.yLabel) ? o.yLabel : series[i].name;
+          const rows = visIdx.map(i => ({ name: nameOf(i), value: fmt(series[i].values[c]), color: fillOf(series[i], i), square: true }));
           if (stacked && visIdx.length > 1) rows.push({ name: '합계', value: fmt(sum(visIdx.map(i => series[i].values[c]))) });
           const r = f.plot.getBoundingClientRect(); let px, py;
           if (ev && ev.clientX != null) { px = ev.clientX - r.left; py = ev.clientY - r.top; } else { const b = hit.getBoundingClientRect(); px = b.left - r.left + b.width / 2; py = b.top - r.top + b.height / 2; }
@@ -440,7 +441,7 @@
       if (horizontal) S('line', { x1: scale(0), x2: scale(0), y1: 0, y2: ph, stroke: T.axis, 'stroke-width': 1, 'shape-rendering': 'crispEdges' }, g);
       else S('line', { x1: 0, x2: pw, y1: scale(0), y2: scale(0), stroke: T.axis, 'stroke-width': 1, 'shape-rendering': 'crispEdges' }, g);
       // 표 쌍둥이
-      const cols = [o.xLabel || o.x].concat(series.map(s => s.name)); if (stacked && series.length > 1) cols.push('합계');
+      const cols = [o.xLabel || o.x].concat(series.map(s => (series.length === 1 && o.yLabel) ? o.yLabel : s.name)); if (stacked && series.length > 1) cols.push('합계');
       buildTable(f, cols, cats.map((cat, c) => { const r = [cat].concat(series.map(s => fmt(s.values[c]))); if (stacked && series.length > 1) r.push(fmt(sum(series.map(s => s.values[c])))); return r; }), new Set(cols.map((_, i) => i).filter(i => i > 0)));
       f.table.querySelectorAll('tbody tr').forEach((tr, i) => tr.classList.toggle('is-selected', state.sel.has(cats[i])));
     };
@@ -520,7 +521,7 @@
       const showAt = (k, px, py) => {
         cur = k; const x = sx(k); cross.setAttribute('x1', x); cross.setAttribute('x2', x); cross.setAttribute('opacity', 1); dots.innerHTML = ''; dots.setAttribute('opacity', 1);
         visIdx.forEach(i => S('circle', { cx: x, cy: sy(series[i].values[k]), r: 5, fill: strokeOf(series[i], i), stroke: T.surface, 'stroke-width': 2 }, dots));
-        const rows = visIdx.map(i => ({ name: series[i].name, value: fmt(series[i].values[k]), color: strokeOf(series[i], i) }));
+        const rows = visIdx.map(i => ({ name: (series.length === 1 && o.yLabel) ? o.yLabel : series[i].name, value: fmt(series[i].values[k]), color: strokeOf(series[i], i) }));
         tipShow(f, px != null ? px : x + mL, py != null ? py : mT + 10, cats[k] + (isTime ? '' : ''), rows);
       };
       const nearest = clientX => { const r = svg.getBoundingClientRect(); const px = (clientX - r.left) * (W / r.width) - mL; let best = 0, bd = Infinity; for (let k = 0; k < cats.length; k++) { const d = Math.abs(sx(k) - px); if (d < bd) { bd = d; best = k; } } return best; };
@@ -532,7 +533,7 @@
       hit.addEventListener('click', ev => { const k = nearest(ev.clientX); handleSelect(state, cats[k], ev.shiftKey, state.norm, o); render(); });
       // 선택 표시
       if (state.sel.size) cats.forEach((c, k) => { if (state.sel.has(c)) S('line', { x1: sx(k), x2: sx(k), y1: 0, y2: ph, stroke: T.mark, 'stroke-width': 2, opacity: .6 }, g); });
-      const cols = [o.xLabel || o.x].concat(series.map(s => s.name));
+      const cols = [o.xLabel || o.x].concat(series.map(s => (series.length === 1 && o.yLabel) ? o.yLabel : s.name));
       buildTable(f, cols, cats.map((c, k) => [c].concat(series.map(s => fmt(s.values[k])))), new Set(cols.map((_, i) => i).filter(i => i > 0)));
     };
     const unbind = bindRerender(f, render); render();

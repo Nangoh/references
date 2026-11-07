@@ -181,7 +181,7 @@
     upd('c-trend', 'line', { data: byMonth.map(m => ({ month: m.month, 매출: m.revenue, 원가: m.cost })), x: 'month', y: ['매출', '원가'], xLabel: '월', area: false, title: '월별 매출과 원가', subtitle: '같은 단위라서 한 축. 단위가 다르면 차트를 나눈다', format: 'compact-krw', height: 280 });
     const chOrder = ['매장', '온라인', 'B2B']; const chSum = Sales.groupSum(rows, 'channel', 'revenue').sort((a, b) => chOrder.indexOf(a.channel) - chOrder.indexOf(b.channel));
     upd('c-channel', 'segmented', { parts: chSum.map(c => ({ name: c.channel, value: c.revenue })), size: 'tall', title: '채널 구성', format: 'compact-krw' });
-    upd('c-category', 'bar', { data: Sales.groupSum(rows, 'category', 'revenue'), x: 'category', y: 'revenue', xLabel: '카테고리', horizontal: true, sort: 'desc', title: '카테고리별 매출', format: 'compact-krw', height: 150, labels: 'all-ends' });
+    upd('c-category', 'bar', { data: Sales.groupSum(rows, 'category', 'revenue'), x: 'category', y: 'revenue', xLabel: '카테고리', yLabel: '매출', horizontal: true, sort: 'desc', title: '카테고리별 매출', format: 'compact-krw', height: 150, labels: 'all-ends' });
     upd('c-region', 'bar', { data: Sales.groupSum2(rows, 'region', 'channel', 'revenue'), x: 'region', y: 'revenue', series: 'channel', seriesOrder: ['매장', '온라인', 'B2B'], stacked: true, xLabel: '지역', title: '지역 × 채널 매출', format: 'compact-krw', height: 240, labels: 'none' });
     renderAlerts(rows); renderTable();
   }
