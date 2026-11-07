@@ -231,10 +231,17 @@ c.setSelection(['수도권']); c.clearSelection(); c.selection; // ['수도권']
 
 ds-charts.js 에 없는 형태(트리맵, 생키, 평행좌표, 지도, 드릴다운, 브러시)는 Apache ECharts 를 쓴다. 색·글꼴·격자·마크 규격은 테마가 맡는다:
 
-```js
-echarts.registerTheme('ds', await (await fetch('integrations/echarts-theme.json')).json());
-const chart = echarts.init(el, 'ds');
+```html
+<script src="../vendor/echarts/echarts.min.js"></script>
+<script src="../integrations/echarts-theme.js"></script>
+<script>
+  // 토큰(CSS 변수)을 호출 시점에 읽어 'ds' 테마를 등록하고, 테마 토글 시 자동으로 다시 그린다
+  const ref = DSEchartsTheme.bind(echarts, el, () => option);
+  ref.chart.on('click', p => { /* ... */ });
+</script>
 ```
+
+정적 파일이 필요하면 `integrations/echarts-theme.light.json` / `.dark.json` 을 `echarts.registerTheme('ds', json)` 으로 등록한다 (`npm run tokens` 뒤 `node scripts/build-echarts-theme-json.js` 로 재생성).
 
 테마를 쓰더라도 §2 의 고정 규칙은 그대로다 — 이중 축, 색 순환, 모든 점 라벨, 점선 격자 금지. 세부는 `integrations/` 와 [08-spotfire-mapping.md](08-spotfire-mapping.md).
 
