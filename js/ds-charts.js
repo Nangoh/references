@@ -44,6 +44,10 @@
 .ds-chart__plot svg{display:block;width:100%;height:auto;overflow:visible}
 .ds-chart__plot svg text{font-family:var(--font-sans,system-ui,sans-serif)}
 .ds-chart__plot .tick,.ds-chart__plot .axlabel{font-variant-numeric:tabular-nums}
+.ds-chart__plot text{fill:var(--chart-ink-2,#555)}
+.ds-chart__plot text.tick{fill:var(--chart-muted,#777)}
+.ds-chart__plot text.axlabel{fill:var(--chart-ink-2,#555)}
+.ds-chart__plot[hidden],.ds-chart__legend[hidden],.ds-chart__table[hidden],.ds-chart__scale[hidden]{display:none}
 .ds-chart__plot .hit{fill:transparent;cursor:pointer;outline:none}
 .ds-chart__plot .hit:focus-visible{stroke:var(--accent,#09a);stroke-width:2;stroke-dasharray:none}
 .ds-chart__tip{position:absolute;z-index:var(--z-tooltip,600);pointer-events:none;background:var(--surface,#fff);color:var(--fg,#111);border:1px solid var(--border-strong,#ccc);border-radius:var(--r-md,6px);box-shadow:var(--shadow-2);padding:6px 10px;font-size:var(--text-xs,12px);line-height:16px;min-width:120px;max-width:260px;opacity:0;transition:opacity var(--dur-fast,120ms)}
@@ -54,7 +58,7 @@
 .ds-chart__tip .tip-k--sq{width:8px;height:8px;border-radius:2px}
 .ds-chart__tip .tip-v{font-weight:var(--weight-semibold,600);font-variant-numeric:tabular-nums;margin-left:auto;padding-left:10px}
 .ds-chart__tip .tip-n{color:var(--fg-2,#555)}
-.ds-chart__table{overflow:auto;max-height:320px;border:1px solid var(--border,#ddd);border-radius:var(--r-md,6px)}
+.ds-chart__table{display:block;overflow:auto;max-height:320px;border:1px solid var(--border,#ddd);border-radius:var(--r-md,6px)}
 .ds-chart__table table{border-collapse:collapse;width:100%;font-size:var(--text-sm,13px);line-height:18px}
 .ds-chart__table th,.ds-chart__table td{padding:5px 10px;text-align:left;border-bottom:1px solid var(--border,#ddd);white-space:nowrap}
 .ds-chart__table th{background:var(--surface-2,#f4f4f4);color:var(--fg-2,#555);font-weight:var(--weight-medium,500);position:sticky;top:0}
@@ -62,17 +66,17 @@
 .ds-chart__table .num{text-align:right;font-variant-numeric:tabular-nums}
 .ds-chart__table tr.is-selected td{background:var(--accent-soft,#eef)}
 .ds-chart__caption{font-size:var(--text-xs,12px);line-height:16px;color:var(--fg-muted,#777);margin:0}
-.ds-chart--stat .ds-chart__head{display:none}
-.ds-stat-tile{display:flex;flex-direction:column;gap:2px;min-width:0}
-.ds-stat-tile__label{font-size:var(--text-sm,13px);line-height:18px;color:var(--fg-2,#555)}
-.ds-stat-tile__row{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--sp-3,12px)}
-.ds-stat-tile__value{font-size:var(--text-2xl,24px);line-height:var(--lh-2xl,32px);font-weight:var(--weight-semibold,600);letter-spacing:-.01em;white-space:nowrap}
-.ds-stat-tile--hero .ds-stat-tile__value{font-size:var(--text-hero,48px);line-height:var(--lh-hero,56px)}
-.ds-stat-tile__delta{display:inline-flex;align-items:center;gap:4px;font-size:var(--text-xs,12px);line-height:16px;color:var(--fg-2,#555);font-variant-numeric:tabular-nums}
-.ds-stat-tile__delta .d{font-weight:var(--weight-semibold,600)}
-.ds-stat-tile__delta.is-good .d{color:var(--ok-text)}
-.ds-stat-tile__delta.is-bad .d{color:var(--danger-text)}
-.ds-stat-tile__trend svg{display:block}
+:where(.ds-stat){display:flex;flex-direction:column;gap:4px;min-width:0}
+:where(.ds-stat__label){font-size:var(--text-sm,13px);line-height:18px;color:var(--fg-2,#555)}
+:where(.ds-stat__value){font-size:var(--text-3xl,32px);line-height:var(--lh-3xl,40px);font-weight:var(--weight-semibold,600);letter-spacing:-.02em;white-space:nowrap}
+:where(.ds-stat__delta){display:inline-flex;align-items:center;gap:4px;font-size:var(--text-xs,12px);line-height:16px;color:var(--fg-muted,#777);font-weight:500;font-variant-numeric:tabular-nums}
+:where(.ds-stat__delta.is-up){color:var(--ok-text)}:where(.ds-stat__delta.is-down){color:var(--danger-text)}
+:where(.ds-stat__delta.is-bad.is-up){color:var(--danger-text)}:where(.ds-stat__delta.is-bad.is-down){color:var(--ok-text)}
+:where(.ds-stat__delta.is-up)::before{content:"▲";font-size:9px}:where(.ds-stat__delta.is-down)::before{content:"▼";font-size:9px}:where(.ds-stat__delta.is-flat)::before{content:"–"}
+:where(.ds-stat__delta-ctx){color:var(--fg-muted,#777);font-weight:400}
+:where(.ds-stat__trend){height:32px;margin-top:4px}
+:where(.ds-stat__trend) svg{display:block;width:100%;height:100%;overflow:visible}
+.ds-stat--hero .ds-stat__value{font-size:var(--text-hero,48px);line-height:var(--lh-hero,56px);letter-spacing:-.025em}
 .ds-seg{display:flex;flex-direction:column;gap:var(--sp-2,8px)}
 .ds-seg__bar{display:flex;gap:2px;width:100%}
 .ds-seg__bar--thin{height:8px;border-radius:999px;overflow:hidden}
@@ -482,10 +486,12 @@
       const g = S('g', { transform: `translate(${mL},${mT})` }, svg);
       const sx = i => (xpos[i] - xmin) / span * pw; const sy = v => ph - (v - lo) / (hi - lo) * ph;
       ticks.forEach((t, i) => { const y = sy(t); S('line', { x1: 0, x2: pw, y1: y, y2: y, stroke: t === 0 ? T.axis : T.grid, 'stroke-width': 1, 'shape-rendering': 'crispEdges' }, g); const tx = S('text', { x: -8, y: y + 4, 'text-anchor': 'end', 'font-size': fs, fill: T.muted, class: 'tick' }, g); tx.textContent = tickLabels[i]; });
-      // x 라벨: 겹치지 않게 건너뛰기
-      const xl = cats.map((c, i) => isTime ? fmtDate(xs[i], span) : c); const maxLw = Math.max(...xl.map(t => textW(t, fs))) + 10;
-      const every = Math.max(1, Math.ceil(maxLw / (pw / Math.max(1, cats.length - 1))));
-      cats.forEach((c, i) => { if (i % every !== 0 && i !== cats.length - 1) return; if (i === cats.length - 1 && (cats.length - 1) % every !== 0 && (cats.length - 1 - Math.floor((cats.length - 1) / every) * every) * (pw / (cats.length - 1)) < maxLw) return; const t = S('text', { x: sx(i), y: ph + 16, 'text-anchor': i === 0 ? 'start' : i === cats.length - 1 ? 'end' : 'middle', 'font-size': fs, fill: T.ink2, class: 'tick' }, g); t.textContent = xl[i]; });
+      // x 라벨: 겹치지 않게 건너뛰기 (모두 가운데 정렬, 마지막 라벨은 공간이 있을 때만)
+      const xl = cats.map((c, i) => isTime ? fmtDate(xs[i], span) : c); const maxLw = Math.max(...xl.map(t => textW(t, fs))) + 12;
+      const stepPx = pw / Math.max(1, cats.length - 1); const every = Math.max(1, Math.ceil(maxLw / stepPx));
+      const drawn = []; cats.forEach((c, i) => { if (i % every === 0) drawn.push(i); });
+      const last = cats.length - 1; if (drawn[drawn.length - 1] !== last && (sx(last) - sx(drawn[drawn.length - 1])) >= maxLw) drawn.push(last);
+      drawn.forEach(i => { const t = S('text', { x: sx(i), y: ph + 16, 'text-anchor': 'middle', 'font-size': fs, class: 'tick' }, g); t.textContent = xl[i]; });
       // 시리즈
       const showMarkers = o.markers === 'always' || (o.markers === 'auto' && cats.length <= 30);
       const emphasisOrder = visIdx.slice().sort((a, b) => (series[a].name === o.emphasis) - (series[b].name === o.emphasis));
@@ -544,12 +550,14 @@
       const T = readTokens(el); const { values, width: w, height: h } = state.opts; el.innerHTML = '';
       if (!values || values.length < 2) return;
       const pts = sparkPath(values, w, h, 4);
-      const svg = S('svg', { viewBox: `0 0 ${w} ${h}`, width: w, height: h, role: 'img', 'aria-label': '추세 ' + values.length + '개 지점' }, el);
+      const svg = S('svg', { viewBox: `0 0 ${w} ${h}`, width: state.opts.fluid ? null : w, height: h, preserveAspectRatio: state.opts.fluid ? 'none' : 'xMidYMid meet', role: 'img', 'aria-label': '추세 ' + values.length + '개 지점' }, el);
+      if (state.opts.fluid) { svg.style.width = '100%'; svg.setAttribute('vector-effect', 'non-scaling-stroke'); }
       const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join('');
-      S('path', { d, fill: 'none', stroke: state.opts.color || T.muted, 'stroke-width': 1.5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, svg);
+      S('path', { d, fill: 'none', stroke: state.opts.color || T.muted, 'stroke-width': 1.5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', 'vector-effect': 'non-scaling-stroke' }, svg);
       const a = pts[pts.length - 2], b = pts[pts.length - 1];
-      S('path', { d: `M${a[0].toFixed(1)},${a[1].toFixed(1)}L${b[0].toFixed(1)},${b[1].toFixed(1)}`, fill: 'none', stroke: T.accent, 'stroke-width': 2, 'stroke-linecap': 'round' }, svg);
-      S('circle', { cx: b[0], cy: b[1], r: 3, fill: T.accent, stroke: T.surface, 'stroke-width': 2 }, svg);
+      S('path', { d: `M${a[0].toFixed(1)},${a[1].toFixed(1)}L${b[0].toFixed(1)},${b[1].toFixed(1)}`, fill: 'none', stroke: T.accent, 'stroke-width': 2, 'stroke-linecap': 'round', 'vector-effect': 'non-scaling-stroke' }, svg);
+      if (!state.opts.fluid) S('circle', { cx: b[0], cy: b[1], r: 3, fill: T.accent, stroke: T.surface, 'stroke-width': 2 }, svg);
+      else { const dot = H('span', null, el); dot.style.cssText = `position:absolute;right:-1px;top:${(b[1] / h * 100).toFixed(1)}%;width:8px;height:8px;margin:-4px -4px 0 0;border-radius:50%;background:${T.accent};box-shadow:0 0 0 2px ${T.surface}`; el.style.position = 'relative'; }
     };
     render();
     const onTheme = () => render(); window.addEventListener('ds-themechange', onTheme);
@@ -558,26 +566,24 @@
   }
 
   /* ================= STAT TILE ================= */
+  // ds.css 의 .ds-stat 마크업을 그대로 생성한다 (정적 마크업과 동일 구조).
   function stat(el, opts) {
     ensureStyle(); opts = Object.assign({ upIsGood: true, deltaFormat: 'percent-point' }, opts);
-    el.classList.add('ds-chart', 'ds-chart--stat');
     const state = { opts }; let spark = null;
     const render = () => {
       const o = state.opts; const fmt = formatter(o.format); el.innerHTML = '';
-      const tile = H('div', 'ds-stat-tile' + (o.hero ? ' ds-stat-tile--hero' : ''), el);
-      H('div', 'ds-stat-tile__label', tile, o.label);
-      const row = H('div', 'ds-stat-tile__row', tile);
-      const left = H('div', null, row);
-      H('div', 'ds-stat-tile__value', left, fmt(o.value));
+      el.classList.add('ds-stat'); el.classList.toggle('ds-stat--hero', !!o.hero); el.classList.toggle('ds-stat--compact', !!o.compact);
+      H('div', 'ds-stat__label', el, o.label);
+      H('div', 'ds-stat__value', el, fmt(o.value));
       if (o.delta != null) {
-        const up = o.delta > 0, good = o.delta === 0 ? null : (up === !!o.upIsGood);
-        const d = H('div', 'ds-stat-tile__delta' + (good == null ? '' : good ? ' is-good' : ' is-bad'), left);
+        const dir = o.delta > 0 ? 'is-up' : o.delta < 0 ? 'is-down' : 'is-flat';
+        const d = H('div', 'ds-stat__delta ' + dir + (o.upIsGood ? '' : ' is-bad'), el);
         const df = formatter(o.deltaFormat);
-        H('span', 'd', d, (o.delta > 0 ? '▲ ' : o.delta < 0 ? '▼ ' : '– ') + df(Math.abs(o.delta)).replace(/^\+/, ''));
-        if (o.deltaLabel) H('span', null, d, o.deltaLabel);
+        H('span', null, d, df(Math.abs(o.delta)).replace(/^\+/, ''));
+        if (o.deltaLabel) H('span', 'ds-stat__delta-ctx', d, o.deltaLabel);
       }
-      if (o.trend && o.trend.length > 1) { const tr = H('div', 'ds-stat-tile__trend', row); spark = sparkline(tr, { values: o.trend, width: 96, height: 32 }); }
-      el.setAttribute('role', 'group'); el.setAttribute('aria-label', o.label + ' ' + fmt(o.value));
+      if (o.trend && o.trend.length > 1) { const tr = H('div', 'ds-stat__trend', el); spark = sparkline(tr, { values: o.trend, width: 120, height: 32, fluid: true }); }
+      el.setAttribute('role', 'group'); el.setAttribute('aria-label', o.label + ' ' + fmt(o.value) + (o.delta != null ? ', ' + (o.deltaLabel || '') + ' ' + o.delta : ''));
     };
     render();
     const onTheme = () => render(); window.addEventListener('ds-themechange', onTheme);
