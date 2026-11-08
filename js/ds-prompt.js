@@ -363,6 +363,7 @@
       const orig = DS[kind]; if (typeof orig !== 'function') return;
       DS[kind] = function (host, opts) {
         const inst = orig.call(this, host, opts);
+        if (host && host.hasAttribute && (host.hasAttribute('data-ds-prompt-skip') || host.closest('[data-ds-prompt-skip]'))) return inst;   // 표 셀 스파크라인처럼 버튼이 필요 없는 곳
         try {
           const spec = { kind, opts: Object.assign({}, opts), title: opts && opts.title };
           attach(host, spec);
