@@ -38,6 +38,9 @@
       { id: 'charts', title: '차트 갤러리', href: 'charts.html', sections: [
         ['s1', '1. 숫자가 주인공'], ['s2', '2. 시간 추이'], ['s3', '3. 크기 · 구성'], ['s4', '4. 그리드 · 극성'], ['s5', '5. 마킹'], ['s6', '6. 팔레트'], ['s7', '7. 하지 말 것'],
       ] },
+      { id: 'charts-more', title: '확장 갤러리 (ECharts)', href: 'charts-more.html', sections: [
+        ['m1', '1. 분포'], ['m2', '2. 관계'], ['m3', '3. 흐름 · 구성'], ['m4', '4. 비교 · 순위'], ['m5', '5. 시간 패턴'], ['m6', '6. 일정 · 계층'], ['m7', '7. 하지 말 것 → 대신'],
+      ] },
       { id: 'drilldown', title: '드릴다운 패턴', href: 'drilldown.html', sections: [
         ['sec-treemap', '① 트리맵'], ['sec-sunburst', '② 선버스트'], ['sec-bar', '③ 막대 수동 드릴'], ['sec-code', '핵심 코드'],
       ] },

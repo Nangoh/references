@@ -65,6 +65,11 @@ const charts = [
   { kind: 'echarts-treemap', label: '트리맵 드릴다운 (ECharts)', when: '계층(지역›지점›제품) 비중과 드릴. DSCharts 에 없는 형태는 ECharts + ds 테마.', call: "DSEchartsTheme.bind(echarts, el, () => option)", options: { 'integrations/echarts-theme.js': '색·글꼴·격자·툴팁을 토큰에서 읽어 테마 \'ds\' 등록, 테마 토글 시 자동 재구성', vendor: 'vendor/echarts/echarts.min.js (npm run vendor) 또는 CDN' }, example: "DSEchartsTheme.bind(echarts, el, () => ({ series: [{ type: 'treemap', data: tree(rows), leafDepth: 1, nodeClick: 'zoomToNode' }] }));", examplePage: ex('drilldown.html') },
   { kind: 'echarts-drill-bar', label: '막대 수동 드릴다운 (ECharts + 상태머신)', when: '클릭 → 다음 계층, 브레드크럼/드릴업, URL 해시 저장. 가장 많이 쓰는 패턴.', call: 'LEVELS[] + path[] + rowsAt() + DSEchartsTheme.bind(...)', options: { LEVELS: "string[] — ['region','branch','product']", path: 'string[] — 현재 경로' }, example: '예시 페이지의 "프롬프트" 버튼이 전체 템플릿을 준다.', examplePage: ex('drilldown.html#c-bar') },
 ];
+/* 확장 갤러리(ECharts) — examples/data/charts-more.catalog.js 가 원본 (대입문을 떼고 JSON 으로 읽는다) */
+const moreSrc = read('examples/data/charts-more.catalog.js');
+const moreJson = moreSrc.slice(moreSrc.indexOf('['), moreSrc.lastIndexOf(']') + 1);
+const CHARTS_MORE = JSON.parse(moreJson);
+for (const m of CHARTS_MORE) charts.push({ kind: 'echarts-' + m.id, label: m.title, when: m.when, note: m.note, call: m.id === 'sparktable' ? 'HTML 표 + DSCharts.sparkline' : 'DSEchartsTheme.bind(echarts, el, () => option(prep(rows, P), DSEchartsTheme.colors(), H, el))', options: { prep: '행 배열 → 차트용 데이터 (페이지의 "복사" 버튼이 소스를 준다)', option: '(data, c, H, el) → ECharts option. 색은 c(토큰)만' }, example: '예시 페이지의 "복사" 버튼이 prep/option 소스를 포함한 전체 코드를 준다.', examplePage: ex('charts-more.html#' + m.id) });
 const rules = ['색 옵션(color:)을 직접 넘기지 않는다 — 토큰이 처리', '파이·도넛·이중 y축 금지', '시리즈 최대 8, 9번째는 "기타"', '상태색(ok/warn/danger)을 시리즈 색으로 쓰지 않는다', '모든 값은 표 뷰(tableView) 또는 직접 라벨로도 닿아야 한다', '라이트/다크 둘 다 확인'];
 write('charts.json', JSON.stringify({ name: 'references', version: pkg.version, commit, base: BASE, library: BASE + 'js/ds-charts.js', bundle: BASE + 'api/dist/ds.js', rules, charts, promptButton: '예시 페이지의 각 차트 오른쪽 위 "프롬프트" 버튼이 사양+코드+규칙을 복사해 준다 (js/ds-prompt.js)' }, null, 2) + '\n');
 

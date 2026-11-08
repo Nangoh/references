@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>확장 차트 갤러리 — references</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<script src="../js/ds-theme.js"></script>
+<link rel="stylesheet" href="../css/ds.css">
+<style>
+  /* 페이지 전용 보조 스타일 — 토큰만 사용 */
+  .gallery { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--sp-4); }
+  .gallery > * { grid-column: span 6; min-width: 0; }
+  .gallery > .span-12 { grid-column: span 12; }
+  .gallery > .span-4 { grid-column: span 4; }
+  .gallery > .span-8 { grid-column: span 8; }
+  @media (max-width: 960px) { .gallery > * { grid-column: span 12 !important; } }
+  .section-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-1) var(--sp-3); margin: var(--sp-8) 0 var(--sp-4); scroll-margin-top: calc(var(--shell-h) + var(--sp-4)); }
+  .section-title h2 { flex: 0 0 auto; margin: 0; }
+  .section-title:first-of-type { margin-top: 0; }
+  .section-title .ds-caption { font-size: var(--text-sm); }
+  .xm-plot { height: 280px; width: 100%; position: relative; }
+  .xm-plot.tall { height: 340px; }
+  .xm-plot.short { height: 220px; }
+  .xm-head .ds-card__sub { max-width: 60ch; }
+  .rule { display: flex; gap: var(--sp-2); align-items: flex-start; padding: var(--sp-3) var(--sp-4); border-top: 1px solid var(--border); font-size: var(--text-xs); line-height: var(--lh-xs); color: var(--fg-2); }
+  .rule b { color: var(--accent-text); font-weight: var(--weight-semibold); flex: 0 0 auto; }
+  .ds-card.is-refreshing .xm-plot { opacity: .45; transition: opacity var(--dur) var(--ease); }
+  .spark-table td.trend { width: 120px; }
+  .spark-table .sp { display: inline-block; vertical-align: middle; line-height: 0; }
+  .dont { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--sp-3); }
+  .dont .item { padding: var(--sp-3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); font-size: var(--text-sm); line-height: var(--lh-sm); }
+  .dont .item .no { color: var(--danger-text); font-weight: var(--weight-semibold); }
+  .dont .item .yes { color: var(--ok-text); font-weight: var(--weight-semibold); }
+</style>
+</head>
+<body>
+<div class="ds-shell">
+  <header class="ds-shell__header">
+    <a class="ds-shell__brand" href="index.html"><span class="ds-shell__mark" aria-hidden="true"></span>references<span class="ds-shell__env">design system</span></a>
+    <nav class="ds-shell__crumb" aria-label="현재 위치"><span class="ds-shell__crumb-sep" aria-hidden="true">›</span><a href="index.html">예시</a><span class="ds-shell__crumb-sep" aria-hidden="true">›</span><span aria-current="page">확장 차트 갤러리</span></nav>
+    <nav class="ds-shell__nav" aria-label="레퍼런스 메뉴">
+      <a href="index.html">홈</a>
+      <a href="showcase.html">컴포넌트</a>
+      <a href="charts.html" class="is-active" aria-current="page">차트</a>
+      <a href="dashboard.html">대시보드</a>
+      <a href="explorer.html">탐색기</a>
+      <a href="drilldown.html">드릴다운</a>
+    </nav>
+    <span class="ds-shell__spacer"></span>
+    <div class="ds-shell__actions">
+      <button type="button" class="ds-btn ds-btn--icon ds-theme-toggle" aria-label="다크 모드로 전환">
+        <svg class="ds-icon ds-icon--moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="ds-icon ds-icon--sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <aside class="ds-sidebar" data-sitenav="charts-more"></aside>
+  <main class="ds-main">
+    <div class="ds-page-header">
+      <div>
+        <h1 class="ds-page-title">확장 차트 갤러리</h1>
+        <p class="ds-page-sub">DSCharts 에 없는 형태를 ECharts + ds 테마로. 분포 · 관계 · 흐름 · 순위 · 시간 패턴 · 일정, 그리고 "하지 말 것" 대신 쓰는 형태. 모든 차트는 아래 필터를 함께 따르고 라이트/다크를 모두 지원한다.</p>
+        <p class="ds-page-sub"><strong>쓰고 싶은 차트가 있으면</strong> 카드 오른쪽 위 <span class="ds-badge ds-badge--info">복사</span> 한 번 → 사내 LLM 세션에 Ctrl+V. 데이터 가공(prep)과 옵션 코드가 그대로 들어간다.</p>
+      </div>
+      <div class="ds-page-header__actions">
+        <a class="ds-btn ds-btn--sm" href="charts.html">← 기본 갤러리 (DSCharts)</a>
+        <a class="ds-btn ds-btn--sm" href="doc.html?f=docs%2F06-charts.md">문서: 차트 규칙</a>
+      </div>
+    </div>
+
+    <div class="ds-filter-row" role="group" aria-label="필터">
+      <span class="ds-filter-row__label">기간</span>
+      <div class="ds-date-range" id="f-range">
+        <button type="button" data-range="all" class="is-active">전체</button>
+        <button type="button" data-range="90d">최근 90일</button>
+        <button type="button" data-range="ytd">올해</button>
+        <button type="button" data-range="2025">2025년</button>
+      </div>
+      <span class="ds-filter-row__label">지역</span>
+      <div id="f-regions" class="ds-row ds-row--wrap" style="--gap: var(--sp-1)"></div>
+      <span class="ds-filter-row__spacer"></span>
+      <span class="ds-caption" id="f-count">—</span>
+    </div>
+
+    <div class="section-title" id="m1"><h2 class="ds-h2">1. 분포</h2><span class="ds-caption">히스토그램 · 박스플롯 — 평균 한 숫자 뒤에 숨은 모양</span></div>
+    <div class="gallery" data-section="m1"></div>
+
+    <div class="section-title" id="m2"><h2 class="ds-h2">2. 관계</h2><span class="ds-caption">산점도 · 버블 · 상관 히트맵 — 점 하나가 개체 하나. 색은 3 시리즈까지</span></div>
+    <div class="gallery" data-section="m2"></div>
+
+    <div class="section-title" id="m3"><h2 class="ds-h2">3. 흐름 · 구성</h2><span class="ds-caption">생키 · 워터폴 · 누적 영역 · 100% 누적</span></div>
+    <div class="gallery" data-section="m3"></div>
+
+    <div class="section-title" id="m4"><h2 class="ds-h2">4. 비교 · 순위</h2><span class="ds-caption">덤벨 · 롤리팝 · 슬로프 · 불릿 · 파레토 — 전부 한 축</span></div>
+    <div class="gallery" data-section="m4"></div>
+
+    <div class="section-title" id="m5"><h2 class="ds-h2">5. 시간 패턴</h2><span class="ds-caption">캘린더 · 요일×월 · 계단선 · 스파크라인 표</span></div>
+    <div class="gallery" data-section="m5"></div>
+
+    <div class="section-title" id="m6"><h2 class="ds-h2">6. 일정 · 계층</h2><span class="ds-caption">간트. 계층(트리맵 · 선버스트 · 수동 드릴)은 <a class="ds-link" href="drilldown.html">드릴다운 페이지</a></span></div>
+    <div class="gallery" data-section="m6"></div>
+
+    <div class="section-title" id="m7"><h2 class="ds-h2">7. 하지 말 것 → 대신</h2><span class="ds-caption">파이 · 레이더 · 게이지 · 이중축 · 3D 를 대신하는 형태를 실제로 그려 둠</span></div>
+    <div class="dont mb-4">
+      <div class="item"><span class="no">✕ 파이 · 도넛.</span> 각도와 면적은 눈이 못 읽는다. <span class="yes">○</span> 순위 막대(아래) 또는 <a class="ds-link" href="charts.html#c-seg-tall">분할 막대</a>.</div>
+      <div class="item"><span class="no">✕ 레이더.</span> 축 순서에 따라 모양이 바뀌고 면적이 과장된다. <span class="yes">○</span> 소형 다중(아래): 같은 축을 패널마다 반복.</div>
+      <div class="item"><span class="no">✕ 게이지.</span> 숫자 하나에 반원이 너무 크다. <span class="yes">○</span> 불릿(4절) 또는 KPI 타일 + 미터.</div>
+      <div class="item"><span class="no">✕ 이중 y축.</span> 두 축의 정렬은 임의라 없는 상관을 만든다. <span class="yes">○</span> 지수화(아래)하거나 차트를 둘로.</div>
+      <div class="item"><span class="no">✕ 3D 막대 · 3D 파이.</span> 원근이 값을 왜곡한다. 대체 없음, 그냥 2D.</div>
+    </div>
+    <div class="gallery" data-section="m7"></div>
+  </main>
+</div>
+
+<script src="../vendor/echarts/echarts.min.js"></script>
+<script src="../integrations/echarts-theme.js"></script>
+<script src="../js/ds-charts.js"></script>
+<script src="../js/ds-prompt.js"></script>
+<script src="js/sales.js"></script>
+<script src="data/charts-more.catalog.js"></script>
+<script>
+(async function () {
+  const $ = id => document.getElementById(id);
+  const all = await Sales.loadSales();
+  const regions = ['수도권', '영남', '호남', '중부', '강원'];
+  const filter = { from: null, to: null, regions: new Set(), channel: '' };
+  const maxDate = all.reduce((m, r) => r.date > m ? r.date : m, '');
+  const META = Object.fromEntries(window.CHARTS_MORE_META.map(m => [m.id, m]));
+
+  /* ============================================================
+     공용 헬퍼 — 템플릿(프롬프트 복사)에도 이 함수 소스가 그대로 들어간다
+     ============================================================ */
+  function helpers() {
+    const fmtKRW = v => { const a = Math.abs(v); const s = v < 0 ? '-' : ''; if (a >= 1e8) return s + (a / 1e8).toFixed(1) + '억'; if (a >= 1e4) return s + Math.round(a / 1e4).toLocaleString('ko-KR') + '만'; return s + Math.round(a).toLocaleString('ko-KR'); };
+    const pct = (v, d = 1) => (v * 100).toFixed(d) + '%';
+    const groupSum = (rows, key, val) => { const m = new Map(); for (const r of rows) m.set(r[key], (m.get(r[key]) || 0) + (+r[val] || 0)); return [...m].map(([k, v]) => ({ k, v })); };
+    const quantile = (sorted, q) => { const pos = (sorted.length - 1) * q, b = Math.floor(pos), r = pos - b; return sorted[b + 1] !== undefined ? sorted[b] + r * (sorted[b + 1] - sorted[b]) : sorted[b]; };
+    const months = rows => [...new Set(rows.map(r => r.date.slice(0, 7)))].sort();
+    const mLabel = m => m.slice(2, 4) + '.' + m.slice(5, 7);
+    const base = c => ({ grid: { left: 8, right: 16, top: 12, bottom: 8, containLabel: true }, tooltip: { trigger: 'item', textStyle: { fontFamily: c.font } } });
+    return { fmtKRW, pct, groupSum, quantile, months, mLabel, base };
+  }
+  const H = helpers();
+
+  /* ============================================================
+     차트 정의: { id, span, h, params, prep(rows, P) → data, option(data, c, H, el) → ECharts option }
+     - params 는 프롬프트 옵션 창에서 고칠 수 있는 컬럼명 (템플릿에서 {{KEY}} 로 치환)
+     - option 안에서 색은 c(= DSEchartsTheme.colors()) 만 쓴다. hex 금지.
+     ============================================================ */
+  const DEFS = [
+    { id: 'hist', span: 6, params: { VALUE: 'revenue' },
+      prep: (rows, P) => { const vals = rows.map(r => +r[P.VALUE]).filter(v => v > 0).sort((a, b) => a - b); const lo = 0, hi = H.quantile(vals, 0.99); const n = 20, w = (hi - lo) / n; const bins = Array.from({ length: n }, (_, i) => ({ lo: lo + i * w, hi: lo + (i + 1) * w, n: 0 })); for (const v of vals) { const i = Math.min(n - 1, Math.floor((v - lo) / w)); if (i >= 0) bins[i].n++; } return { bins, total: vals.length }; },
+      option: (d, c, H) => ({ ...H.base(c), tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: ps => { const b = d.bins[ps[0].dataIndex]; return `${H.fmtKRW(b.lo)} ~ ${H.fmtKRW(b.hi)}<br><b>${b.n.toLocaleString('ko-KR')}건</b> (${H.pct(b.n / d.total)})`; } },
+        xAxis: { type: 'category', data: d.bins.map(b => H.fmtKRW(b.lo)), axisLabel: { interval: 3 }, name: '건당 매출', nameLocation: 'middle', nameGap: 28 },
+        yAxis: { type: 'value', name: '건수', splitNumber: 4 },
+        series: [{ type: 'bar', data: d.bins.map(b => b.n), barCategoryGap: '2px', barMaxWidth: 40, itemStyle: { color: c.series[0], borderRadius: [4, 4, 0, 0] } }] }) },
+
+    { id: 'box', span: 6, params: { GROUP: 'region', VALUE: 'revenue' },
+      prep: (rows, P) => { const m = new Map(); for (const r of rows) { if (!m.has(r[P.GROUP])) m.set(r[P.GROUP], []); m.get(r[P.GROUP]).push(+r[P.VALUE]); } const groups = [...m.keys()]; const boxes = [], outliers = []; groups.forEach((g, gi) => { const s = m.get(g).sort((a, b) => a - b); const q1 = H.quantile(s, .25), med = H.quantile(s, .5), q3 = H.quantile(s, .75), iqr = q3 - q1; const lo = Math.max(s[0], q1 - 1.5 * iqr), hi = Math.min(s[s.length - 1], q3 + 1.5 * iqr); boxes.push([lo, q1, med, q3, hi]); s.forEach(v => { if (v < lo || v > hi) outliers.push([gi, v]); }); }); return { groups, boxes, outliers }; },
+      option: (d, c, H) => ({ ...H.base(c), tooltip: { trigger: 'item', formatter: p => p.seriesType === 'boxplot' ? `${p.name}<br>최대 ${H.fmtKRW(p.data[5])}<br>Q3 ${H.fmtKRW(p.data[4])}<br><b>중앙값 ${H.fmtKRW(p.data[3])}</b><br>Q1 ${H.fmtKRW(p.data[2])}<br>최소 ${H.fmtKRW(p.data[1])}` : `${d.groups[p.data[0]]} 이상치 ${H.fmtKRW(p.data[1])}` },
+        xAxis: { type: 'category', data: d.groups }, yAxis: { type: 'value', axisLabel: { formatter: v => H.fmtKRW(v) }, splitNumber: 4 },
+        series: [
+          { type: 'boxplot', data: d.boxes, boxWidth: [10, 24], itemStyle: { color: c.accentSoft, borderColor: c.series[0], borderWidth: 1.5 } },
+          { type: 'scatter', data: d.outliers, symbolSize: 5, itemStyle: { color: c.muted, opacity: .7 } },
+        ] }) },
+
+    { id: 'scatter', span: 6, params: { ENTITY: 'branch', X: 'discount_rate', REV: 'revenue', COST: 'cost' },
+      prep: (rows, P) => { const m = new Map(); for (const r of rows) { let o = m.get(r[P.ENTITY]); if (!o) { o = { name: r[P.ENTITY], n: 0, disc: 0, rev: 0, cost: 0 }; m.set(r[P.ENTITY], o); } o.n++; o.disc += +r[P.X]; o.rev += +r[P.REV]; o.cost += +r[P.COST]; } return [...m.values()].map(o => ({ name: o.name, x: o.disc / o.n, y: (o.rev - o.cost) / o.rev, rev: o.rev })); },
+      option: (d, c, H) => ({ ...H.base(c), tooltip: { trigger: 'item', formatter: p => `<b>${p.data.name}</b><br>할인율 ${H.pct(p.data.x)} · 이익률 ${H.pct(p.data.y)}` },
+        xAxis: { type: 'value', name: '평균 할인율', nameLocation: 'middle', nameGap: 28, axisLabel: { formatter: v => H.pct(v, 1) }, scale: true },
+        yAxis: { type: 'value', name: '이익률', axisLabel: { formatter: v => H.pct(v, 1) }, scale: true, splitNumber: 4 },
+        series: [{ type: 'scatter', data: d.map(p => ({ value: [p.x, p.y], name: p.name, ...p })), symbolSize: 10, itemStyle: { color: c.series[0], borderColor: c.surface, borderWidth: 2 }, emphasis: { label: { show: true, formatter: p => p.data.name, position: 'top', color: c.ink, fontFamily: c.font } } }] }) },
+
+    { id: 'bubble', span: 6, params: { ENTITY: 'branch', SERIES: 'channel', X: 'discount_rate', REV: 'revenue', COST: 'cost' },
+      prep: (rows, P) => { const m = new Map(); for (const r of rows) { const k = r[P.ENTITY] + '|' + r[P.SERIES]; let o = m.get(k); if (!o) { o = { name: r[P.ENTITY], s: r[P.SERIES], n: 0, disc: 0, rev: 0, cost: 0 }; m.set(k, o); } o.n++; o.disc += +r[P.X]; o.rev += +r[P.REV]; o.cost += +r[P.COST]; } const pts = [...m.values()].map(o => ({ name: o.name, s: o.s, x: o.disc / o.n, y: (o.rev - o.cost) / o.rev, size: o.rev })); const series = [...new Set(pts.map(p => p.s))].slice(0, 3); const max = Math.max(...pts.map(p => p.size)); return { series, pts, max }; },
+      option: (d, c, H) => ({ ...H.base(c), legend: { show: true, top: 0, left: 0, right: 'auto', icon: 'circle' }, grid: { left: 8, right: 16, top: 52, bottom: 8, containLabel: true },
+        tooltip: { trigger: 'item', formatter: p => `<b>${p.data.name}</b> · ${p.seriesName}<br>할인율 ${H.pct(p.data.x)} · 이익률 ${H.pct(p.data.y)}<br>매출 ${H.fmtKRW(p.data.size)}` },
+        xAxis: { type: 'value', name: '평균 할인율', nameLocation: 'middle', nameGap: 28, axisLabel: { formatter: v => H.pct(v, 1) }, scale: true },
+        yAxis: { type: 'value', name: '이익률', axisLabel: { formatter: v => H.pct(v, 1) }, scale: true, splitNumber: 4 },
+        series: d.series.map((s, i) => ({ name: s, type: 'scatter', data: d.pts.filter(p => p.s === s).map(p => ({ value: [p.x, p.y], ...p })), symbolSize: p => 8 + 28 * Math.sqrt(p[2] !== undefined ? 0 : 0) || 8 + 28 * Math.sqrt((p.size || 0) / d.max), itemStyle: { color: c.series[i], opacity: .85, borderColor: c.surface, borderWidth: 2 } })) }) },
+
+    { id: 'corr', span: 6, params: { METRICS: 'units,revenue,cost,discount_rate,returned' },
+      prep: (rows, P) => { const keys = P.METRICS.split(',').map(s => s.trim()); const cols = keys.map(k => rows.map(r => +r[k] || 0)); const mean = a => a.reduce((s, v) => s + v, 0) / a.length; const corr = (a, b) => { const ma = mean(a), mb = mean(b); let n = 0, da = 0, db = 0; for (let i = 0; i < a.length; i++) { n += (a[i] - ma) * (b[i] - mb); da += (a[i] - ma) ** 2; db += (b[i] - mb) ** 2; } return da && db ? n / Math.sqrt(da * db) : 0; }; const cells = []; keys.forEach((_, i) => keys.forEach((_, j) => cells.push([i, j, +corr(cols[i], cols[j]).toFixed(2)]))); const ko = { units: '수량', revenue: '매출', cost: '원가', discount_rate: '할인율', returned: '반품' }; return { labels: keys.map(k => ko[k] || k), cells }; },
+      option: (d, c, H) => ({ grid: { left: 8, right: 16, top: 8, bottom: 36, containLabel: true }, tooltip: { formatter: p => `${d.labels[p.data[1]]} × ${d.labels[p.data[0]]}: <b>${p.data[2]}</b>` },
+        xAxis: { type: 'category', data: d.labels, splitArea: { show: false } }, yAxis: { type: 'category', data: d.labels },
+        visualMap: { min: -1, max: 1, calculable: false, orient: 'horizontal', left: 'center', bottom: 0, itemWidth: 10, itemHeight: 120, text: ['+1', '−1'], textStyle: { color: c.muted, fontFamily: c.font }, inRange: { color: [c.div[0], c.div[1], c.div[2], c.div[3], c.div[4], c.div[5], c.div[6]] } },
+        series: [{ type: 'heatmap', data: d.cells, label: { show: true, formatter: p => p.data[2].toFixed(2), fontFamily: c.mono, fontSize: 11, color: c.ink }, itemStyle: { borderColor: c.surface, borderWidth: 2, borderRadius: 3 }, emphasis: { itemStyle: { borderColor: c.ink } } }] }) },
+
+    { id: 'sankey', span: 12, h: 'tall', params: { L1: 'region', L2: 'channel', L3: 'category', VALUE: 'revenue' },
+      prep: (rows, P) => { const link = new Map(); const add = (a, b, v) => { const k = a + '→' + b; link.set(k, (link.get(k) || 0) + v); }; for (const r of rows) { add('지역:' + r[P.L1], '채널:' + r[P.L2], +r[P.VALUE]); add('채널:' + r[P.L2], '카테고리:' + r[P.L3], +r[P.VALUE]); } const nodes = new Map(); const links = [...link].map(([k, v]) => { const [s, t] = k.split('→'); nodes.set(s, 1); nodes.set(t, 1); return { source: s, target: t, value: v }; }); return { nodes: [...nodes.keys()].map(n => ({ name: n, depth: n.startsWith('지역') ? 0 : n.startsWith('채널') ? 1 : 2 })), links }; },
+      option: (d, c, H) => { const depthColor = [c.series[0], c.series[1], c.series[2]]; return { tooltip: { trigger: 'item', formatter: p => p.dataType === 'edge' ? `${p.data.source.split(':')[1]} → ${p.data.target.split(':')[1]}<br><b>${H.fmtKRW(p.data.value)}</b>` : `${p.name.split(':')[1]}<br><b>${H.fmtKRW(p.value)}</b>` },
+        series: [{ type: 'sankey', left: 8, right: 90, top: 8, bottom: 8, nodeWidth: 12, nodeGap: 10, nodeAlign: 'justify', emphasis: { focus: 'adjacency' },
+          data: d.nodes.map(n => ({ ...n, itemStyle: { color: depthColor[n.depth], borderWidth: 0 } })), links: d.links,
+          lineStyle: { color: 'source', opacity: .22, curveness: .5 }, label: { formatter: p => p.name.split(':')[1], color: c.ink2, fontFamily: c.font, fontSize: 12 },
+          levels: [{ depth: 0 }, { depth: 1 }, { depth: 2, label: { position: 'left' } }] }] }; } },
+
+    { id: 'waterfall', span: 6, params: { TIME: 'date', VALUE: 'revenue' },
+      prep: (rows, P) => { const m = new Map(); for (const r of rows) { const k = r[P.TIME].slice(0, 7); m.set(k, (m.get(k) || 0) + (+r[P.VALUE])); } const ms = [...m.keys()].sort().slice(-9); const vals = ms.map(k => m.get(k)); const items = [{ name: H.mLabel(ms[0]), type: 'total', base: 0, v: vals[0] }]; for (let i = 1; i < vals.length; i++) { const d = vals[i] - vals[i - 1]; items.push({ name: H.mLabel(ms[i]), type: d >= 0 ? 'up' : 'down', base: d >= 0 ? vals[i - 1] : vals[i], v: Math.abs(d), delta: d }); } items.push({ name: H.mLabel(ms[ms.length - 1]) + ' 누계', type: 'total', base: 0, v: vals[vals.length - 1] }); return items; },
+      option: (d, c, H) => ({ ...H.base(c), tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: ps => { const it = d[ps[0].dataIndex]; return `${it.name}<br><b>${it.type === 'total' ? H.fmtKRW(it.v) : (it.delta >= 0 ? '+' : '−') + H.fmtKRW(Math.abs(it.delta))}</b>`; } },
+        xAxis: { type: 'category', data: d.map(i => i.name), axisLabel: { interval: 0, rotate: d.length > 8 ? 30 : 0 } }, yAxis: { type: 'value', axisLabel: { formatter: v => H.fmtKRW(v) }, splitNumber: 4 },
+        series: [
+          { type: 'bar', stack: 'w', data: d.map(i => i.base), itemStyle: { color: 'transparent' }, emphasis: { itemStyle: { color: 'transparent' } }, tooltip: { show: false }, barMaxWidth: 24 },
+          { type: 'bar', stack: 'w', barMaxWidth: 24, data: d.map(i => ({ value: i.v, itemStyle: { color: i.type === 'total' ? c.other : i.type === 'up' ? c.div[1] : c.div[5], borderRadius: i.type === 'down' ? [0, 0, 4, 4] : [4, 4, 0, 0] } })), label: { show: true, position: 'top', color: c.ink2, fontFamily: c.font, fontSize: 11, formatter: p => { const it = d[p.dataIndex]; return it.type === 'total' ? H.fmtKRW(it.v) : (it.delta >= 0 ? '+' : '−') + H.fmtKRW(Math.abs(it.delta)); } } },
+        ] }) },
+
+    { id: 'sarea', span: 6, params: { TIME: 'date', SERIES: 'channel', VALUE: 'revenue' },
+      prep: (rows, P) => { const ms = H.months(rows); const ss = [...new Set(rows.map(r => r[P.SERIES]))].slice(0, 5); const m = new Map(); for (const r of rows) { const k = r[P.TIME].slice(0, 7) + '|' + r[P.SERIES]; m.set(k, (m.get(k) || 0) + (+r[P.VALUE])); } return { ms, ss, data: ss.map(s => ms.map(mm => m.get(mm + '|' + s) || 0)) }; },
+      option: (d, c, H) => ({ grid: { left: 8, right: 16, top: 36, bottom: 8, containLabel: true }, legend: { show: true, top: 0, left: 0, right: 'auto' }, tooltip: { trigger: 'axis', valueFormatter: v => H.fmtKRW(v) },
+        xAxis: { type: 'category', data: d.ms.map(H.mLabel), boundaryGap: false, axisLabel: { hideOverlap: true } }, yAxis: { type: 'value', axisLabel: { formatter: v => H.fmtKRW(v) }, splitNumber: 4 },
+        series: d.ss.map((s, i) => ({ name: s, type: 'line', stack: 'a', data: d.data[i], smooth: false, symbol: 'none', lineStyle: { width: 2, color: c.series[i] }, areaStyle: { color: c.series[i], opacity: .18 }, emphasis: { focus: 'series' } })) }) },
+
+    { id: 's100', span: 6, params: { TIME: 'date', SERIES: 'category', VALUE: 'revenue' },
+      prep: (rows, P) => { const ms = H.months(rows); const ss = [...new Set(rows.map(r => r[P.SERIES]))].slice(0, 8); const m = new Map(); const tot = new Map(); for (const r of rows) { const mm = r[P.TIME].slice(0, 7); const k = mm + '|' + r[P.SERIES]; m.set(k, (m.get(k) || 0) + (+r[P.VALUE])); tot.set(mm, (tot.get(mm) || 0) + (+r[P.VALUE])); } return { ms, ss, data: ss.map(s => ms.map(mm => tot.get(mm) ? (m.get(mm + '|' + s) || 0) / tot.get(mm) : 0)) }; },
+      option: (d, c, H) => ({ grid: { left: 8, right: 16, top: 36, bottom: 8, containLabel: true }, legend: { show: true, top: 0, left: 0, right: 'auto' }, tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: v => H.pct(v) },
+        xAxis: { type: 'category', data: d.ms.map(H.mLabel), axisLabel: { hideOverlap: true } }, yAxis: { type: 'value', max: 1, axisLabel: { formatter: v => H.pct(v, 0) }, splitNumber: 4 },
+        series: d.ss.map((s, i) => ({ name: s, type: 'bar', stack: 'p', data: d.data[i], barMaxWidth: 24, itemStyle: { color: c.series[i], borderColor: c.surface, borderWidth: 1 } })) }) },
+
+    { id: 'dumbbell', span: 6, params: { GROUP: 'region', TIME: 'date', VALUE: 'revenue', YEAR_A: '2025', YEAR_B: '2026', MONTH_TO: '10' },
+      prep: (rows, P) => { const a = new Map(), b = new Map(); for (const r of rows) { const mm = +r[P.TIME].slice(5, 7); if (mm > +P.MONTH_TO) continue; const y = r[P.TIME].slice(0, 4); const t = y === P.YEAR_A ? a : y === P.YEAR_B ? b : null; if (!t) continue; t.set(r[P.GROUP], (t.get(r[P.GROUP]) || 0) + (+r[P.VALUE])); } const groups = [...new Set([...a.keys(), ...b.keys()])]; return groups.map(g => ({ g, a: a.get(g) || 0, b: b.get(g) || 0 })).sort((x, y) => y.b - x.b); },
+      option: (d, c, H) => ({ grid: { left: 8, right: 72, top: 36, bottom: 8, containLabel: true }, legend: { show: true, top: 0, left: 0, right: 'auto', icon: 'circle' },
+        tooltip: { trigger: 'axis', formatter: ps => { const it = d[ps[0].dataIndex]; return `${it.g}<br>2025 ${H.fmtKRW(it.a)} → 2026 <b>${H.fmtKRW(it.b)}</b> (${it.b >= it.a ? '+' : '−'}${H.pct(Math.abs(it.b - it.a) / (it.a || 1))})`; } },
+        xAxis: { type: 'value', axisLabel: { formatter: v => H.fmtKRW(v) }, splitNumber: 4 }, yAxis: { type: 'category', data: d.map(i => i.g), inverse: true },
+        series: [
+          { type: 'custom', silent: true, renderItem: (params, api) => { const y = api.coord([0, params.dataIndex])[1]; const x1 = api.coord([api.value(0), 0])[0], x2 = api.coord([api.value(1), 0])[0]; return { type: 'line', shape: { x1, y1: y, x2, y2: y }, style: { stroke: c.axis, lineWidth: 2 } }; }, data: d.map(i => [i.a, i.b]), z: 1 },
+          { name: '2025', type: 'scatter', data: d.map(i => i.a), symbolSize: 10, itemStyle: { color: c.other, borderColor: c.surface, borderWidth: 2 }, z: 2 },
+          { name: '2026', type: 'scatter', data: d.map(i => i.b), symbolSize: 10, itemStyle: { color: c.series[0], borderColor: c.surface, borderWidth: 2 }, z: 3, label: { show: true, position: 'right', color: c.ink2, fontFamily: c.font, fontSize: 11, formatter: p => { const it = d[p.dataIndex]; return (it.b >= it.a ? '+' : '−') + H.pct(Math.abs(it.b - it.a) / (it.a || 1), 0); } } },
+        ] }) },
+
+    { id: 'lollipop', span: 6, h: 'tall', params: { ENTITY: 'branch', VALUE: 'revenue', TOP: '15' },
+      prep: (rows, P) => H.groupSum(rows, P.ENTITY, P.VALUE).sort((a, b) => b.v - a.v).slice(0, +P.TOP),
+      option: (d, c, H) => ({ grid: { left: 8, right: 56, top: 8, bottom: 8, containLabel: true }, tooltip: { trigger: 'axis', formatter: ps => `${ps[0].name}<br><b>${H.fmtKRW(ps[0].value)}</b>` },
+        xAxis: { type: 'value', axisLabel: { formatter: v => H.fmtKRW(v) }, splitNumber: 4 }, yAxis: { type: 'category', data: d.map(i => i.k), inverse: true, axisLabel: { width: 72, overflow: 'truncate' } },
+        series: [
+          { type: 'bar', data: d.map(i => i.v), barWidth: 2, itemStyle: { color: c.axis }, tooltip: { show: false }, z: 1 },
+          { type: 'scatter', data: d.map(i => i.v), symbolSize: 10, itemStyle: { color: c.series[0], borderColor: c.surface, borderWidth: 2 }, z: 2, label: { show: true, position: 'right', color: c.ink2, fontFamily: c.font, fontSize: 11, formatter: p => p.dataIndex < 3 ? H.fmtKRW(p.value) : '' } },
+        ] }) },
+
+    { id: 'slope', span: 6, h: 'tall', params: { ENTITY: 'category', TIME: 'date', VALUE: 'revenue', YEAR_A: '2025', YEAR_B: '2026', MONTH_TO: '10' },
+      prep: (rows, P) => { const a = new Map(), b = new Map(); for (const r of rows) { const mm = +r[P.TIME].slice(5, 7); if (mm > +P.MONTH_TO) continue; const y = r[P.TIME].slice(0, 4); const t = y === P.YEAR_A ? a : y === P.YEAR_B ? b : null; if (!t) continue; t.set(r[P.ENTITY], (t.get(r[P.ENTITY]) || 0) + (+r[P.VALUE])); } return [...new Set([...a.keys(), ...b.keys()])].slice(0, 8).map(k => ({ k, a: a.get(k) || 0, b: b.get(k) || 0 })).sort((x, y) => y.a - x.a); },
+      option: (d, c, H) => ({ grid: { left: 96, right: 96, top: 24, bottom: 8, containLabel: false }, tooltip: { trigger: 'item', formatter: p => `${p.seriesName}<br>${p.name}: <b>${H.fmtKRW(p.value)}</b>` },
+        xAxis: { type: 'category', data: ['2025 (1~10월)', '2026 (1~10월)'], boundaryGap: false, axisLine: { show: false }, axisLabel: { color: c.ink2, fontWeight: 500 } }, yAxis: { type: 'value', show: false, scale: true },
+        series: d.map((it, i) => ({ name: it.k, type: 'line', lineStyle: { width: 2, color: c.series[i] }, areaStyle: { opacity: 0 }, symbol: 'circle', symbolSize: 8, showSymbol: true, itemStyle: { color: c.series[i], borderColor: c.surface, borderWidth: 2 },
+          data: [
+            { value: it.a, label: { show: true, position: 'left', color: c.ink2, fontFamily: c.font, fontSize: 11, formatter: `${it.k} ${H.fmtKRW(it.a)}` } },
+            { value: it.b, label: { show: true, position: 'right', color: c.ink2, fontFamily: c.font, fontSize: 11, formatter: `${H.fmtKRW(it.b)} ${it.k}` } },
+          ] })) }) },
+
+    { id: 'bullet', span: 6, params: { GROUP: 'region', VALUE: 'revenue', TARGET_RATIO: '1.05' },
+      prep: (rows, P) => { const cur = H.groupSum(rows.filter(r => r.date >= '2026-01-01' && r.date < '2026-11-01'), P.GROUP, P.VALUE); const prev = new Map(H.groupSum(rows.filter(r => r.date >= '2025-01-01' && r.date < '2025-11-01'), P.GROUP, P.VALUE).map(o => [o.k, o.v])); return cur.map(o => { const target = (prev.get(o.k) || o.v) * +P.TARGET_RATIO; return { g: o.k, actual: o.v, target, ratio: o.v / target }; }).sort((a, b) => b.ratio - a.ratio); },
+      option: (d, c, H) => ({ grid: { left: 8, right: 48, top: 8, bottom: 8, containLabel: true }, tooltip: { trigger: 'axis', formatter: ps => { const it = d[ps[0].dataIndex]; return `${it.g}<br>실적 <b>${H.fmtKRW(it.actual)}</b> / 목표 ${H.fmtKRW(it.target)}<br>달성률 ${H.pct(it.ratio, 0)}`; } },
+        xAxis: { type: 'value', max: 1.3, axisLabel: { formatter: v => H.pct(v, 0) }, splitNumber: 4 }, yAxis: { type: 'category', data: d.map(i => i.g), inverse: true },
+        series: [
+          { type: 'bar', stack: 'bg', data: d.map(() => 0.7), barWidth: 22, itemStyle: { color: c.seq[2] }, silent: true, tooltip: { show: false } },
+          { type: 'bar', stack: 'bg', data: d.map(() => 0.25), barWidth: 22, itemStyle: { color: c.seq[1] }, silent: true, tooltip: { show: false } },
+          { type: 'bar', stack: 'bg', data: d.map(() => 0.35), barWidth: 22, itemStyle: { color: c.seq[0], borderRadius: [0, 4, 4, 0] }, silent: true, tooltip: { show: false } },
+          { type: 'bar', data: d.map(i => i.ratio), barWidth: 10, barGap: '-73%', itemStyle: { color: c.series[0], borderRadius: [0, 4, 4, 0] }, z: 3, label: { show: true, position: 'right', color: c.ink2, fontFamily: c.font, fontSize: 11, formatter: p => H.pct(p.value, 0) } },
+          { type: 'scatter', data: d.map(() => 1), symbol: 'rect', symbolSize: [2, 26], itemStyle: { color: c.ink }, z: 4, silent: true, tooltip: { show: false } },
+        ] }) },
+
+    { id: 'pareto', span: 12, params: { ENTITY: 'product', VALUE: 'revenue' },
+      prep: (rows, P) => { const g = H.groupSum(rows, P.ENTITY, P.VALUE).sort((a, b) => b.v - a.v); const tot = g.reduce((s, o) => s + o.v, 0) || 1; let acc = 0; return g.map(o => { acc += o.v; return { k: o.k, share: o.v / tot, cum: acc / tot, v: o.v }; }); },
+      option: (d, c, H) => ({ grid: { left: 8, right: 16, top: 36, bottom: 8, containLabel: true }, legend: { show: true, top: 0, left: 0, right: 'auto', data: ['비중', '누적'] },
+        tooltip: { trigger: 'axis', formatter: ps => { const it = d[ps[0].dataIndex]; return `${it.k}<br>비중 <b>${H.pct(it.share)}</b> · 누적 ${H.pct(it.cum)}<br>${H.fmtKRW(it.v)}`; } },
+        xAxis: { type: 'category', data: d.map(i => i.k), axisLabel: { interval: 0, rotate: d.length > 10 ? 30 : 0 } }, yAxis: { type: 'value', max: 1, axisLabel: { formatter: v => H.pct(v, 0) }, splitNumber: 5 },
+        series: [
+          { name: '비중', type: 'bar', data: d.map(i => i.share), barMaxWidth: 24, itemStyle: { color: c.series[0], borderRadius: [4, 4, 0, 0] } },
+          { name: '누적', type: 'line', data: d.map(i => i.cum), lineStyle: { width: 2, color: c.series[1] }, itemStyle: { color: c.series[1], borderColor: c.surface, borderWidth: 2 }, symbolSize: 8,
+            markLine: { silent: true, symbol: 'none', data: [{ yAxis: 0.8 }], lineStyle: { color: c.muted, type: 'dashed', width: 1 }, label: { formatter: '80%', color: c.muted, fontFamily: c.font, position: 'insideEndTop' } } },
+        ] }) },
+
+    { id: 'calendar', span: 12, h: 'short', params: { TIME: 'date', VALUE: 'revenue' },
+      prep: (rows, P) => { const m = new Map(); let max = ''; for (const r of rows) { m.set(r[P.TIME], (m.get(r[P.TIME]) || 0) + (+r[P.VALUE])); if (r[P.TIME] > max) max = r[P.TIME]; } const end = max || '2026-10-31'; const s = new Date(end); s.setFullYear(s.getFullYear() - 1); s.setDate(s.getDate() + 1); const start = s.toISOString().slice(0, 10); const data = [...m].filter(([k]) => k >= start && k <= end); return { range: [start, end], data, max: Math.max(...data.map(x => x[1]), 1) }; },
+      option: (d, c, H) => ({ tooltip: { formatter: p => `${p.data[0]}<br><b>${H.fmtKRW(p.data[1])}</b>` },
+        visualMap: { min: 0, max: d.max, orient: 'horizontal', left: 'center', bottom: 0, itemWidth: 10, itemHeight: 120, text: [H.fmtKRW(d.max), '0'], textStyle: { color: c.muted, fontFamily: c.font }, inRange: { color: [c.seq[0], c.seq[1], c.seq[2], c.seq[3], c.seq[4], c.seq[5], c.seq[6]] } },
+        calendar: { range: d.range, top: 28, left: 40, right: 16, bottom: 44, cellSize: ['auto', 13], splitLine: { show: false }, itemStyle: { color: 'transparent', borderColor: c.surface, borderWidth: 2 }, dayLabel: { nameMap: ['일', '월', '화', '수', '목', '금', '토'], color: c.muted, fontFamily: c.font, fontSize: 11, firstDay: 1 }, monthLabel: { nameMap: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'], color: c.muted, fontFamily: c.font, fontSize: 11 }, yearLabel: { show: false } },
+        series: [{ type: 'heatmap', coordinateSystem: 'calendar', data: d.data, itemStyle: { borderRadius: 2 } }] }) },
+
+    { id: 'wdmonth', span: 6, params: { TIME: 'date', VALUE: 'revenue' },
+      prep: (rows, P) => { const ms = H.months(rows).slice(-12); const idx = new Map(ms.map((m, i) => [m, i])); const cells = new Map(); for (const r of rows) { const mi = idx.get(r[P.TIME].slice(0, 7)); if (mi === undefined) continue; const wd = (new Date(r[P.TIME]).getDay() + 6) % 7; const k = mi + '|' + wd; cells.set(k, (cells.get(k) || 0) + (+r[P.VALUE])); } const data = [...cells].map(([k, v]) => { const [a, b] = k.split('|').map(Number); return [a, b, v]; }); return { ms, days: ['월', '화', '수', '목', '금', '토', '일'], data, max: Math.max(...data.map(x => x[2]), 1) }; },
+      option: (d, c, H) => ({ grid: { left: 8, right: 16, top: 8, bottom: 40, containLabel: true }, tooltip: { formatter: p => `${H.mLabel(d.ms[p.data[0]])} ${d.days[p.data[1]]}요일<br><b>${H.fmtKRW(p.data[2])}</b>` },
+        xAxis: { type: 'category', data: d.ms.map(H.mLabel), splitArea: { show: false } }, yAxis: { type: 'category', data: d.days, inverse: true },
+        visualMap: { min: 0, max: d.max, orient: 'horizontal', left: 'center', bottom: 0, itemWidth: 10, itemHeight: 120, text: [H.fmtKRW(d.max), '0'], textStyle: { color: c.muted, fontFamily: c.font }, inRange: { color: [c.seq[0], c.seq[1], c.seq[2], c.seq[3], c.seq[4], c.seq[5], c.seq[6]] } },
+        series: [{ type: 'heatmap', data: d.data, itemStyle: { borderColor: c.surface, borderWidth: 2, borderRadius: 3 } }] }) },
+
+    { id: 'step', span: 6, params: { TIME: 'date', FLAG: 'returned' },
+      prep: (rows, P) => { const ms = H.months(rows); const m = new Map(); for (const r of rows) if (+r[P.FLAG]) { const k = r[P.TIME].slice(0, 7); m.set(k, (m.get(k) || 0) + 1); } let acc = 0; return ms.map(k => { acc += m.get(k) || 0; return { m: k, n: acc }; }); },
+      option: (d, c, H) => ({ ...H.base(c), tooltip: { trigger: 'axis', formatter: ps => `${ps[0].name}<br>누적 반품 <b>${ps[0].value.toLocaleString('ko-KR')}건</b>` },
+        xAxis: { type: 'category', data: d.map(i => H.mLabel(i.m)), boundaryGap: false, axisLabel: { hideOverlap: true } }, yAxis: { type: 'value', splitNumber: 4 },
+        series: [{ type: 'line', step: 'end', data: d.map(i => i.n), lineStyle: { width: 2, color: c.series[0] }, symbol: 'circle', symbolSize: 6, showSymbol: false, itemStyle: { color: c.series[0], borderColor: c.surface, borderWidth: 2 }, areaStyle: { color: c.series[0], opacity: .1 }, endLabel: { show: true, formatter: p => p.value.toLocaleString('ko-KR') + '건', color: c.ink2, fontFamily: c.font } }] }) },
+
+    { id: 'gantt', span: 12, h: 'tall', params: { ENTITY: 'branch' },
+      prep: (rows, P) => { const names = [...new Set(rows.map(r => r[P.ENTITY]))].slice(0, 10); const types = ['프로모션', '점검', '리뉴얼']; let s = 7; const rnd = () => { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; }; const items = []; names.forEach((n, i) => { const k = 1 + Math.floor(rnd() * 2); for (let j = 0; j < k; j++) { const t = types[Math.floor(rnd() * 3)]; const st = new Date(2026, 7 + Math.floor(rnd() * 3), 1 + Math.floor(rnd() * 27)); const en = new Date(st.getTime() + (3 + Math.floor(rnd() * 25)) * 864e5); items.push({ row: i, name: n, type: t, start: st.getTime(), end: en.getTime() }); } }); return { names, types, items, today: new Date(2026, 9, 15).getTime() }; },
+      option: (d, c, H) => ({ grid: { left: 8, right: 16, top: 36, bottom: 8, containLabel: true }, legend: { show: true, top: 0, left: 0, right: 'auto', data: d.types },
+        tooltip: { trigger: 'item', formatter: p => { const it = p.data.it; const f = t => new Date(t).toISOString().slice(5, 10).replace('-', '.'); return `${it.name} · ${it.type}<br><b>${f(it.start)} ~ ${f(it.end)}</b>`; } },
+        xAxis: { type: 'time', min: new Date(2026, 7, 1).getTime(), max: new Date(2026, 10, 1).getTime(), axisLabel: { formatter: v => { const dt = new Date(v); return `${dt.getMonth() + 1}.${dt.getDate()}`; } } },
+        yAxis: { type: 'category', data: d.names, inverse: true, axisLabel: { width: 72, overflow: 'truncate' } },
+        series: d.types.map((t, ti) => ({ name: t, type: 'custom', renderItem: (params, api) => { const row = api.value(0), s = api.coord([api.value(1), row]), e = api.coord([api.value(2), row]); const h = Math.min(20, api.size([0, 1])[1] * 0.6); const rect = echarts.graphic.clipRectByRect({ x: s[0], y: s[1] - h / 2, width: Math.max(2, e[0] - s[0]), height: h }, { x: params.coordSys.x, y: params.coordSys.y, width: params.coordSys.width, height: params.coordSys.height }); return rect && { type: 'rect', shape: { ...rect, r: 4 }, style: { fill: c.series[ti] } }; }, encode: { x: [1, 2], y: 0 }, data: d.items.filter(i => i.type === t).map(i => ({ value: [i.row, i.start, i.end], it: i })) }))
+          .concat([{ type: 'line', markLine: { silent: true, symbol: 'none', data: [{ xAxis: d.today }], lineStyle: { color: c.ink, width: 1, type: 'dashed' }, label: { formatter: '오늘', color: c.ink2, fontFamily: c.font, position: 'insideEndTop' } }, data: [] }]) }) },
+
+    { id: 'smallmult', span: 12, h: 'tall', params: { PANEL: 'region', CAT: 'category', VALUE: 'revenue' },
+      prep: (rows, P) => { const panels = [...new Set(rows.map(r => r[P.PANEL]))].slice(0, 12); const cats = [...new Set(rows.map(r => r[P.CAT]))].slice(0, 8); const m = new Map(); const tot = new Map(); for (const r of rows) { const k = r[P.PANEL] + '|' + r[P.CAT]; m.set(k, (m.get(k) || 0) + (+r[P.VALUE])); tot.set(r[P.PANEL], (tot.get(r[P.PANEL]) || 0) + (+r[P.VALUE])); } return { panels, cats, share: panels.map(p => cats.map(ca => (m.get(p + '|' + ca) || 0) / (tot.get(p) || 1))) }; },
+      option: (d, c, H, el) => { const w = el ? el.clientWidth : 900; const cols = w < 560 ? 2 : w < 900 ? 3 : Math.min(5, d.panels.length); const rowsN = Math.ceil(d.panels.length / cols); const gw = 100 / cols, gh = 100 / rowsN; const max = Math.max(...d.share.flat()); return {
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: ps => `${d.panels[ps[0].axisIndex] || ''} · ${ps[0].name}<br><b>${H.pct(ps[0].value)}</b>` },
+        title: d.panels.map((p, i) => ({ text: p, left: (i % cols) * gw + gw / 2 + '%', top: Math.floor(i / cols) * gh + 1 + '%', textAlign: 'center', textStyle: { fontSize: 12, fontWeight: 500, color: c.ink2, fontFamily: c.font } })),
+        grid: d.panels.map((p, i) => ({ left: (i % cols) * gw + 2 + '%', width: gw - 4 + '%', top: Math.floor(i / cols) * gh + 10 + '%', height: gh - 20 + '%', containLabel: true })),
+        xAxis: d.panels.map((p, i) => ({ type: 'category', gridIndex: i, data: d.cats, axisLabel: { fontSize: 10, interval: 0, rotate: 0 } })),
+        yAxis: d.panels.map((p, i) => ({ type: 'value', gridIndex: i, max, axisLabel: { show: i % cols === 0, formatter: v => H.pct(v, 0), fontSize: 10 }, splitNumber: 2 })),
+        series: d.panels.map((p, i) => ({ type: 'bar', xAxisIndex: i, yAxisIndex: i, data: d.share[i], barMaxWidth: 18, itemStyle: { color: c.series[0], borderRadius: [4, 4, 0, 0] } })),
+      }; } },
+
+    { id: 'indexed', span: 6, params: { TIME: 'date', A: 'revenue', B: 'units' },
+      prep: (rows, P) => { const ms = H.months(rows); const a = new Map(), b = new Map(); for (const r of rows) { const k = r[P.TIME].slice(0, 7); a.set(k, (a.get(k) || 0) + (+r[P.A])); b.set(k, (b.get(k) || 0) + (+r[P.B])); } const a0 = a.get(ms[0]) || 1, b0 = b.get(ms[0]) || 1; return { ms, a: ms.map(k => (a.get(k) || 0) / a0 * 100), b: ms.map(k => (b.get(k) || 0) / b0 * 100), base: ms[0] }; },
+      option: (d, c, H) => ({ grid: { left: 8, right: 16, top: 52, bottom: 8, containLabel: true }, legend: { show: true, top: 0, left: 0, right: 'auto' }, tooltip: { trigger: 'axis', valueFormatter: v => v.toFixed(0) },
+        xAxis: { type: 'category', data: d.ms.map(H.mLabel), boundaryGap: false, axisLabel: { hideOverlap: true } }, yAxis: { type: 'value', name: `지수 (${H.mLabel(d.base)} = 100)`, nameTextStyle: { align: 'left' }, nameGap: 10, scale: true, splitNumber: 4 },
+        series: [{ name: '매출', type: 'line', data: d.a, areaStyle: { opacity: 0 }, lineStyle: { width: 2, color: c.series[0] }, itemStyle: { color: c.series[0], borderColor: c.surface, borderWidth: 2 }, symbolSize: 8, showSymbol: false }, { name: '판매 수량', type: 'line', data: d.b, areaStyle: { opacity: 0 }, lineStyle: { width: 2, color: c.series[1] }, itemStyle: { color: c.series[1], borderColor: c.surface, borderWidth: 2 }, symbolSize: 8, showSymbol: false }] }) },
+
+    { id: 'rankedbar', span: 6, params: { ENTITY: 'channel', VALUE: 'revenue' },
+      prep: (rows, P) => { const g = H.groupSum(rows, P.ENTITY, P.VALUE).sort((a, b) => b.v - a.v); const tot = g.reduce((s, o) => s + o.v, 0) || 1; return g.map(o => ({ k: o.k, share: o.v / tot, v: o.v })); },
+      option: (d, c, H) => ({ grid: { left: 8, right: 56, top: 8, bottom: 8, containLabel: true }, tooltip: { trigger: 'axis', formatter: ps => { const it = d[ps[0].dataIndex]; return `${it.k}<br><b>${H.pct(it.share)}</b> · ${H.fmtKRW(it.v)}`; } },
+        xAxis: { type: 'value', max: 1, axisLabel: { formatter: v => H.pct(v, 0) }, splitNumber: 4 }, yAxis: { type: 'category', data: d.map(i => i.k), inverse: true },
+        series: [{ type: 'bar', data: d.map(i => i.share), barMaxWidth: 24, itemStyle: { color: c.series[0], borderRadius: [0, 4, 4, 0] }, label: { show: true, position: 'right', color: c.ink2, fontFamily: c.font, fontSize: 11, formatter: p => H.pct(p.value) } }] }) },
+  ];
+
+  /* ============================================================
+     카드 생성 + 차트 바인딩 + 프롬프트 템플릿 (option/prep 소스를 그대로 넣는다)
+     ============================================================ */
+  const COLS = 'date, region, branch, category, product, channel, units, revenue, cost, discount_rate, returned';
+  function template(def, meta) {
+    const P = JSON.stringify(def.params || {}).replace(/"(\w+)":"([^"]*)"/g, (_, k) => `"${k}": "{{${k}}}"`);
+    return [
+      '<!-- head: tokens/tokens.css, css/ds.css, js/ds-theme.js 가 링크되어 있어야 한다 -->',
+      `<div class="ds-card"><div class="ds-card__header"><div><h3 class="ds-card__title">${meta.title}</h3><p class="ds-card__sub">${meta.when}</p></div></div><div class="ds-card__body"><div id="${def.id}" style="height:${def.h === 'tall' ? 340 : def.h === 'short' ? 220 : 280}px"></div></div></div>`,
+      '<script src="../vendor/echarts/echarts.min.js"><\/script>',
+      '<script src="../integrations/echarts-theme.js"><\/script>',
+      '<script>',
+      `// rows: 객체 배열. 이 예시의 컬럼: ${COLS}. 날짜는 'YYYY-MM-DD' 문자열.`,
+      'const rows = [];   // ← 실제 데이터로 교체',
+      `const P = ${P};   // 컬럼 매핑 — 내 데이터 이름으로`,
+      'const H = (' + helpers.toString() + ')();',
+      'const prep = ' + def.prep.toString() + ';',
+      'const option = ' + def.option.toString() + ';',
+      `const el = document.getElementById('${def.id}');`,
+      '// bind: 테마 \'ds\' 로 init + 테마 토글 시 자동 재구성. 색은 c(토큰)에서만 가져온다.',
+      'DSEchartsTheme.bind(echarts, el, () => option(prep(rows, P), DSEchartsTheme.colors(), H, el));',
+      '<\/script>',
+    ].join('\n');
+  }
+  const binds = {};
+  const sectionEls = Object.fromEntries([...document.querySelectorAll('.gallery[data-section]')].map(g => [g.dataset.section, g]));
+  for (const def of DEFS) {
+    const meta = META[def.id]; if (!meta) continue;
+    const card = document.createElement('div'); card.className = 'ds-card span-' + (def.span || 6); card.id = def.id;
+    card.innerHTML = `<div class="ds-card__header xm-head"><div><h3 class="ds-card__title"></h3><p class="ds-card__sub"></p></div></div><div class="ds-card__body"><div class="xm-plot ${def.h || ''}"></div></div><div class="rule"><b>주의</b><span></span></div>`;
+    card.querySelector('.ds-card__title').textContent = meta.title; card.querySelector('.ds-card__sub').textContent = meta.when; card.querySelector('.rule span').textContent = meta.note;
+    sectionEls[meta.section].appendChild(card);
+    const plot = card.querySelector('.xm-plot');
+    const fields = Object.fromEntries(Object.entries(def.params || {}).map(([k, v]) => [k, { label: k + ' (컬럼명)', value: v }]));
+    DSPrompt.attach(plot, { kind: 'echarts', kindLabel: meta.title, lib: 'ECharts + integrations/echarts-theme.js', title: meta.title, note: meta.note, fields, anchor: def.id, desc: '객체 배열(rows). 컬럼: ' + COLS, code: template(def, meta) });
+    def._plot = plot; def._card = card;
+  }
+
+  /* 스파크라인 표 (ECharts 아님 — DSCharts.sparkline 을 표 셀에) */
+  const sparkMeta = META.sparktable;
+  const sparkCard = document.createElement('div'); sparkCard.className = 'ds-card span-6'; sparkCard.id = 'sparktable';
+  sparkCard.innerHTML = `<div class="ds-card__header xm-head"><div><h3 class="ds-card__title">${sparkMeta.title}</h3><p class="ds-card__sub">${sparkMeta.when}</p></div></div><div class="ds-card__body" style="padding:0" data-ds-prompt-skip><div class="ds-table-wrap" style="border:0;border-radius:0;max-height:340px"><table class="ds-table ds-table--compact spark-table"><thead><tr><th>지점</th><th>12개월</th><th class="num">이번 달</th><th class="num">전월 대비</th></tr></thead><tbody></tbody></table></div></div><div class="rule"><b>주의</b><span>${sparkMeta.note}</span></div>`;
+  sectionEls.m5.appendChild(sparkCard);
+  const sparkTpl = `<!-- head: tokens/tokens.css, css/ds.css, js/ds-theme.js 가 링크되어 있어야 한다 -->
+<div class="ds-card"><div class="ds-table-wrap"><table class="ds-table ds-table--compact" id="spark-table">
+  <thead><tr><th>지점</th><th>12개월</th><th class="num">이번 달</th><th class="num">전월 대비</th></tr></thead><tbody></tbody>
+</table></div></div>
+<script src="../js/ds-charts.js"><\/script>
+<script>
+// rows: 객체 배열 — 지점별 월 매출 { branch, month:'YYYY-MM', revenue }
+const byBranch = new Map();
+for (const r of rows) { if (!byBranch.has(r.branch)) byBranch.set(r.branch, new Map()); const m = byBranch.get(r.branch); m.set(r.month, (m.get(r.month) || 0) + r.revenue); }
+const tb = document.querySelector('#spark-table tbody');
+for (const [name, m] of byBranch) {
+  const months = [...m.keys()].sort().slice(-12); const vals = months.map(k => m.get(k));
+  const cur = vals[vals.length - 1], prev = vals[vals.length - 2] || cur; const d = prev ? (cur - prev) / prev : 0;
+  const tr = tb.insertRow(); tr.insertCell().textContent = name;
+  const sp = tr.insertCell(); DSCharts.sparkline(sp, { values: vals, width: 96, height: 24 });           // 표 셀 안의 작은 추세선
+  const v = tr.insertCell(); v.className = 'ds-num'; v.textContent = cur.toLocaleString('ko-KR');
+  const dl = tr.insertCell(); dl.className = 'ds-num'; dl.textContent = (d >= 0 ? '▲ ' : '▼ ') + Math.abs(d * 100).toFixed(1) + '%'; dl.style.color = d >= 0 ? 'var(--ok-text)' : 'var(--danger-text)';
+}
+<\/script>`;
+  DSPrompt.attach(sparkCard.querySelector('.ds-table-wrap'), { kind: 'table', kindLabel: sparkMeta.title, lib: 'HTML 표 + DSCharts.sparkline', title: sparkMeta.title, note: sparkMeta.note, fields: { ENTITY: { label: '행 항목 컬럼', value: 'branch' }, VALUE: { label: '값 컬럼', value: 'revenue' } }, anchor: 'sparktable', desc: '객체 배열(rows). 컬럼: branch, month, revenue', code: sparkTpl, mount: 'self' });
+  const sparks = [];
+  function renderSparkTable(rows) {
+    const tb = sparkCard.querySelector('tbody'); tb.innerHTML = ''; sparks.forEach(s => s.destroy()); sparks.length = 0;
+    const by = new Map(); for (const r of rows) { if (!by.has(r.branch)) by.set(r.branch, new Map()); const m = by.get(r.branch); m.set(r.month, (m.get(r.month) || 0) + r.revenue); }
+    const list = [...by].map(([name, m]) => { const months = [...m.keys()].sort().slice(-12); const vals = months.map(k => m.get(k)); return { name, vals, cur: vals[vals.length - 1] || 0, prev: vals[vals.length - 2] }; }).sort((a, b) => b.cur - a.cur);
+    for (const it of list) {
+      const tr = tb.insertRow(); tr.insertCell().textContent = it.name;
+      const sp = tr.insertCell(); sp.className = 'trend'; const host = document.createElement('span'); host.className = 'sp'; sp.appendChild(host); if (it.vals.length > 1) sparks.push(DSCharts.sparkline(host, { values: it.vals, width: 96, height: 24 }));
+      const v = tr.insertCell(); v.className = 'ds-num'; v.textContent = H.fmtKRW(it.cur);
+      const d = it.prev ? (it.cur - it.prev) / it.prev : 0; const dl = tr.insertCell(); dl.className = 'ds-num'; dl.textContent = (d >= 0 ? '▲ ' : '▼ ') + H.pct(Math.abs(d)); dl.style.color = d >= 0 ? 'var(--ok-text)' : 'var(--danger-text)';
+    }
+  }
+
+  /* ---- 필터 UI (charts.html 과 동일) ---- */
+  const regionWrap = $('f-regions');
+  regions.forEach(r => { const b = document.createElement('button'); b.type = 'button'; b.className = 'ds-chip'; b.textContent = r; b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', () => { if (filter.regions.has(r)) filter.regions.delete(r); else filter.regions.add(r); b.classList.toggle('is-active', filter.regions.has(r)); b.setAttribute('aria-pressed', String(filter.regions.has(r))); renderAll(); }); regionWrap.appendChild(b); });
+  $('f-range').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; $('f-range').querySelectorAll('button').forEach(x => x.classList.toggle('is-active', x === b));
+    const d = new Date(maxDate); const iso = x => x.toISOString().slice(0, 10); filter.from = null; filter.to = null;
+    if (b.dataset.range === '90d') filter.from = iso(new Date(d - 90 * 864e5));
+    if (b.dataset.range === 'ytd') filter.from = maxDate.slice(0, 4) + '-01-01'; if (b.dataset.range === '2025') { filter.from = '2025-01-01'; filter.to = '2025-12-31'; }
+    renderAll(); });
+
+  let first = true;
+  function renderAll() {
+    const rows = Sales.filterRows(all, filter);
+    $('f-count').textContent = rows.length.toLocaleString('ko-KR') + '건 · ' + (rows[0] ? rows[0].date : '') + ' ~ ' + (rows.length ? rows[rows.length - 1].date : '');
+    for (const def of DEFS) {
+      if (!def._plot) continue;
+      def._card.classList.add('is-refreshing');
+      try {
+        const data = def.prep(rows, def.params || {});
+        if (!binds[def.id]) binds[def.id] = DSEchartsTheme.bind(echarts, def._plot, () => def.option(data, DSEchartsTheme.colors(), H, def._plot));
+        else binds[def.id].chart.setOption(def.option(data, DSEchartsTheme.colors(), H, def._plot), true);
+        def._lastData = data;
+      } catch (e) { console.error(def.id, e); }
+      def._card.classList.remove('is-refreshing');
+    }
+    renderSparkTable(rows);
+    first = false;
+  }
+  // 테마 토글: bind 가 재구성하지만 optionFn 이 최신 데이터를 보도록 클로저 갱신
+  window.addEventListener('ds-themechange', () => { for (const def of DEFS) if (binds[def.id] && def._lastData) binds[def.id].chart.setOption(def.option(def._lastData, DSEchartsTheme.colors(), H, def._plot), true); });
+  new ResizeObserver(() => { for (const id in binds) { try { binds[id].chart.resize(); } catch (e) { /* noop */ } } const sm = DEFS.find(d => d.id === 'smallmult'); if (sm && binds.smallmult && sm._lastData) binds.smallmult.chart.setOption(sm.option(sm._lastData, DSEchartsTheme.colors(), H, sm._plot), true); }).observe(document.querySelector('.ds-main'));
+  renderAll();
+  window.__xm = { DEFS, binds, renderAll };
+})();
+</script>
+<script src="../js/ds-sitenav.js"></script>
+</body>
+</html>
