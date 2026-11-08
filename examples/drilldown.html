@@ -12,6 +12,7 @@
 <script src="../js/ds-theme.js"></script>
 <script src="../vendor/echarts/echarts.min.js"></script>
 <script src="../integrations/echarts-theme.js"></script>
+<script src="../js/ds-prompt.js"></script>
 <style>
   .dd-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--sp-4); }
   .dd-grid > .ds-card { grid-column: span 6; }
@@ -58,13 +59,13 @@
         <div class="ds-card__header dd-head">
           <div><h3 class="ds-card__title">① 트리맵 — ECharts 내장 드릴</h3><p class="ds-card__sub">클릭하면 확대, 상단 브레드크럼(ECharts 제공)으로 복귀. 코드 최소.</p></div>
         </div>
-        <div class="ds-card__body"><div class="dd-plot" id="c-treemap"></div></div>
+        <div class="ds-card__body"><div class="dd-plot" id="c-treemap" data-ds-prompt='{"title": "트리맵 드릴다운", "lib": "ECharts treemap + integrations/echarts-theme.js", "kindLabel": "트리맵 드릴다운", "note": "클릭하면 확대(leafDepth), 상단 브레드크럼으로 복귀", "desc": "객체 배열(rows). 계층 필드는 상위→하위 순서, 값 필드는 숫자", "fields": {"levels": {"label": "계층 필드 (상위→하위, 쉼표)", "value": "region, branch, category, product", "wide": true}, "value": {"label": "값 필드 (합계)", "value": "revenue"}}}' data-ds-prompt-code="#tpl-treemap"></div></div>
       </div>
       <div class="ds-card">
         <div class="ds-card__header dd-head">
           <div><h3 class="ds-card__title">② 선버스트 — 전체 계층 한 눈에</h3><p class="ds-card__sub">바깥 링일수록 하위 레벨. 조각 클릭 = 해당 노드를 루트로.</p></div>
         </div>
-        <div class="ds-card__body"><div class="dd-plot" id="c-sunburst"></div></div>
+        <div class="ds-card__body"><div class="dd-plot" id="c-sunburst" data-ds-prompt='{"title": "선버스트", "lib": "ECharts sunburst + integrations/echarts-theme.js", "kindLabel": "선버스트", "note": "조각 클릭 = 해당 노드를 루트로", "desc": "객체 배열(rows). 계층 필드는 상위→하위 순서, 값 필드는 숫자", "fields": {"levels": {"label": "계층 필드 (상위→하위, 쉼표)", "value": "region, branch, category, product", "wide": true}, "value": {"label": "값 필드 (합계)", "value": "revenue"}}}' data-ds-prompt-code="#tpl-sunburst"></div></div>
       </div>
       <div class="ds-card wide">
         <div class="ds-card__header dd-head">
@@ -77,7 +78,7 @@
             <button class="ds-btn ds-btn--ghost ds-btn--sm" id="btn-root" type="button" hidden>처음으로</button>
           </div>
         </div>
-        <div class="ds-card__body"><div class="dd-plot" id="c-bar" style="height:300px"></div></div>
+        <div class="ds-card__body"><div class="dd-plot" id="c-bar" style="height:300px" data-ds-prompt='{"title": "막대 수동 드릴다운 (브레드크럼 + 드릴업 + 해시)", "lib": "ECharts bar + 상태머신", "kindLabel": "막대 수동 드릴다운 (브레드크럼 + 드릴업 + 해시)", "note": "가장 많이 쓰는 패턴. 레벨 배열과 경로 배열만 있으면 어떤 차트에도 적용", "desc": "객체 배열(rows). 계층 필드는 상위→하위 순서, 값 필드는 숫자", "fields": {"levels": {"label": "계층 필드 (상위→하위, 쉼표)", "value": "region, branch, category, product", "wide": true}, "value": {"label": "값 필드 (합계)", "value": "revenue"}}}' data-ds-prompt-code="#tpl-bar"></div></div>
         <div class="ds-card__footer ds-card__footer--between">
           <span class="dd-note">실무에서 가장 많이 쓰는 패턴. 레벨 배열과 경로 배열만 있으면 어떤 차트에도 적용됩니다. 경로는 URL 해시에 저장되어 뒤로가기·북마크가 동작합니다.</span>
         </div>
@@ -96,6 +97,113 @@ function render() { chart.setOption(option(rowsAt())); breadcrumb(['전체', ...
   </main>
 </div>
 
+
+<script type="text/plain" id="tpl-treemap">
+<!-- head: tokens/tokens.css, css/ds.css, js/ds-theme.js 가 링크되어 있어야 한다 -->
+<div class="ds-card"><div class="ds-card__body"><div id="treemap" style="height:360px"></div></div></div>
+<script src="../vendor/echarts/echarts.min.js"><\/script>
+<script src="../integrations/echarts-theme.js"><\/script>
+<script>
+// rows: 객체 배열. 계층 필드와 값 필드로 트리를 만든다
+const LEVELS = '{{levels}}'.split(',').map(s => s.trim());
+const VALUE = '{{value}}';
+function tree(rows) {
+  const root = new Map();
+  for (const r of rows) { let m = root; for (const l of LEVELS) { if (!m.has(r[l])) m.set(r[l], { name: r[l], value: 0, children: new Map() }); const n = m.get(r[l]); n.value += +r[VALUE] || 0; m = n.children; } }
+  const toArr = m => [...m.values()].sort((a, b) => b.value - a.value).map(n => ({ name: n.name, value: n.value, children: n.children.size ? toArr(n.children) : undefined }));
+  return toArr(root);
+}
+const fmt = v => v.toLocaleString('ko-KR');
+DSEchartsTheme.bind(echarts, document.getElementById('treemap'), () => { const c = DSEchartsTheme.colors(); return {
+  tooltip: { formatter: p => p.treePathInfo.map(t => t.name).filter(Boolean).join(' › ') + '<br><b>' + fmt(p.value) + '</b>' },
+  series: [{ type: 'treemap', data: tree(rows), leafDepth: 1, roam: false, nodeClick: 'zoomToNode', width: '100%', height: '100%', top: 28,
+    breadcrumb: { show: true, top: 0, left: 0, height: 20, itemStyle: { color: c.accentSoft, borderColor: c.border, textStyle: { color: c.fg, fontFamily: c.font } } },
+    label: { show: true, formatter: p => p.name + '\n' + fmt(p.value), fontSize: 12, fontFamily: c.font, color: '#fff' },
+    upperLabel: { show: true, height: 22, color: '#fff', fontFamily: c.font, fontSize: 11 },
+    itemStyle: { borderColor: c.surface, borderWidth: 2, gapWidth: 2, borderRadius: 3 },
+    levels: [{ itemStyle: { borderWidth: 0, gapWidth: 3 }, color: c.series }, { colorSaturation: [0.35, 0.6], itemStyle: { gapWidth: 2, borderColorSaturation: 0.7 } }, { colorSaturation: [0.3, 0.5] }, { colorSaturation: [0.25, 0.45] }],
+  }],
+}; });
+<\/script>
+</script>
+<script type="text/plain" id="tpl-sunburst">
+<!-- head: tokens/tokens.css, css/ds.css, js/ds-theme.js 가 링크되어 있어야 한다 -->
+<div class="ds-card"><div class="ds-card__body"><div id="sunburst" style="height:360px"></div></div></div>
+<script src="../vendor/echarts/echarts.min.js"><\/script>
+<script src="../integrations/echarts-theme.js"><\/script>
+<script>
+// rows: 객체 배열. 계층 필드와 값 필드로 트리를 만든다
+const LEVELS = '{{levels}}'.split(',').map(s => s.trim());
+const VALUE = '{{value}}';
+function tree(rows) {
+  const root = new Map();
+  for (const r of rows) { let m = root; for (const l of LEVELS) { if (!m.has(r[l])) m.set(r[l], { name: r[l], value: 0, children: new Map() }); const n = m.get(r[l]); n.value += +r[VALUE] || 0; m = n.children; } }
+  const toArr = m => [...m.values()].sort((a, b) => b.value - a.value).map(n => ({ name: n.name, value: n.value, children: n.children.size ? toArr(n.children) : undefined }));
+  return toArr(root);
+}
+const fmt = v => v.toLocaleString('ko-KR');
+DSEchartsTheme.bind(echarts, document.getElementById('sunburst'), () => { const c = DSEchartsTheme.colors(); return {
+  tooltip: { formatter: p => p.treePathInfo.map(t => t.name).filter(Boolean).join(' › ') + '<br><b>' + fmt(p.value) + '</b>' },
+  series: [{ type: 'sunburst', data: tree(rows), radius: ['14%', '96%'], sort: 'desc', nodeClick: 'rootToNode',
+    itemStyle: { borderColor: c.surface, borderWidth: 2, borderRadius: 3 },
+    label: { fontFamily: c.font, fontSize: 11, color: '#fff', minAngle: 8, rotate: 'tangential' },
+    levels: [{}, { r0: '14%', r: '36%', label: { fontSize: 12, fontWeight: 600 }, itemStyle: { borderWidth: 3 } }, { r0: '36%', r: '62%', label: { align: 'right' } }, { r0: '62%', r: '82%', label: { fontSize: 10 } }, { r0: '82%', r: '96%', label: { show: false }, itemStyle: { borderWidth: 1 } }],
+    color: c.series,
+  }],
+}; });
+<\/script>
+</script>
+<script type="text/plain" id="tpl-bar">
+<!-- head: tokens/tokens.css, css/ds.css, js/ds-theme.js 가 링크되어 있어야 한다 -->
+<div class="ds-card">
+  <div class="ds-card__header">
+    <div><h3 class="ds-card__title" id="bar-title">{{title}}</h3><nav class="ds-breadcrumb" id="bc" aria-label="드릴 경로"></nav></div>
+    <div class="ds-card__actions"><button class="ds-btn ds-btn--sm" id="btn-up" type="button" hidden>↑ 드릴업</button></div>
+  </div>
+  <div class="ds-card__body"><div id="drill-bar" style="height:300px"></div></div>
+</div>
+<script src="../vendor/echarts/echarts.min.js"><\/script>
+<script src="../integrations/echarts-theme.js"><\/script>
+<script>
+// rows: 객체 배열. 클릭할 때마다 다음 계층으로 내려가고, 브레드크럼/드릴업으로 올라온다. 경로는 URL 해시에 저장.
+const LEVELS = '{{levels}}'.split(',').map(s => s.trim());   // 예: ['region', 'branch', 'product']
+const VALUE = '{{value}}';
+const path = [];                                                // 현재 경로: ['수도권', '서울 강남']
+const level = () => path.length;
+const fmt = v => v.toLocaleString('ko-KR');
+function rowsAt() {                                             // 경로로 필터 → 현재 레벨로 그룹 합계
+  const f = rows.filter(r => path.every((v, i) => r[LEVELS[i]] === v));
+  const key = LEVELS[level()]; const m = new Map();
+  for (const r of f) m.set(r[key], (m.get(r[key]) || 0) + (+r[VALUE] || 0));
+  return [...m].map(([k, v]) => ({ k, v })).sort((a, b) => b.v - a.v);
+}
+let cur = [];
+const bar = DSEchartsTheme.bind(echarts, document.getElementById('drill-bar'), () => { const c = DSEchartsTheme.colors(); const last = level() === LEVELS.length - 1; return {
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: v => fmt(v) },
+  grid: { left: 8, right: 16, top: 12, bottom: 8, containLabel: true },
+  xAxis: { type: 'category', data: cur.map(r => r.k), axisLabel: { interval: 0, hideOverlap: true, rotate: cur.length > 12 ? 30 : 0 } },
+  yAxis: { type: 'value', axisLabel: { formatter: v => fmt(v) }, splitNumber: 4 },
+  series: [{ type: 'bar', data: cur.map(r => r.v), itemStyle: { color: c.series[Math.min(level(), 7)], borderRadius: [4, 4, 0, 0] }, barMaxWidth: 24, cursor: last ? 'default' : 'pointer',
+    label: { show: cur.length <= 8, position: 'top', formatter: p => fmt(p.value), color: c.ink2, fontSize: 11 } }],
+}; }, { onInit: ch => ch.on('click', p => { if (p.componentType === 'series' && level() < LEVELS.length - 1) { path.push(p.name); render(); } }) });
+function drillTo(n) { path.length = Math.max(0, n); render(); }
+function render() {
+  cur = rowsAt(); bar.rebuild();
+  const nav = document.getElementById('bc'); nav.innerHTML = ''; const names = ['전체', ...path];
+  names.forEach((n, i) => {
+    if (i) { const s = document.createElement('span'); s.className = 'ds-breadcrumb__sep'; s.textContent = '›'; nav.appendChild(s); }
+    const lastCrumb = i === names.length - 1; const a = document.createElement(lastCrumb ? 'span' : 'a'); a.textContent = n;
+    if (lastCrumb) a.setAttribute('aria-current', 'page'); else { a.href = '#'; a.addEventListener('click', e => { e.preventDefault(); drillTo(i); }); }
+    nav.appendChild(a);
+  });
+  document.getElementById('btn-up').hidden = level() === 0;
+  history.replaceState(null, '', path.length ? '#' + path.map(encodeURIComponent).join('/') : location.pathname);
+}
+document.getElementById('btn-up').addEventListener('click', () => drillTo(level() - 1));
+if (location.hash.length > 1) path.push(...location.hash.slice(1).split('/').filter(Boolean).map(decodeURIComponent));
+render();
+<\/script>
+</script>
 <script>
 (async function () {
   const $ = s => document.querySelector(s);

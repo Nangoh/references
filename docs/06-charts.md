@@ -227,6 +227,10 @@ c.setSelection(['수도권']); c.clearSelection(); c.selection; // ['수도권']
 
 `DSTheme.toggle()` 또는 `html[data-theme]` 변경, OS 설정 변경 모두 자동 재렌더. 컨테이너 너비 변화도 `ResizeObserver` 로 재렌더.
 
+## 5b. 갤러리에서 프롬프트 복사해 쓰기
+
+`examples/charts.html`의 각 차트 오른쪽 위 **프롬프트** 버튼을 누르면 x/y/제목을 확인·수정한 뒤 "사양 + 호출 코드 + 규칙 요약"을 한 번에 복사할 수 있다. Claude/GPT에 붙여넣기만 하면 같은 차트가 나온다. 구현은 `js/ds-prompt.js` (DSCharts 호출을 가로채 사양을 기억한다).
+
 ## 6. ECharts 를 쓸 때
 
 ds-charts.js 에 없는 형태(트리맵, 생키, 평행좌표, 지도, 드릴다운, 브러시)는 Apache ECharts 를 쓴다. 색·글꼴·격자·마크 규격은 테마가 맡는다:

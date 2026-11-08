@@ -68,6 +68,16 @@ GPT 6.1 sol, GLM-5.3 flash 같은 모델이 화면을 생성할 때 이 저장�
 
 예시 데이터는 `examples/data/sales.csv`(2025–2026 지점별 판매, 약 4,300행, 합성)입니다. 실제 수치가 아닙니다.
 
+## 레퍼런스 사이트에서 바로 프롬프트 복사
+
+차트 갤러리(`examples/charts.html`), 대시보드, 드릴다운 페이지의 모든 차트에는 오른쪽 위에 **프롬프트** 버튼이 있다.
+
+1. 마음에 드는 차트에서 **프롬프트** 클릭
+2. x / y / 제목이 미리 채워져 있다 — 내 데이터의 필드명으로 고치고, "데이터 설명"에 어디서 오는 데이터인지 한 줄
+3. **프롬프트 복사** → Claude / GPT / GLM 입력창에 붙여넣기
+
+복사되는 내용: 차트 사양(종류·x·y·제목·데이터) + 그대로 호출할 코드(`DSCharts.*` 또는 ECharts 템플릿) + 디자인 규칙 요약(`prompts/system-prompt-short.md`) + 파일 위치. "코드만 복사"는 호출 코드만 준다. 구현은 `js/ds-prompt.js`이고, 다른 페이지의 ECharts 차트에도 `data-ds-prompt` 속성과 `<script type="text/plain" data-ds-prompt-code>` 템플릿으로 같은 버튼을 붙일 수 있다.
+
 ## LLM에 먹이는 방법
 
 1. **코딩 에이전트(Claude Code, Codex, Cursor 등)** — 이 저장소를 작업 폴더에 두면 루트의 `AGENTS.md`(또는 `CLAUDE.md`)를 자동으로 읽습니다. 다른 저장소에서 쓸 때는 두 파일을 그 저장소 루트에 복사하고 경로만 고칩니다.
