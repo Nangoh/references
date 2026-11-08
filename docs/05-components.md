@@ -11,8 +11,9 @@
 ```html
 <body class="ds-shell">
   <header class="ds-shell__header">
-    <a class="ds-shell__brand" href="/">정산 시스템</a>
-    <nav class="ds-shell__nav"><a href="/" aria-current="page">대시보드</a><a href="/orders">주문</a></nav>
+    <a class="ds-shell__brand" href="/"><span class="ds-shell__mark" aria-hidden="true"></span>정산 시스템</a>
+    <nav class="ds-shell__crumb" aria-label="현재 위치"><span class="ds-shell__crumb-sep">›</span><a href="/orders">주문</a><span class="ds-shell__crumb-sep">›</span><span aria-current="page">주문 상세</span></nav>
+    <nav class="ds-shell__nav"><a href="/">대시보드</a><a href="/orders" class="is-active" aria-current="page">주문</a></nav>
     <div class="ds-shell__user">
       <button class="ds-btn ds-btn--ghost ds-btn--sm ds-theme-toggle" type="button" onclick="DSTheme.toggle()">테마</button>
       <span>홍길동</span>
@@ -23,7 +24,8 @@
 </body>
 ```
 
-- 현재 메뉴는 `aria-current="page"`. 클래스가 아니라 속성으로 표시한다.
+- 현재 메뉴는 `class="is-active" aria-current="page"` 둘 다. 밑줄 + 옅은 배경으로 강조된다.
+- **현재 위치 브레드크럼 `.ds-shell__crumb`** 를 브랜드 바로 옆에 둔다(시스템 › 모듈 › 화면). 960px 아래에서 메뉴는 숨지만 브레드크럼은 남아, 어느 화면에 있는지 항상 보인다. 마지막 항목만 `aria-current="page"`, 앞 항목은 링크.
 - ✗ 헤더에 페이지 제목, 검색창, 흰 배경. ✗ 헤더를 라이트 모드에서 밝게.
 - 접근성: 헤더 첫 요소로 "본문으로 건너뛰기" 링크(`.ds-skip`)를 둘 수 있다.
 

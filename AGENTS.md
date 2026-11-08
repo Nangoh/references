@@ -12,7 +12,7 @@
 4. **차트는 `DSCharts` 먼저, 부족하면 ECharts + `integrations/echarts-theme.js`.** 다른 차트 라이브러리를 새로 끌어오지 않는다. 파이·도넛·이중축 금지.
 5. **상태(성공/경고/위험)는 색 + 아이콘 + 텍스트 셋 다.** 색만으로 의미를 전달하지 않는다. 상태색을 시리즈 색으로 재사용하지 않는다.
 6. **다크 모드 필수.** 토큰만 쓰면 자동으로 된다. 토글은 `DSTheme.toggle()`. 두 테마를 모두 확인한다.
-7. **상단 헤더는 항상 `.ds-shell__header`(배경 `--shell-bg`).** 라이트/다크 무관하게 어둡다. 이것이 시그니처다.
+7. **상단 헤더는 항상 `.ds-shell__header`(배경 `--shell-bg`).** 라이트/다크 무관하게 어둡다. 이것이 시그니처다. 헤더에는 브랜드 옆에 **현재 위치 브레드크럼 `.ds-shell__crumb`**(시스템 › 모듈 › 화면)을 두고, 메뉴의 현재 항목에 `class="is-active" aria-current="page"`를 단다. 좁은 폭에서 메뉴가 숨어도 브레드크럼은 남는다.
 8. **밀도: 기본 글자 14px, 컨트롤 높이 32px, 반경 6px, 카드에 그림자 없음(테두리만).** 크게·둥글게·떠 있게 만들지 않는다.
 9. **AI 티 나는 디자인 금지.** 이모지 섹션 마커, 보라-파랑 그라데이션 히어로, 모두 중앙 정렬, 카드마다 액센트 바, 크림 배경+세리프, 검정+형광색 금지.
 10. **숫자 열은 `.ds-num`(우측 정렬, tabular).** 큰 대표 숫자는 `.ds-stat__value`(proportional). 숫자 단위는 라벨에 쓴다: "매출(백만원)".
@@ -33,8 +33,9 @@
 </head>
 <body class="ds-shell">
   <header class="ds-shell__header">
-    <a class="ds-shell__brand" href="#">시스템명</a>
-    <nav class="ds-shell__nav"><a href="#" aria-current="page">대시보드</a><a href="#">승인</a><a href="#">설정</a></nav>
+    <a class="ds-shell__brand" href="#"><span class="ds-shell__mark" aria-hidden="true"></span>시스템명</a>
+    <nav class="ds-shell__crumb" aria-label="현재 위치"><span class="ds-shell__crumb-sep">›</span><a href="#">승인</a><span class="ds-shell__crumb-sep">›</span><span aria-current="page">승인 대기</span></nav>
+    <nav class="ds-shell__nav"><a href="#">대시보드</a><a href="#" class="is-active" aria-current="page">승인</a><a href="#">설정</a></nav>
     <div class="ds-shell__user">
       <button class="ds-btn ds-btn--ghost ds-btn--sm ds-theme-toggle" type="button" onclick="DSTheme.toggle()">테마</button>
       <span>홍길동</span>
@@ -88,7 +89,7 @@
 
 | 클래스 | 용도 | 변형·상태 |
 |---|---|---|
-| `.ds-shell` (body), `.ds-shell__header/__brand/__nav/__user` | 앱 셸, 48px 고정 헤더 | `aria-current="page"` |
+| `.ds-shell` (body), `.ds-shell__header/__brand/__crumb/__nav/__actions` | 앱 셸, 48px 고정 헤더. `__crumb` = 현재 위치(시스템 › 모듈 › 화면) | 메뉴 현재 항목 `.is-active` + `aria-current="page"` |
 | `.ds-sidebar`, `.ds-sidebar__item` | 좌측 240px 메뉴 | `.is-active` |
 | `.ds-main`, `.ds-page-header`, `.ds-page-title` | 본문, 페이지 제목 행 | |
 | `.ds-btn` | 버튼 (기본 = secondary) | `--primary` `--ghost` `--danger` `--sm` `--lg` `--icon` `:disabled` |

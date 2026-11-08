@@ -100,10 +100,16 @@ pre code { background: none; border: 0; padding: 0; }
 .ds-shell__mark::after { content: ""; position: absolute; left: 5px; top: 5px; width: 10px; height: 10px; border-radius: 2px; background: var(--shell-bg); }
 .ds-shell__env { font-size: 11px; line-height: 16px; font-weight: var(--weight-medium); padding: 0 6px; border-radius: var(--r-sm); background: rgba(255,255,255,.10); color: var(--shell-fg-2); letter-spacing: var(--tracking-label); text-transform: uppercase; }
 .ds-shell__env--prod { background: color-mix(in srgb, var(--warn) 25%, transparent); color: var(--shell-fg); }
-.ds-shell__nav { display: flex; align-items: stretch; gap: var(--sp-1); height: 100%; margin-left: var(--sp-2); }
+.ds-shell__nav { display: flex; align-items: stretch; gap: var(--sp-1); height: 100%; margin-left: var(--sp-4); }
 .ds-shell__nav a { display: inline-flex; align-items: center; padding: 0 var(--sp-3); color: var(--shell-fg-2); font-size: var(--text-sm); font-weight: var(--weight-medium); text-decoration: none; border-bottom: 2px solid transparent; border-top: 2px solid transparent; }
 .ds-shell__nav a:hover { color: var(--shell-fg); }
-.ds-shell__nav a.is-active { color: var(--shell-fg); border-bottom-color: var(--shell-accent); }
+.ds-shell__nav a.is-active, .ds-shell__nav a[aria-current="page"] { color: var(--shell-fg); border-bottom-color: var(--shell-accent); background: rgba(255,255,255,.07); }
+/* 현재 위치 브레드크럼: 브랜드 바로 옆. 메뉴가 숨는 좁은 폭에서도 남아 "지금 어디"를 알려 준다 */
+.ds-shell__crumb { display: flex; align-items: center; gap: var(--sp-1); min-width: 0; margin-left: var(--sp-1); font-size: var(--text-sm); color: var(--shell-fg-2); white-space: nowrap; }
+.ds-shell__crumb a { color: var(--shell-fg-2); text-decoration: none; }
+.ds-shell__crumb a:hover { color: var(--shell-fg); text-decoration: underline; }
+.ds-shell__crumb [aria-current] { color: var(--shell-fg); font-weight: var(--weight-medium); overflow: hidden; text-overflow: ellipsis; }
+.ds-shell__crumb-sep { opacity: .55; }
 .ds-shell__spacer { flex: 1 1 auto; }
 .ds-shell__actions { display: flex; align-items: center; gap: var(--sp-2); }
 .ds-shell__actions .ds-btn { background: transparent; border-color: transparent; color: var(--shell-fg-2); }
@@ -145,6 +151,7 @@ pre code { background: none; border: 0; padding: 0; }
   .ds-shell { grid-template-columns: minmax(0, 1fr); grid-template-areas: "header" "main"; }
   .ds-sidebar { display: none; }
   .ds-shell__nav { display: none; }
+  .ds-shell__env { display: none; }
   .ds-shell__actions .ds-search { display: none; }
   .ds-main { padding: var(--sp-4); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 }
