@@ -14,11 +14,13 @@
 (function (global) {
   'use strict';
   const REPO = 'https://github.com/Nangoh/references/blob/main/';
+  const doc = (id, title, file, note) => ({ id, title, doc: file, href: 'doc.html?f=' + encodeURIComponent(file), note });   // 문서는 사이트 안 뷰어로 본다
   const SITE = [
     { group: '시작하기', items: [
       { id: 'home', title: '홈 · 무엇인가', href: 'index.html' },
       { id: 'get', title: '가져가기 · API', href: 'index.html#get', note: 'llms.txt, manifest, 번들, install.sh' },
-      { id: 'principles', title: '개발 원칙', href: REPO + 'docs/00-dev-principles.md', ext: true },
+      doc('readme', 'README', 'README.md'),
+      doc('principles', '개발 원칙', 'docs/00-dev-principles.md'),
     ] },
     { group: '디자인', items: [
       { id: 'showcase', title: '컴포넌트 쇼케이스', href: 'showcase.html', sections: [
@@ -26,8 +28,11 @@
         ['cards', '카드'], ['tables', '테이블'], ['badges', '배지 · 상태'], ['tabs', '탭'], ['kpi', 'KPI · 스탯'], ['chart-chrome', '차트 크롬'],
         ['overlays', '오버레이'], ['feedback', '알림 · 상태'], ['marking', '마킹'],
       ] },
-      { id: 'tokens-doc', title: '색 · 토큰 문서', href: REPO + 'docs/02-color.md', ext: true },
-      { id: 'layout-doc', title: '레이아웃 · 페이지 템플릿', href: REPO + 'docs/04-layout.md', ext: true },
+      doc('design-doc', '디자인 원칙', 'docs/01-principles.md'),
+      doc('tokens-doc', '색 · 토큰', 'docs/02-color.md'),
+      doc('type-doc', '타이포그래피', 'docs/03-typography.md'),
+      doc('layout-doc', '레이아웃 · 페이지 템플릿', 'docs/04-layout.md'),
+      doc('components-doc', '컴포넌트 문서', 'docs/05-components.md'),
     ] },
     { group: '차트', items: [
       { id: 'charts', title: '차트 갤러리', href: 'charts.html', sections: [
@@ -36,20 +41,23 @@
       { id: 'drilldown', title: '드릴다운 패턴', href: 'drilldown.html', sections: [
         ['sec-treemap', '① 트리맵'], ['sec-sunburst', '② 선버스트'], ['sec-bar', '③ 막대 수동 드릴'], ['sec-code', '핵심 코드'],
       ] },
-      { id: 'charts-doc', title: '차트 규칙 · DSCharts API', href: REPO + 'docs/06-charts.md', ext: true },
+      doc('charts-doc', '차트 규칙 · DSCharts API', 'docs/06-charts.md'),
     ] },
     { group: '예시 시스템', items: [
       { id: 'dashboard', title: '운영 대시보드', href: 'dashboard.html', note: '조립 예시' },
       { id: 'explorer', title: '판매 분석 탐색기', href: 'explorer.html', note: 'Spotfire 대체: 마킹 · 드릴 · 피벗' },
-      { id: 'spotfire-doc', title: 'Spotfire 기능 대응표', href: REPO + 'docs/08-spotfire-mapping.md', ext: true },
+      doc('spotfire-doc', 'Spotfire 기능 대응표', 'docs/08-spotfire-mapping.md'),
     ] },
     { group: 'LLM에 먹이기', items: [
-      { id: 'agents', title: 'AGENTS.md (코딩 에이전트)', href: REPO + 'AGENTS.md', ext: true },
-      { id: 'prompt', title: '시스템 프롬프트 (채팅형)', href: REPO + 'prompts/system-prompt.md', ext: true },
-      { id: 'anti', title: '금지 패턴 · 리뷰 체크리스트', href: REPO + 'docs/07-anti-patterns.md', ext: true },
-      { id: 'docs', title: '문서 목차 전체', href: REPO + 'docs/README.md', ext: true },
+      doc('agents', 'AGENTS.md (코딩 에이전트 규칙)', 'AGENTS.md'),
+      doc('prompt', '시스템 프롬프트 (채팅형)', 'prompts/system-prompt.md'),
+      doc('prompt-short', '시스템 프롬프트 (짧은 판)', 'prompts/system-prompt-short.md'),
+      doc('anti', '금지 패턴 · 리뷰 체크리스트', 'docs/07-anti-patterns.md'),
+      doc('docs', '문서 목차', 'docs/README.md'),
     ] },
   ];
+  /* 문서 목록(순서대로): doc.html 의 이전/다음과 제목에 쓴다 */
+  function docs() { const out = []; for (const g of SITE) for (const it of g.items) if (it.doc) out.push({ ...it, group: g.group }); return out; }
 
   const el = (tag, cls, parent, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; if (parent) parent.appendChild(n); return n; };
   const extIcon = () => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '0 0 16 16'); s.setAttribute('class', 'ds-sidebar__ext'); s.setAttribute('aria-hidden', 'true'); const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('d', 'M6 3h7v7M13 3 7 9M11 9v4H3V5h4'); p.setAttribute('fill', 'none'); p.setAttribute('stroke', 'currentColor'); p.setAttribute('stroke-width', '1.5'); s.appendChild(p); return s; };
@@ -57,7 +65,7 @@
   function findCurrent(id) { for (const g of SITE) for (const it of g.items) if (it.id === id) return { group: g, item: it }; return null; }
 
   /* 전체 트리 */
-  function mount(aside, currentId) {
+  function mount(aside, currentId, opts = {}) {
     aside.innerHTML = '';
     aside.setAttribute('aria-label', '사이트 구조');
     const head = el('div', 'ds-sidebar__site', aside);
@@ -71,9 +79,10 @@
         const a = el('a', 'ds-sidebar__item', aside); a.href = it.href; a.textContent = it.title;
         if (it.ext) { a.target = '_blank'; a.rel = 'noopener'; a.appendChild(extIcon()); a.title = '문서 (GitHub, 새 탭)'; }
         if (it.id === currentId) { a.classList.add('is-active'); a.setAttribute('aria-current', 'page'); }
-        if (it.id === currentId && it.sections && it.sections.length) {
+        const secs = it.id === currentId ? (opts.sections || it.sections) : null;
+        if (secs && secs.length) {
           const tree = el('div', 'ds-sidebar__tree', aside); tree.setAttribute('aria-label', '이 페이지의 목차');
-          for (const [sid, title] of it.sections) {
+          for (const [sid, title] of secs) {
             if (!document.getElementById(sid)) continue;
             const s = el('a', 'ds-sidebar__item ds-sidebar__item--sub', tree, title); s.href = '#' + sid; s.dataset.section = sid;
           }
@@ -138,9 +147,9 @@
   }
 
   function boot() {
-    document.querySelectorAll('[data-sitenav]').forEach(a => mount(a, a.getAttribute('data-sitenav')));
+    document.querySelectorAll('[data-sitenav]').forEach(a => { const id = a.getAttribute('data-sitenav'); if (id !== 'manual') mount(a, id); });
     document.querySelectorAll('[data-sitenav-compact]').forEach(a => mountCompact(a, a.getAttribute('data-sitenav-compact')));
   }
-  global.DSSiteNav = { SITE, mount, mountCompact, boot };
+  global.DSSiteNav = { SITE, docs, mount, mountCompact, boot };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })(window);

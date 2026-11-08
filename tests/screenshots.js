@@ -10,7 +10,7 @@ const server = http.createServer((req, res) => {
   if (!p.startsWith(root) || !fs.existsSync(p) || fs.statSync(p).isDirectory()) { res.writeHead(404); return res.end(); }
   res.writeHead(200, { 'Content-Type': MIME[path.extname(p)] || 'application/octet-stream' }); fs.createReadStream(p).pipe(res);
 });
-const PAGES = ['index', 'showcase', 'charts', 'dashboard', 'explorer', 'drilldown'].filter(p => fs.existsSync(path.join(root, 'examples', p + '.html')));
+const PAGES = ['index', 'showcase', 'charts', 'dashboard', 'explorer', 'drilldown', 'doc'].filter(p => fs.existsSync(path.join(root, 'examples', p + '.html')));
 const VIEWPORTS = { desktop: { width: 1440, height: 900 }, mobile: { width: 400, height: 800 } };
 const ALLOW = [/favicon/i, /fonts\.g(oogleapis|static)\.com/i, /ERR_INTERNET_DISCONNECTED/];
 (async () => {

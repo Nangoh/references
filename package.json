@@ -23,6 +23,7 @@
     "apache-arrow": "21.2.0",
     "echarts": "6.1.0",
     "esbuild": "^0.25.4",
+    "marked": "16.4.1",
     "vega": "6.4.0",
     "vega-embed": "7.3.0",
     "vega-lite": "6.5.0"

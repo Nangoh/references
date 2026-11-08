@@ -17,6 +17,7 @@ const out = path.join(root, 'vendor');
 const FILES = [
   // [node_modules 상대경로, vendor 상대경로]
   ['echarts/dist/echarts.min.js', 'echarts/echarts.min.js'],
+  ['marked/lib/marked.umd.js', 'marked/marked.umd.js'],      // 문서 뷰어(examples/doc.html)
   ['ag-grid-community/dist/ag-grid-community.min.js', 'ag-grid/ag-grid-community.min.js'],
   ['ag-grid-community/styles/ag-grid.css', 'ag-grid/styles/ag-grid.css'],          // 레거시 CSS 테마 사용자용
   ['ag-grid-community/styles/ag-theme-quartz.css', 'ag-grid/styles/ag-theme-quartz.css'],
