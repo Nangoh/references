@@ -28,7 +28,7 @@
 </style>
 </head>
 <body>
-<div class="ds-shell ds-shell--no-sidebar">
+<div class="ds-shell">
   <header class="ds-shell__header">
     <a class="ds-shell__brand" href="index.html"><span class="ds-shell__mark" aria-hidden="true"></span>references<span class="ds-shell__env">design system</span></a>
     <nav class="ds-shell__nav" aria-label="레퍼런스 메뉴">
@@ -49,6 +49,7 @@
     </div>
   </header>
 
+  <aside class="ds-sidebar" data-sitenav="home"></aside>
   <main class="ds-main">
     <div class="ds-container" style="padding-left:0;padding-right:0">
       <div class="ix-intro">
@@ -80,8 +81,8 @@
         <a class="ds-card ds-card--interactive" href="../api/llms.txt"><div class="ds-card__body ix-card__body"><div class="ix-card__kicker">가져가기 · API</div><h2 class="ds-h3 mt-1">LLM이 알아서 받아가게</h2><p>손으로 파일을 나르지 않는다. <code>llms.txt</code>가 진입점, <code>api/manifest.json</code>이 파일 목록, <code>api/charts.json</code>이 차트 카탈로그, <code>api/dist/ds.css · ds.js</code>가 한 파일 번들, <code>api/install.sh</code>가 내려받기 명령. 각 차트의 "프롬프트" 버튼이 이 주소들을 프롬프트에 넣어 준다.</p></div><div class="ds-card__footer"><span class="ds-caption">curl -fsSL …/api/install.sh | sh -s -- ./public/ds</span></div></a>
       </div>
 
-      <div class="ix-section">
-        <div class="ds-label mb-3">LLM에 먹이는 파일</div>
+      <div class="ix-section" id="get">
+        <div class="ds-label mb-3">LLM에 먹이는 파일 · 가져가기</div>
         <div class="ds-grid" style="--cols:3">
           <div class="ds-card"><div class="ds-card__body ix-files"><div class="ds-row ds-row--between mb-2"><strong>AGENTS.md</strong><span class="ds-badge ds-badge--info">코딩 에이전트</span></div><p class="ds-text-2" style="margin:0 0 var(--sp-2)">GPT·GLM·Claude 코딩 에이전트가 리포에서 읽는 규칙. 짧고 명령형. <code>CLAUDE.md</code>는 같은 내용.</p><a class="ds-link" href="https://github.com/Nangoh/references/blob/main/AGENTS.md" target="_blank" rel="noopener">GitHub에서 보기</a></div></div>
           <div class="ds-card"><div class="ds-card__body ix-files"><div class="ds-row ds-row--between mb-2"><strong>docs/00-dev-principles.md</strong><span class="ds-badge ds-badge--neutral">개발 원칙</span></div><p class="ds-text-2" style="margin:0 0 var(--sp-2)">어떻게 만드나: 기본 원칙 10, LLM과 개발할 때, 저장소 규칙, 코드 스타일, 머지 전 완료 기준. 사람 코드와 모델 코드에 똑같이 적용.</p><a class="ds-link" href="../docs/00-dev-principles.md">문서 보기</a></div></div>
@@ -104,5 +105,6 @@ examples/              이 사이트. 전부 정적 HTML, 빌드 없음</code></
     </div>
   </main>
 </div>
+<script src="../js/ds-sitenav.js"></script>
 </body>
 </html>

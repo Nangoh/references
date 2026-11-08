@@ -58,28 +58,7 @@
     </div>
   </header>
 
-  <aside class="ds-sidebar" aria-label="섹션">
-    <div class="ds-sidebar__group">기초</div>
-    <a class="ds-sidebar__item is-active" href="#tokens">토큰</a>
-    <a class="ds-sidebar__item" href="#type">타이포그래피</a>
-    <a class="ds-sidebar__item" href="#shell">앱 셸</a>
-    <div class="ds-sidebar__group">입력</div>
-    <a class="ds-sidebar__item" href="#buttons">버튼</a>
-    <a class="ds-sidebar__item" href="#forms">폼</a>
-    <a class="ds-sidebar__item" href="#filters">필터 · 칩</a>
-    <div class="ds-sidebar__group">표시</div>
-    <a class="ds-sidebar__item" href="#cards">카드</a>
-    <a class="ds-sidebar__item" href="#tables">테이블</a>
-    <a class="ds-sidebar__item" href="#badges">배지 · 상태</a>
-    <a class="ds-sidebar__item" href="#tabs">탭</a>
-    <a class="ds-sidebar__item" href="#kpi">KPI · 스탯</a>
-    <a class="ds-sidebar__item" href="#chart-chrome">차트 크롬</a>
-    <div class="ds-sidebar__group">피드백</div>
-    <a class="ds-sidebar__item" href="#overlays">오버레이</a>
-    <a class="ds-sidebar__item" href="#feedback">알림 · 상태</a>
-    <a class="ds-sidebar__item" href="#marking">마킹</a>
-    <div class="ds-sidebar__footer">v0.1 · 토큰은 <code>tokens/tokens.css</code></div>
-  </aside>
+  <aside class="ds-sidebar" data-sitenav="showcase"></aside>
 
   <main class="ds-main">
     <div class="ds-breadcrumb"><a href="index.html">references</a><span class="ds-breadcrumb__sep">/</span><span aria-current="page">컴포넌트 쇼케이스</span></div>
@@ -542,13 +521,7 @@
   renderRamps(); window.addEventListener('ds-themechange', renderRamps);
   document.getElementById('indet').indeterminate = true;
 
-  // --- 사이드바 현재 섹션 표시
-  var items = Array.prototype.slice.call(document.querySelectorAll('.ds-sidebar__item[href^="#"]'));
-  var secs = items.map(function(a){ return document.querySelector(a.getAttribute('href')); });
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ items.forEach(function(a){ a.classList.toggle('is-active', a.getAttribute('href')==='#'+e.target.id); }); } }); }, { rootMargin: '-45% 0px -50% 0px' });
-    secs.forEach(function(s){ if(s) io.observe(s); });
-  }
+  // 사이드바 현재 섹션 표시는 ds-sitenav.js 가 담당
 
   // --- 탭
   var tabs = document.getElementById('demo-tabs');
@@ -588,5 +561,6 @@
   document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ modal.hidden=true; closeDrawer(); menu.hidden=true; } });
 })();
 </script>
+<script src="../js/ds-sitenav.js"></script>
 </body>
 </html>

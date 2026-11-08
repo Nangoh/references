@@ -135,6 +135,22 @@ pre code { background: none; border: 0; padding: 0; }
 .ds-sidebar__item.is-active .ds-icon { color: var(--accent); }
 .ds-sidebar__count { margin-left: auto; font-size: var(--text-xs); color: var(--fg-muted); font-variant-numeric: tabular-nums; }
 .ds-sidebar__footer { margin-top: auto; padding: var(--sp-3); border-top: 1px solid var(--border); font-size: var(--text-xs); color: var(--fg-muted); }
+/* 사이트 트리 (ds-sitenav.js): 섹션 › 페이지 › 페이지 안 목차 */
+.ds-sidebar__site { padding: var(--sp-1) var(--sp-3) var(--sp-2); display: flex; flex-direction: column; gap: 2px; }
+.ds-sidebar__site-name { font-weight: var(--weight-semibold); color: var(--fg); font-size: var(--text-sm); }
+.ds-sidebar__site-sub { font-size: var(--text-xs); color: var(--fg-muted); }
+.ds-sidebar__group.is-here { color: var(--accent-text); display: flex; align-items: center; gap: var(--sp-2); }
+.ds-sidebar__here { font-size: 10px; line-height: 14px; padding: 0 5px; border-radius: var(--r-full); background: var(--accent-soft-2); color: var(--accent-text); letter-spacing: 0; text-transform: none; }
+.ds-sidebar__tree { display: flex; flex-direction: column; gap: 1px; margin: 2px 0 var(--sp-2) calc(var(--sp-3) + 5px); padding-left: var(--sp-2); border-left: 1px solid var(--border-strong); }
+.ds-sidebar__item--sub { height: 28px; padding-left: var(--sp-3); font-size: var(--text-sm); font-weight: var(--weight-regular); color: var(--fg-2); }
+.ds-sidebar__item--sub.is-active { background: transparent; color: var(--accent-text); font-weight: var(--weight-medium); }
+.ds-sidebar__item--sub.is-active::before { left: -1px; top: 6px; bottom: 6px; width: 2px; }
+.ds-sidebar__tree .ds-sidebar__item--sub.is-active::before { left: calc(-1 * var(--sp-2) - 1px); }
+.ds-sidebar__item--back { color: var(--fg-2); font-weight: var(--weight-regular); }
+.ds-sidebar__ext { width: 12px; height: 12px; margin-left: auto; color: var(--fg-muted); flex: 0 0 auto; }
+.ds-sidebar__divider { height: 1px; margin: var(--sp-2) var(--sp-3); background: var(--border); }
+.ds-sidebar__backdrop { display: none; }
+.ds-shell__header .ds-shell__menu { display: none; }
 
 .ds-main { grid-area: main; min-width: 0; background: var(--bg); padding: var(--sp-6); padding-left: max(var(--sp-6), env(safe-area-inset-left, 0px)); padding-right: max(var(--sp-6), env(safe-area-inset-right, 0px)); }
 .ds-page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-4); flex-wrap: wrap; margin-bottom: var(--sp-6); }
@@ -150,6 +166,11 @@ pre code { background: none; border: 0; padding: 0; }
 @media (max-width: 960px) {
   .ds-shell { grid-template-columns: minmax(0, 1fr); grid-template-areas: "header" "main"; }
   .ds-sidebar { display: none; }
+  /* 좁은 폭: ☰ 로 여는 드로어 — 사이트 구조는 어디서나 열어 볼 수 있어야 한다 */
+  .ds-shell__header .ds-shell__menu { display: inline-flex; color: var(--shell-fg-2); border-color: transparent; background: transparent; }
+  .ds-shell__header .ds-shell__menu:hover { color: var(--shell-fg); background: rgba(255,255,255,.08); }
+  .ds-sidebar.is-open { display: flex; position: fixed; left: 0; top: var(--shell-h); bottom: 0; height: auto; width: min(300px, 85vw); z-index: var(--z-drawer); box-shadow: var(--shadow-3); padding-left: max(var(--sp-2), env(safe-area-inset-left, 0px)); }
+  .ds-sidebar__backdrop { display: block; position: fixed; inset: var(--shell-h) 0 0 0; z-index: calc(var(--z-drawer) - 1); background: rgba(9,14,15,.35); }
   .ds-shell__nav { display: none; }
   .ds-shell__env { display: none; }
   .ds-shell__actions .ds-search { display: none; }

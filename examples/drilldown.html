@@ -26,7 +26,7 @@
 </style>
 </head>
 <body>
-<div class="ds-shell ds-shell--no-sidebar">
+<div class="ds-shell">
   <header class="ds-shell__header">
     <a class="ds-shell__brand" href="index.html"><span class="ds-shell__mark" aria-hidden="true"></span>references<span class="ds-shell__env">design system</span></a>
     <nav class="ds-shell__crumb" aria-label="현재 위치"><span class="ds-shell__crumb-sep" aria-hidden="true">›</span><a href="index.html">예시</a><span class="ds-shell__crumb-sep" aria-hidden="true">›</span><span aria-current="page">드릴다운 패턴</span></nav>
@@ -46,6 +46,7 @@
       </button>
     </div>
   </header>
+  <aside class="ds-sidebar" data-sitenav="drilldown"></aside>
   <main class="ds-main">
     <div class="ds-page-header">
       <div>
@@ -56,19 +57,19 @@
     </div>
 
     <div class="dd-grid">
-      <div class="ds-card">
+      <div class="ds-card" id="sec-treemap">
         <div class="ds-card__header dd-head">
           <div><h3 class="ds-card__title">① 트리맵 — ECharts 내장 드릴</h3><p class="ds-card__sub">클릭하면 확대, 상단 브레드크럼(ECharts 제공)으로 복귀. 코드 최소.</p></div>
         </div>
         <div class="ds-card__body"><div class="dd-plot" id="c-treemap" data-ds-prompt='{"title": "트리맵 드릴다운", "lib": "ECharts treemap + integrations/echarts-theme.js", "kindLabel": "트리맵 드릴다운", "note": "클릭하면 확대(leafDepth), 상단 브레드크럼으로 복귀", "desc": "객체 배열(rows). 계층 필드는 상위→하위 순서, 값 필드는 숫자", "fields": {"levels": {"label": "계층 필드 (상위→하위, 쉼표)", "value": "region, branch, category, product", "wide": true}, "value": {"label": "값 필드 (합계)", "value": "revenue"}}}' data-ds-prompt-code="#tpl-treemap"></div></div>
       </div>
-      <div class="ds-card">
+      <div class="ds-card" id="sec-sunburst">
         <div class="ds-card__header dd-head">
           <div><h3 class="ds-card__title">② 선버스트 — 전체 계층 한 눈에</h3><p class="ds-card__sub">바깥 링일수록 하위 레벨. 조각 클릭 = 해당 노드를 루트로.</p></div>
         </div>
         <div class="ds-card__body"><div class="dd-plot" id="c-sunburst" data-ds-prompt='{"title": "선버스트", "lib": "ECharts sunburst + integrations/echarts-theme.js", "kindLabel": "선버스트", "note": "조각 클릭 = 해당 노드를 루트로", "desc": "객체 배열(rows). 계층 필드는 상위→하위 순서, 값 필드는 숫자", "fields": {"levels": {"label": "계층 필드 (상위→하위, 쉼표)", "value": "region, branch, category, product", "wide": true}, "value": {"label": "값 필드 (합계)", "value": "revenue"}}}' data-ds-prompt-code="#tpl-sunburst"></div></div>
       </div>
-      <div class="ds-card wide">
+      <div class="ds-card wide" id="sec-bar">
         <div class="ds-card__header dd-head">
           <div>
             <h3 class="ds-card__title" id="bar-title">③ 막대 — 수동 드릴 (상태머신 + 브레드크럼)</h3>
@@ -84,7 +85,7 @@
           <span class="dd-note">실무에서 가장 많이 쓰는 패턴. 레벨 배열과 경로 배열만 있으면 어떤 차트에도 적용됩니다. 경로는 URL 해시에 저장되어 뒤로가기·북마크가 동작합니다.</span>
         </div>
       </div>
-      <div class="ds-card wide">
+      <div class="ds-card wide" id="sec-code">
         <div class="ds-card__header"><div><h3 class="ds-card__title">패턴 ③ 핵심 코드</h3><p class="ds-card__sub">docs/08-spotfire-mapping.md 의 드릴다운 절과 같은 내용</p></div></div>
         <div class="ds-card__body"><pre class="dd-code">const LEVELS = ['region', 'branch', 'category', 'product'];   // 계층 정의
 const path = [];                                             // 현재 경로: ['수도권', '서울 강남']
@@ -309,5 +310,6 @@ render();
   window.__dd = { path, drillTo, render };
 })();
 </script>
+<script src="../js/ds-sitenav.js"></script>
 </body>
 </html>

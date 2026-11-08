@@ -102,7 +102,7 @@
   </header>
 
   <!-- ===== 필터 패널 (Spotfire Filters) ===== -->
-  <aside class="ds-sidebar" aria-label="필터 패널">
+  <aside class="ds-sidebar" aria-label="필터 패널" data-sitenav-compact="explorer">
     <div class="xp-sidebar-head">
       <h2>필터</h2>
       <button class="ds-btn ds-btn--ghost ds-btn--sm" id="btn-reset" type="button">초기화</button>
@@ -893,5 +893,6 @@ $('#boot').hidden = true;
 if (restored) toast('북마크 복원', '링크에 저장된 필터·마킹 상태를 불러왔습니다.');
 window.__xp = { state, refresh, query };   // 콘솔/테스트용
 </script>
+<script src="../js/ds-sitenav.js"></script>
 </body>
 </html>

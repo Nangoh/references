@@ -40,7 +40,7 @@
 </style>
 </head>
 <body>
-<div class="ds-shell ds-shell--no-sidebar">
+<div class="ds-shell">
   <header class="ds-shell__header">
     <a class="ds-shell__brand" href="index.html"><span class="ds-shell__mark" aria-hidden="true"></span>references<span class="ds-shell__env">design system</span></a>
     <nav class="ds-shell__crumb" aria-label="현재 위치"><span class="ds-shell__crumb-sep" aria-hidden="true">›</span><a href="index.html">예시</a><span class="ds-shell__crumb-sep" aria-hidden="true">›</span><span aria-current="page">차트 갤러리</span></nav>
@@ -61,6 +61,7 @@
     </div>
   </header>
 
+  <aside class="ds-sidebar" data-sitenav="charts"></aside>
   <main class="ds-main">
     <div class="ds-page-header">
       <div>
@@ -94,14 +95,14 @@
     </div>
 
     <!-- 1. 숫자가 주인공인 형태 -->
-    <div class="section-title"><h2 class="ds-h2">1. 숫자가 주인공일 때</h2><span class="ds-caption">스탯 타일 · KPI 행 — 막대 하나짜리 차트나 2조각 파이 대신</span></div>
+    <div class="section-title" id="s1"><h2 class="ds-h2">1. 숫자가 주인공일 때</h2><span class="ds-caption">스탯 타일 · KPI 행 — 막대 하나짜리 차트나 2조각 파이 대신</span></div>
     <div class="ds-kpi-row" id="kpis">
       <div id="k1"></div><div id="k2"></div><div id="k3"></div><div id="k4"></div>
     </div>
     <p class="ds-caption" style="margin: var(--sp-2) 0 0">큰 숫자는 비례 숫자(기본), 표와 축 눈금에만 tabular-nums. 델타 색은 "방향 × 오르면 좋은가"로 정한다 — 반품률은 올라가면 빨강.</p>
 
     <!-- 2. 시간 추이 -->
-    <div class="section-title"><h2 class="ds-h2">2. 시간에 따른 추이</h2><span class="ds-caption">선 · 영역 — 단일 시리즈는 범례 없이, 여러 시리즈는 범례 + 끝값 라벨</span></div>
+    <div class="section-title" id="s2"><h2 class="ds-h2">2. 시간에 따른 추이</h2><span class="ds-caption">선 · 영역 — 단일 시리즈는 범례 없이, 여러 시리즈는 범례 + 끝값 라벨</span></div>
     <div class="gallery">
       <div class="ds-card"><div class="ds-card__body"><div id="c-month"></div></div>
         <div class="rule"><b>규칙</b><span>단일 시리즈 → 범례 없음(제목이 설명). 영역 채움은 시리즈 색 10%. 끝점 마커 8px + 표면색 2px 링. 크로스헤어가 가장 가까운 x에 스냅.</span></div></div>
@@ -114,7 +115,7 @@
     </div>
 
     <!-- 3. 크기 비교 -->
-    <div class="section-title"><h2 class="ds-h2">3. 크기 비교와 구성</h2><span class="ds-caption">막대 · 누적 · 순위 · 분할 막대</span></div>
+    <div class="section-title" id="s3"><h2 class="ds-h2">3. 크기 비교와 구성</h2><span class="ds-caption">막대 · 누적 · 순위 · 분할 막대</span></div>
     <div class="gallery">
       <div class="ds-card"><div class="ds-card__body"><div id="c-region"></div></div>
         <div class="rule"><b>규칙</b><span>명목 범주(지역)는 전부 1번 색 하나. 값이 크다고 더 진하게 칠하지 않는다(막대 길이가 이미 말한다). 막대 ≤24px, 끝 4px 라운드, 기준선은 직각. 최댓값만 직접 라벨.</span></div></div>
@@ -135,7 +136,7 @@
     </div>
 
     <!-- 4. 크기 그리드 / 극성 -->
-    <div class="section-title"><h2 class="ds-h2">4. 크기 그리드와 극성</h2><span class="ds-caption">히트맵(순차형 한 색) · 발산 막대(두 색 + 회색 중앙)</span></div>
+    <div class="section-title" id="s4"><h2 class="ds-h2">4. 크기 그리드와 극성</h2><span class="ds-caption">히트맵(순차형 한 색) · 발산 막대(두 색 + 회색 중앙)</span></div>
     <div class="gallery">
       <div class="ds-card"><div class="ds-card__body"><div id="c-heat"></div></div>
         <div class="rule"><b>순차형</b><span>크기는 한 색(틸) 연함→진함. 무지개 금지. 스케일 범례 필수, 값은 툴팁과 표에.</span></div></div>
@@ -144,7 +145,7 @@
     </div>
 
     <!-- 5. 마킹 -->
-    <div class="section-title"><h2 class="ds-h2">5. 마킹 (Spotfire식 선택)</h2><span class="ds-caption">차트에서 고르면 다른 뷰가 따라온다 — onSelect</span></div>
+    <div class="section-title" id="s5"><h2 class="ds-h2">5. 마킹 (Spotfire식 선택)</h2><span class="ds-caption">차트에서 고르면 다른 뷰가 따라온다 — onSelect</span></div>
     <div class="gallery">
       <div class="ds-card span-4"><div class="ds-card__body"><div id="c-mark"></div></div>
         <div class="rule"><b>조작</b><span>막대 클릭 = 마킹, Shift+클릭 = 추가 선택, 다시 클릭 = 해제. 키보드: Tab으로 막대 이동, Enter로 선택. 선택되지 않은 막대는 가라앉고 선택된 막대엔 --chart-mark 링.</span></div></div>
@@ -163,7 +164,7 @@
     </div>
 
     <!-- 6. 팔레트 -->
-    <div class="section-title"><h2 class="ds-h2">6. 팔레트</h2><span class="ds-caption">범주형 8색 고정 순서 · 라이트/다크 각각 색약 검증 통과</span></div>
+    <div class="section-title" id="s6"><h2 class="ds-h2">6. 팔레트</h2><span class="ds-caption">범주형 8색 고정 순서 · 라이트/다크 각각 색약 검증 통과</span></div>
     <div class="ds-card"><div class="ds-card__body ds-stack">
       <div class="palette" id="palette"></div>
       <p class="ds-caption">4번(옐로)은 라이트 모드에서 흰 표면 대비 2.3:1 — 직접 라벨이나 표 뷰를 반드시 같이 둔다. 상태색(ok/warn/danger)은 시리즈에 쓰지 않는다. 검증: <code>node scripts/validate_palette.js "…" --mode light</code></p>
@@ -174,7 +175,7 @@ DSCharts.stat(el, { label: '반품률', value: 0.034, format: 'percent', delta: 
     </div></div>
 
     <!-- 7. 하지 말 것 -->
-    <div class="section-title"><h2 class="ds-h2">7. 하지 말 것</h2><span class="ds-caption">실제 대시보드에서 잡힌 것들</span></div>
+    <div class="section-title" id="s7"><h2 class="ds-h2">7. 하지 말 것</h2><span class="ds-caption">실제 대시보드에서 잡힌 것들</span></div>
     <div class="dont">
       <div class="item"><span class="no">✕ 이중 y축.</span> 두 눈금의 정렬은 임의라서 없는 상관관계를 만든다. <span class="yes">○</span> 차트 둘로 나누거나 공통 기준(=100)으로 지수화.</div>
       <div class="item"><span class="no">✕ 순위대로 색 다시 칠하기.</span> 필터하면 살아남은 시리즈 색이 바뀐다. <span class="yes">○</span> 색은 개체를 따른다.</div>
@@ -273,5 +274,6 @@ DSCharts.stat(el, { label: '반품률', value: 0.034, format: 'percent', delta: 
   renderAll();
 })();
 </script>
+<script src="../js/ds-sitenav.js"></script>
 </body>
 </html>

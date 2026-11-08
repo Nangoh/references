@@ -31,6 +31,8 @@
 
 ## 사이드바
 
+레퍼런스 사이트의 사이드바는 `js/ds-sitenav.js`가 그린다(섹션 › 페이지 › 페이지 안 목차, 현재 위치 강조, 좁은 폭에서는 헤더 ☰ 드로어). 사내 시스템에서도 같은 클래스를 쓰면 된다: 페이지 안 목차는 `.ds-sidebar__tree > .ds-sidebar__item--sub`, 현재 그룹 표시는 `.ds-sidebar__group.is-here`.
+
 ```html
 <aside class="ds-sidebar">
   <a class="ds-sidebar__item is-active" href="#">승인 대기</a>
