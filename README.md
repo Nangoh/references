@@ -63,7 +63,7 @@ GPT 6.1 sol, GLM-5.3 flash 같은 모델이 화면을 생성할 때 이 저장�
 | 컴포넌트 쇼케이스 | https://nangoh.github.io/references/examples/showcase.html | 모든 컴포넌트, 라이트/다크 |
 | 차트 갤러리 | https://nangoh.github.io/references/examples/charts.html | DSCharts 전 종류, 표 뷰, 툴팁 |
 | 운영 대시보드 | https://nangoh.github.io/references/examples/dashboard.html | 셸 + KPI + 차트 + 테이블 조립 예 |
-| Spotfire식 탐색기 | https://nangoh.github.io/references/examples/explorer.html | 마킹, 교차 필터, 드릴다운, 상세 표, 피벗 |
+| Spotfire식 탐색기 | https://nangoh.github.io/references/examples/explorer.html | 마킹, 마킹 계층(마킹 안으로 드릴), 차트별 데이터 범위, 교차 필터, 드릴다운, 상세 표, 피벗 |
 | 드릴다운 | https://nangoh.github.io/references/examples/drilldown.html | 계층 드릴다운 단독 예 |
 
 예시 데이터는 `examples/data/sales.csv`(2025–2026 지점별 판매, 약 4,300행, 합성)입니다. 실제 수치가 아닙니다.

@@ -45,6 +45,18 @@
   .xp-card-head .ds-breadcrumb { margin-top: 2px; }
   .xp-card-head .ds-breadcrumb a { cursor: pointer; }
   .xp-detail { margin-top: var(--sp-4); }
+  /* 마킹 계층(마킹 안으로 드릴한 경로) */
+  .xp-markpath { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); margin-top: var(--sp-3); padding: var(--sp-2) var(--sp-3); background: var(--accent-soft); border: 1px solid var(--accent-soft-2); border-radius: var(--r-md); font-size: var(--text-sm); }
+  .xp-markpath[hidden] { display: none; }
+  .xp-markpath .ds-label { margin-right: var(--sp-1); }
+  .xp-markpath .ds-breadcrumb { flex: 1 1 auto; min-width: 0; }
+  .xp-markpath .ds-breadcrumb a { cursor: pointer; }
+  .xp-markpath .cnt { color: var(--fg-muted); font-variant-numeric: tabular-nums; font-size: var(--text-xs); }
+  /* 차트별 데이터 범위(마킹으로 제한) */
+  .xp-limit { height: 24px; font-size: var(--text-xs); padding: 0 24px 0 var(--sp-2); border-radius: var(--r-sm); background-position: right 6px center; color: var(--fg-2); }
+  .xp-limit.is-limited { color: var(--accent-text); border-color: var(--accent); background-color: var(--accent-soft); }
+  .xp-card-head .ds-card__actions { gap: var(--sp-2); flex-shrink: 0; }
+  .xp-card-head .xp-legend-note { white-space: nowrap; }
   .xp-grid { height: 420px; width: 100%; }
   .xp-pivot { height: 480px; width: 100%; display: block; border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; }
   .xp-pivot-note { padding: var(--sp-2) 0; font-size: var(--text-xs); color: var(--fg-muted); }
@@ -152,12 +164,18 @@
     <div class="ds-page-header">
       <div>
         <h1 class="ds-page-title">판매 분석</h1>
-        <p class="ds-page-sub">차트를 클릭하면 <b>마킹</b>, Shift+클릭은 추가, 우클릭은 메뉴, 지역 막대는 <b>드릴다운</b>됩니다. 마킹된 행은 아래 상세 보기에 나타납니다.</p>
+        <p class="ds-page-sub">차트를 클릭하면 <b>마킹</b>, Shift+클릭은 추가, 우클릭은 메뉴, 지역 막대는 <b>드릴다운</b>됩니다. 마킹 바의 <b>마킹 안으로 드릴</b>을 누르면 마킹이 한 단계가 되어 그 안에서 다시 마킹할 수 있고(마킹 계층), 각 차트는 오른쪽 위에서 <b>데이터 범위</b>(전체 / 마킹만 / 마킹 제외)를 따로 정합니다.</p>
       </div>
       <div class="ds-page-header__actions">
-        <label class="ds-switch" title="Spotfire 의 'Limit data using markings'"><input type="checkbox" id="sw-marked-only"><span class="ds-switch__track"></span>마킹된 데이터만 보기</label>
+        <label class="ds-switch" title="모든 차트의 데이터 범위를 '마킹만'으로 (Spotfire: Limit data using markings). 차트별로는 카드 오른쪽 위에서 따로 정합니다."><input type="checkbox" id="sw-marked-only"><span class="ds-switch__track"></span>모든 차트 마킹만 보기</label>
         <button class="ds-btn ds-btn--sm" id="btn-reset-all" type="button">전체 초기화</button>
       </div>
+    </div>
+
+    <div class="xp-markpath" id="markpath" hidden role="navigation" aria-label="마킹 계층">
+      <span class="ds-label">마킹 계층</span>
+      <nav class="ds-breadcrumb" id="bc-mark"></nav>
+      <button class="ds-btn ds-btn--ghost ds-btn--sm" id="btn-mark-up" type="button" title="한 단계 위 마킹으로">↑ 한 단계 위</button>
     </div>
 
     <div class="ds-filter-row" id="active-filters" hidden>
@@ -175,7 +193,7 @@
       <div class="ds-card span-8">
         <div class="ds-card__header xp-card-head">
           <div><h3 class="ds-card__title">월별 매출 추이</h3><p class="ds-card__sub">클릭: 해당 월 마킹 · 툴박스의 브러시로 기간 마킹 · 하단 슬라이더로 확대</p></div>
-          <div class="ds-card__actions"><span class="xp-legend-note"><i class="on"></i>마킹 <i></i>나머지</span></div>
+          <div class="ds-card__actions"><span class="xp-legend-note"><i class="on"></i>마킹 <i></i>나머지</span><select class="ds-select xp-limit" data-chart="c-trend" aria-label="데이터 범위" title="이 차트의 데이터 범위 (Spotfire: 마킹으로 데이터 제한)"><option value="all">전체</option><option value="marked">마킹만</option><option value="unmarked">마킹 제외</option></select></div>
         </div>
         <div class="ds-card__body"><div class="xp-plot" id="c-trend"></div></div>
       </div>
@@ -185,16 +203,16 @@
             <h3 class="ds-card__title" id="c-region-title">지역별 매출</h3>
             <nav class="ds-breadcrumb" id="bc-region" aria-label="드릴 경로"></nav>
           </div>
-          <div class="ds-card__actions"><button class="ds-btn ds-btn--ghost ds-btn--sm" id="btn-drill-up" type="button" hidden>↑ 드릴업</button></div>
+          <div class="ds-card__actions"><button class="ds-btn ds-btn--ghost ds-btn--sm" id="btn-drill-up" type="button" hidden>↑ 드릴업</button><select class="ds-select xp-limit" data-chart="c-region" aria-label="데이터 범위" title="이 차트의 데이터 범위 (Spotfire: 마킹으로 데이터 제한)"><option value="all">전체</option><option value="marked">마킹만</option><option value="unmarked">마킹 제외</option></select></div>
         </div>
         <div class="ds-card__body"><div class="xp-plot" id="c-region"></div></div>
       </div>
       <div class="ds-card span-4">
-        <div class="ds-card__header xp-card-head"><div><h3 class="ds-card__title">카테고리별 매출 비중</h3><p class="ds-card__sub">순위 막대 (도넛 대신)</p></div></div>
+        <div class="ds-card__header xp-card-head"><div><h3 class="ds-card__title">카테고리별 매출 비중</h3><p class="ds-card__sub">순위 막대 (도넛 대신)</p></div><div class="ds-card__actions"><select class="ds-select xp-limit" data-chart="c-category" aria-label="데이터 범위" title="이 차트의 데이터 범위 (Spotfire: 마킹으로 데이터 제한)"><option value="all">전체</option><option value="marked">마킹만</option><option value="unmarked">마킹 제외</option></select></div></div>
         <div class="ds-card__body"><div class="xp-plot" id="c-category"></div></div>
       </div>
       <div class="ds-card span-4">
-        <div class="ds-card__header xp-card-head"><div><h3 class="ds-card__title">채널별 판매 수량</h3><p class="ds-card__sub">카테고리 누적 · 세그먼트 클릭 = 채널×카테고리 마킹</p></div></div>
+        <div class="ds-card__header xp-card-head"><div><h3 class="ds-card__title">채널별 판매 수량</h3><p class="ds-card__sub">카테고리 누적 · 세그먼트 클릭 = 채널×카테고리 마킹</p></div><div class="ds-card__actions"><select class="ds-select xp-limit" data-chart="c-channel" aria-label="데이터 범위" title="이 차트의 데이터 범위 (Spotfire: 마킹으로 데이터 제한)"><option value="all">전체</option><option value="marked">마킹만</option><option value="unmarked">마킹 제외</option></select></div></div>
         <div class="ds-card__body"><div class="xp-plot" id="c-channel"></div></div>
       </div>
       <div class="ds-card span-4">
@@ -203,7 +221,7 @@
             <h3 class="ds-card__title" id="c-heat-title">지점 × 카테고리 매출</h3>
             <nav class="ds-breadcrumb" id="bc-heat" aria-label="드릴 경로"></nav>
           </div>
-          <div class="ds-card__actions"><button class="ds-btn ds-btn--ghost ds-btn--sm" id="btn-heat-up" type="button" hidden>↑ 드릴업</button></div>
+          <div class="ds-card__actions"><button class="ds-btn ds-btn--ghost ds-btn--sm" id="btn-heat-up" type="button" hidden>↑ 드릴업</button><select class="ds-select xp-limit" data-chart="c-heat" aria-label="데이터 범위" title="이 차트의 데이터 범위 (Spotfire: 마킹으로 데이터 제한)"><option value="all">전체</option><option value="marked">마킹만</option><option value="unmarked">마킹 제외</option></select></div>
         </div>
         <div class="ds-card__body"><div class="xp-plot tall" id="c-heat"></div></div>
       </div>
@@ -235,7 +253,8 @@
 <!-- 마킹 바 -->
 <div class="ds-marking-bar" id="marking-bar" hidden role="status">
   <span><span class="ds-marking-bar__count" id="mark-count">0</span>행 마킹</span>
-  <button class="ds-btn ds-btn--sm" id="btn-mark-filter" type="button" title="마킹을 필터로 전환 (Spotfire: limit data by marking)">필터로 전환</button>
+  <button class="ds-btn ds-btn--primary ds-btn--sm" id="btn-mark-drill" type="button" title="이 마킹을 한 단계로 고정하고 그 안에서 다시 마킹 (마킹 계층)">마킹 안으로 드릴 ↓</button>
+  <button class="ds-btn ds-btn--sm" id="btn-mark-filter" type="button" title="마킹을 필터 칩으로 전환 (계층 없이)">필터 칩으로</button>
   <button class="ds-btn ds-btn--sm" id="btn-mark-clear" type="button">해제</button>
 </div>
 
@@ -272,9 +291,13 @@ function toast(title, msg, kind = 'info') {
 const state = {
   filters: { from: null, to: null, region: [], category: [], channel: [], revPct: [0, 100], returned: false, discount: null, extra: [] },
   marking: [],            // [{ label, sql }] — OR 로 결합. Spotfire 마킹과 동일 의미
-  markedOnly: false,      // 마킹된 데이터만 보기 (Limit data using markings)
+  markedOnly: false,      // 모든 차트 '마킹만' (Limit data using markings 일괄)
+  markStack: [],          // 마킹 계층: [{ label, sql, n }] — 각 단계가 AND 로 누적. 마킹 안으로 드릴한 경로
+  limit: {},              // 차트별 데이터 범위: { 'c-trend': 'all'|'marked'|'unmarked' } (Spotfire 마킹 스킴의 '마킹으로 제한')
   drill: { region: [] , heat: null },   // region: [] | [지역] | [지역, 지점]  / heat: null | 지점명
 };
+const CHART_IDS = ['c-trend', 'c-region', 'c-category', 'c-channel', 'c-heat'];
+const limitOf = id => state.limit[id] || 'all';
 let dims = {};            // 차원 목록 + 전체 카운트
 let revQuantiles = [];    // 0..100 백분위 → 매출값
 
@@ -300,11 +323,14 @@ function whereFilters(f = state.filters, { skip = [] } = {}) {
   if (f.returned) w.push(`returned = 1`);
   if (f.discount) w.push(`discount_rate BETWEEN ${f.discount[0]} AND ${f.discount[1]}`);
   for (const x of f.extra) w.push(`(${x.sql})`);
+  if (!skip.includes('stack')) for (const lv of state.markStack) w.push(`(${lv.sql})`);   // 마킹 계층: 상위 단계들이 데이터 범위를 좁힌다
   return w.length ? w.join(' AND ') : '1=1';
 }
 const whereMarking = () => state.marking.length ? state.marking.map(m => `(${m.sql})`).join(' OR ') : null;
 /** 시각화 베이스: 마킹된 데이터만 보기가 켜져 있으면 마킹도 필터처럼 */
 function whereBase() { const f = whereFilters(); const m = whereMarking(); return state.markedOnly && m ? `${f} AND (${m})` : f; }
+/** 차트별 베이스: 그 차트의 데이터 범위 설정(전체/마킹만/마킹 제외)을 적용. 마킹이 없으면 '전체'와 같다 */
+function whereFor(id) { const f = whereFilters(); const m = whereMarking(); const l = limitOf(id); if (!m || l === 'all') return f; return l === 'marked' ? `${f} AND (${m})` : `${f} AND NOT (${m})`; }
 /** 마킹 플래그 컬럼 (집계에서 마킹/비마킹 분리) */
 const markExpr = () => { const m = whereMarking(); return m ? `CASE WHEN ${m} THEN 1 ELSE 0 END` : '0'; };
 
@@ -345,8 +371,8 @@ async function buildFilterPanel() {
   for (const id of ['rev-min', 'rev-max']) $('#' + id).addEventListener('input', () => { updateRangeLabels(); onRange(); });
   $('#f-returned').addEventListener('change', e => { state.filters.returned = e.target.checked; refresh(); });
   $('#btn-reset').addEventListener('click', () => { resetFilters(); refresh(); });
-  $('#btn-reset-all').addEventListener('click', () => { resetFilters(); state.marking = []; state.drill = { region: [], heat: null }; state.markedOnly = false; $('#sw-marked-only').checked = false; refresh(); });
-  $('#sw-marked-only').addEventListener('change', e => { state.markedOnly = e.target.checked; refresh(); });
+  $('#btn-reset-all').addEventListener('click', () => { resetFilters(); state.marking = []; state.markStack = []; state.limit = {}; state.drill = { region: [], heat: null }; state.markedOnly = false; $('#sw-marked-only').checked = false; refresh(); });
+  $('#sw-marked-only').addEventListener('change', e => { state.markedOnly = e.target.checked; for (const id of CHART_IDS) state.limit[id] = e.target.checked ? 'marked' : 'all'; refresh(); });
 }
 function updateRangeLabels() {
   let a = +$('#rev-min').value, b = +$('#rev-max').value; if (a > b) [a, b] = [b, a];
@@ -410,9 +436,40 @@ function markingToFilter() {
   if (!state.marking.length) return;
   state.filters.extra.push({ label: state.marking.map(m => m.label).join(' | '), sql: whereMarking() });
   state.marking = []; refresh();
-  toast('필터로 전환됨', '마킹 조건이 필터 칩으로 이동했습니다.', 'ok');
+  toast('필터 칩으로 전환됨', '마킹 조건이 필터 칩으로 이동했습니다.', 'ok');
+}
+/** 마킹 안으로 드릴: 현재 마킹을 계층의 한 단계로 고정하고(AND), 그 안에서 새로 마킹한다 */
+function drillIntoMarking() {
+  if (!state.marking.length) return;
+  const n = Number(($('#mark-count').textContent || '0').replace(/[^\d]/g, '')) || 0;
+  state.markStack.push({ label: state.marking.map(m => m.label).join(' | '), sql: whereMarking(), n });
+  state.marking = []; refresh();
+  toast(`마킹 ${state.markStack.length}단계`, `${fmtInt(n)}행 안에서 다시 마킹할 수 있습니다. 위 "마킹 계층"에서 되돌아갑니다.`, 'ok');
+}
+/** 마킹 계층을 level 단계까지만 남긴다 (0 = 전체) */
+function markStackTo(level) { state.markStack = state.markStack.slice(0, Math.max(0, level)); state.marking = []; refresh(); }
+function renderMarkCrumb() {
+  const st = state.markStack, wrap = $('#markpath'), nav = $('#bc-mark'); nav.innerHTML = '';
+  wrap.hidden = st.length === 0; if (!st.length) return;
+  const crumb = (text, i, last, cnt) => {
+    if (i) { const sp = document.createElement('span'); sp.className = 'ds-breadcrumb__sep'; sp.textContent = '›'; nav.appendChild(sp); }
+    const a = document.createElement(last ? 'span' : 'a'); a.textContent = text;
+    if (last) a.setAttribute('aria-current', 'page'); else { a.href = '#'; a.title = '이 단계로 돌아가기'; a.addEventListener('click', e => { e.preventDefault(); markStackTo(i); }); }
+    nav.appendChild(a);
+    if (cnt != null) { const c = document.createElement('span'); c.className = 'cnt'; c.textContent = ` ${fmtInt(cnt)}행`; nav.appendChild(c); }
+  };
+  crumb('전체', 0, false, null);
+  st.forEach((lv, i) => crumb(`마킹 ${i + 1}: ${lv.label}`, i + 1, i === st.length - 1, lv.n));
 }
 $('#btn-mark-clear').addEventListener('click', clearMarking);
+$('#btn-mark-drill').addEventListener('click', drillIntoMarking);
+$('#btn-mark-up').addEventListener('click', () => markStackTo(state.markStack.length - 1));
+/* 차트별 데이터 범위 */
+function syncLimitUI() {
+  for (const sel of $$('.xp-limit')) { sel.value = limitOf(sel.dataset.chart); sel.classList.toggle('is-limited', sel.value !== 'all'); }
+  const allMarked = CHART_IDS.every(id => limitOf(id) === 'marked'); state.markedOnly = allMarked; $('#sw-marked-only').checked = allMarked;
+}
+for (const sel of $$('.xp-limit')) sel.addEventListener('change', () => { state.limit[sel.dataset.chart] = sel.value; refresh({ keepDrill: true }); });
 $('#btn-mark-filter').addEventListener('click', markingToFilter);
 
 /* ============================================================
@@ -625,7 +682,10 @@ function openCtx(ev, chartId, p) {
     if (!state.drill.heat) items.push({ sep: true }, { label: '드릴다운 → 월별', run: () => { state.drill.heat = heatRows[p.dataIndex].y; refresh({ keepDrill: true }); } });
     else items.push({ sep: true }, { label: '드릴업', run: () => { state.drill.heat = null; refresh({ keepDrill: true }); } });
   }
-  if (state.marking.length) items.push({ sep: true }, { label: '마킹 해제', run: clearMarking }, { label: '마킹을 필터로 전환', run: markingToFilter });
+  if (state.marking.length) items.push({ sep: true }, { label: '마킹 안으로 드릴 ↓ (마킹 계층)', run: drillIntoMarking }, { label: '마킹을 필터 칩으로', run: markingToFilter }, { label: '마킹 해제', run: clearMarking });
+  if (state.markStack.length) items.push({ label: `마킹 계층 한 단계 위 (${state.markStack.length}→${state.markStack.length - 1})`, run: () => markStackTo(state.markStack.length - 1) });
+  const lim = limitOf(chartId);
+  items.push({ sep: true }, ...[['all', '이 차트: 전체'], ['marked', '이 차트: 마킹만'], ['unmarked', '이 차트: 마킹 제외']].filter(([v]) => v !== lim).map(([v, label]) => ({ label, run: () => { state.limit[chartId] = v; refresh({ keepDrill: true }); } })));
   ctx.innerHTML = '';
   for (const it of items) {
     if (it.sep) { const hr = document.createElement('hr'); hr.className = 'ds-menu__sep'; ctx.appendChild(hr); continue; }
@@ -745,13 +805,15 @@ function syncVgFilter() {
    9. 북마크 (URL 해시) — 필터 + 드릴 + 마킹
    ============================================================ */
 function writeHash() {
-  try { const s = btoa(unescape(encodeURIComponent(JSON.stringify({ f: state.filters, m: state.marking, d: state.drill, o: state.markedOnly })))); history.replaceState(null, '', '#f=' + s); } catch {}
+  try { const s = btoa(unescape(encodeURIComponent(JSON.stringify({ f: state.filters, m: state.marking, d: state.drill, o: state.markedOnly, s: state.markStack, l: state.limit })))); history.replaceState(null, '', '#f=' + s); } catch {}
 }
 function readHash() {
   try {
     const m = /[#&]f=([^&]+)/.exec(location.hash); if (!m) return false;
     const o = JSON.parse(decodeURIComponent(escape(atob(m[1]))));
     if (o.f) state.filters = { ...state.filters, ...o.f }; if (o.m) state.marking = o.m; if (o.d) state.drill = o.d; state.markedOnly = !!o.o;
+    if (Array.isArray(o.s)) state.markStack = o.s; if (o.l && typeof o.l === 'object') state.limit = o.l;
+    if (state.markedOnly && !Object.keys(state.limit).length) for (const id of CHART_IDS) state.limit[id] = 'marked';
     return true;
   } catch { return false; }
 }
@@ -771,7 +833,8 @@ async function refresh(opts = {}) {
   document.body.classList.add('is-busy'); $$('.xp-plot, #grid').forEach(el => el.classList.add('is-refreshing'));
   try {
     const base = whereBase(); const mk = markExpr(); const hasMark = state.marking.length > 0;
-    renderActiveChips(); renderRegionCrumb(); renderHeatCrumb(); if (!opts.fromBrush) syncVgFilter();
+    renderActiveChips(); renderRegionCrumb(); renderHeatCrumb(); renderMarkCrumb(); syncLimitUI(); if (!opts.fromBrush) syncVgFilter();
+    const B = Object.fromEntries(CHART_IDS.map(id => [id, whereFor(id)]));   // 차트별 데이터 범위
 
     // KPI (+ 전 기간 대비 delta: 같은 길이의 직전 구간)
     const [k] = await query(`SELECT sum(revenue)::DOUBLE rev, sum("cost")::DOUBLE cst, sum(units)::DOUBLE units, avg(returned) ret, count(*) n, CAST(min(date) AS VARCHAR) mn, CAST(max(date) AS VARCHAR) mx FROM sales WHERE ${base}`);
@@ -787,15 +850,16 @@ async function refresh(opts = {}) {
     } else for (const id of ['k-rev-d', 'k-margin-d', 'k-units-d', 'k-ret-d']) $('#' + id).textContent = '';
 
     // 차트 데이터
-    trend = await query(`SELECT CAST(date_trunc('month', date) AS VARCHAR) m, sum(revenue)::DOUBLE total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END)::DOUBLE marked FROM sales WHERE ${base} GROUP BY 1 ORDER BY 1`);
+    trend = await query(`SELECT CAST(date_trunc('month', date) AS VARCHAR) m, sum(revenue)::DOUBLE total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END)::DOUBLE marked FROM sales WHERE ${B['c-trend']} GROUP BY 1 ORDER BY 1`);
     const rf = regionField(); const d = state.drill.region;
-    const rw = d.length === 0 ? base : d.length === 1 ? `${base} AND region = '${esc(d[0])}'` : `${base} AND branch = '${esc(d[1])}'`;
+    const rb = B['c-region'];
+    const rw = d.length === 0 ? rb : d.length === 1 ? `${rb} AND region = '${esc(d[0])}'` : `${rb} AND branch = '${esc(d[1])}'`;
     regionRows = await query(`SELECT ${rf} k, sum(revenue)::DOUBLE total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END)::DOUBLE marked FROM sales WHERE ${rw} GROUP BY 1 ORDER BY total DESC`);
-    catRows = await query(`SELECT category k, sum(revenue)::DOUBLE total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END)::DOUBLE marked FROM sales WHERE ${base} GROUP BY 1 ORDER BY total DESC`);
-    chRows = await query(`SELECT channel, category, sum(units)::DOUBLE units, sum(CASE WHEN (${mk})=1 THEN units ELSE 0 END)::DOUBLE marked FROM sales WHERE ${base} GROUP BY 1,2 ORDER BY 1,2`);
+    catRows = await query(`SELECT category k, sum(revenue)::DOUBLE total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END)::DOUBLE marked FROM sales WHERE ${B['c-category']} GROUP BY 1 ORDER BY total DESC`);
+    chRows = await query(`SELECT channel, category, sum(units)::DOUBLE units, sum(CASE WHEN (${mk})=1 THEN units ELSE 0 END)::DOUBLE marked FROM sales WHERE ${B['c-channel']} GROUP BY 1,2 ORDER BY 1,2`);
     heatRows = state.drill.heat
-      ? await query(`SELECT CAST(date_trunc('month', date) AS VARCHAR) x, category y, sum(revenue)::DOUBLE total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END)::DOUBLE marked FROM sales WHERE ${base} AND branch = '${esc(state.drill.heat)}' GROUP BY 1,2 ORDER BY 1,2`)
-      : await query(`SELECT category x, branch y, sum(revenue)::DOUBLE total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END)::DOUBLE marked FROM sales WHERE ${base} GROUP BY 1,2 ORDER BY y, x`);
+      ? await query(`SELECT CAST(date_trunc('month', date) AS VARCHAR) x, category y, sum(revenue)::DOUBLE total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END)::DOUBLE marked FROM sales WHERE ${B['c-heat']} AND branch = '${esc(state.drill.heat)}' GROUP BY 1,2 ORDER BY 1,2`)
+      : await query(`SELECT category x, branch y, sum(revenue)::DOUBLE total, sum(CASE WHEN (${mk})=1 THEN revenue ELSE 0 END)::DOUBLE marked FROM sales WHERE ${B['c-heat']} GROUP BY 1,2 ORDER BY y, x`);
     for (const id of ['c-trend', 'c-region', 'c-category', 'c-channel', 'c-heat']) charts[id].setOption(({ 'c-trend': trendOption, 'c-region': regionOption, 'c-category': categoryOption, 'c-channel': channelOption, 'c-heat': heatOption })[id](), { replaceMerge: ['series'] });
 
     // 마킹 바 + 상세 보기
@@ -806,7 +870,8 @@ async function refresh(opts = {}) {
     const rows = await query(`SELECT CAST(date AS VARCHAR) date, region, branch, category, product, channel, units, revenue, "cost", round((revenue-"cost")*1.0/revenue, 4) margin, discount_rate, returned FROM sales WHERE ${mwhere} ORDER BY date DESC, revenue DESC LIMIT ${CAP}`);
     gridApi.setGridOption('rowData', rows);
     $('#detail-count').textContent = fmtInt(mc.n);
-    $('#detail-note').textContent = hasMark ? `마킹된 ${fmtInt(mc.n)}행` : `필터된 ${fmtInt(mc.n)}행${mc.n > CAP ? ` (상위 ${fmtInt(CAP)}행만 표시)` : ''}`;
+    const lvl = state.markStack.length ? ` · 마킹 ${state.markStack.length}단계 안` : '';
+    $('#detail-note').textContent = (hasMark ? `마킹된 ${fmtInt(mc.n)}행` : `필터된 ${fmtInt(mc.n)}행${mc.n > CAP ? ` (상위 ${fmtInt(CAP)}행만 표시)` : ''}`) + lvl;
     pivotDirty = true; if (pivotActive) refreshPivot();
     writeHash();
   } catch (e) { console.error(e); toast('조회 오류', e.message, 'danger'); }

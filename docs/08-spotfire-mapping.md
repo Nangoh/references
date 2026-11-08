@@ -85,6 +85,38 @@ function markingToFilter() {
 const whereBase = () => state.markedOnly && whereMarking() ? `${whereFilters()} AND (${whereMarking()})` : whereFilters();
 ```
 
+### 3-3b. 마킹 계층 — 마킹 안으로 드릴 (Spotfire: 마킹으로 제한을 여러 번 겹치기)
+
+마킹을 "한 단계"로 고정하고 그 안에서 다시 마킹한다. 단계는 `state.markStack` 배열에 쌓이고 WHERE 에 AND 로 누적된다. 브레드크럼(`전체 › 마킹 1 › 마킹 2`)을 누르면 그 단계까지만 남긴다. 북마크(해시)에 같이 저장된다.
+
+```js
+state.markStack = [];                                   // [{ label, sql, n }]
+function drillIntoMarking() {                           // 마킹 바의 "마킹 안으로 드릴 ↓"
+  state.markStack.push({ label: markLabel(), sql: whereMarking(), n: markedCount });
+  state.marking = []; refresh();
+}
+function markStackTo(level) { state.markStack = state.markStack.slice(0, level); state.marking = []; refresh(); }
+function whereFilters() { /* ...필터... */ for (const lv of state.markStack) w.push(`(${lv.sql})`); return w.join(' AND '); }
+```
+
+"필터 칩으로 전환"(3-3)은 순서 없는 칩, "마킹 안으로 드릴"은 순서 있는 계층이다. 되돌아갈 경로가 필요하면 후자를 쓴다.
+
+### 3-3c. 차트별 데이터 범위 — 마킹으로 제한 (Spotfire: Limit data using markings, 시각화별)
+
+차트마다 `전체 / 마킹만 / 마킹 제외`를 고른다. 각 차트의 집계 쿼리가 자기 WHERE 를 쓴다. "모든 차트 마킹만 보기" 스위치는 다섯 차트를 한 번에 `marked` 로 바꾸는 단축키일 뿐이다.
+
+```js
+state.limit = {};                                       // { 'c-trend': 'all'|'marked'|'unmarked' }
+function whereFor(id) {
+  const f = whereFilters(), m = whereMarking(), l = state.limit[id] || 'all';
+  if (!m || l === 'all') return f;                      // 마킹이 없으면 '전체'와 같다 (빈 화면 대신)
+  return l === 'marked' ? `${f} AND (${m})` : `${f} AND NOT (${m})`;
+}
+// refresh(): const B = Object.fromEntries(CHART_IDS.map(id => [id, whereFor(id)])); ... WHERE ${B['c-trend']}
+```
+
+마킹 "제외"는 Spotfire 에 없는 보너스다. "마킹한 것 빼고 나머지는 어떤가"를 바로 본다. 우클릭 메뉴에도 같은 항목이 있다.
+
 ### 3-4. 드릴다운 상태머신 + 브레드크럼
 
 ```js
