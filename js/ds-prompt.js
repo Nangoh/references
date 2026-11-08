@@ -44,15 +44,44 @@
     rulesCache = FALLBACK_RULES; return rulesCache;
   }
 
+  /* ---------- 라이브러리 소스 포함 (네트워크 없는 사내 세션용) ---------- */
+  const SRC_CORE = ['tokens/tokens.css', 'css/ds.css', 'js/ds-theme.js', 'js/ds-charts.js'];
+  const SRC_ECHARTS = ['integrations/echarts-theme.js'];
+  const srcCache = {};
+  async function loadSources(spec) {
+    const list = SRC_CORE.concat(spec.kind in KIND_KO ? [] : SRC_ECHARTS);
+    const outp = [];
+    for (const p of list) {
+      if (!(p in srcCache)) { try { const r = await fetch(new URL('../' + p, SCRIPT_URL)); srcCache[p] = r.ok ? await r.text() : null; } catch (e) { srcCache[p] = null; } }
+      outp.push({ path: p, text: srcCache[p] });
+    }
+    return outp;
+  }
+  const pref = { get embed() { try { return localStorage.getItem('ds-prompt-embed') === '1'; } catch (e) { return false; } }, set embed(v) { try { localStorage.setItem('ds-prompt-embed', v ? '1' : '0'); } catch (e) { /* noop */ } } };
+  function sourcesSection(sources) {
+    const L = ['', '■ 라이브러리 소스 (세션에서 URL 을 못 받을 때용 — 아래 파일을 프로젝트에 같은 경로로 저장하고, 위 코드의 ../ 경로로 링크해라. 내용은 수정하지 말 것)'];
+    for (const f of sources) {
+      if (!f.text) { L.push('--- ' + f.path + ' --- (가져오지 못함: ' + BASE + f.path + ' 에서 직접 받기)'); continue; }
+      const lang = f.path.endsWith('.css') ? 'css' : 'js';
+      L.push('--- ' + f.path + ' ---'); L.push('```' + lang); L.push(f.text.trim()); L.push('```');
+    }
+    return L.join('\n');
+  }
+
   /* ---------- 스타일 (토큰만) ---------- */
   function ensureStyle() {
     if (document.getElementById('ds-prompt-style')) return;
     const s = document.createElement('style'); s.id = 'ds-prompt-style';
     s.textContent = `
 .ds-prompt-host{position:relative}
-.ds-prompt__fab{position:absolute;top:var(--sp-2,8px);right:var(--sp-2,8px);z-index:3;height:24px;padding:0 var(--sp-2,8px);font:inherit;font-size:var(--text-xs,12px);line-height:22px;color:var(--fg-2);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm,4px);cursor:pointer;display:inline-flex;align-items:center;gap:4px}
-.ds-prompt__fab:hover,.ds-chart__tool.ds-prompt__btn:hover{background:var(--accent-soft);color:var(--accent-text);border-color:var(--accent-soft-2)}
-.ds-prompt__fab:focus-visible,.ds-prompt__btn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.ds-prompt__group{display:inline-flex;gap:0}
+.ds-prompt__group>.ds-prompt__btn:first-child{border-top-right-radius:0;border-bottom-right-radius:0}
+.ds-prompt__group>.ds-prompt__more{border-top-left-radius:0;border-bottom-left-radius:0;margin-left:-1px;padding-left:6px;padding-right:6px}
+.ds-prompt__fab{position:absolute;top:var(--sp-2,8px);right:var(--sp-2,8px);z-index:3}
+.ds-prompt__fabbtn{height:24px;padding:0 var(--sp-2,8px);font:inherit;font-size:var(--text-xs,12px);line-height:22px;color:var(--fg-2);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm,4px);cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.ds-prompt__btn:hover{background:var(--accent-soft);color:var(--accent-text);border-color:var(--accent-soft-2)}
+.ds-prompt__btn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.ds-prompt__toasts{z-index:var(--z-toast,500)}
 .ds-prompt__ico{width:12px;height:12px;flex:0 0 auto}
 .ds-prompt-pop{position:absolute;top:36px;right:var(--sp-2,8px);z-index:var(--z-dropdown,200);width:min(380px,calc(100% - 16px));padding:var(--sp-3,12px) var(--sp-4,16px) var(--sp-4,16px);background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--r-md,6px);box-shadow:var(--shadow-2);font-size:var(--text-sm,13px);color:var(--fg);text-align:left}
 .ds-prompt-pop[hidden]{display:none}
@@ -65,7 +94,7 @@
 .ds-prompt-pop .ds-field__label{font-size:var(--text-xs);color:var(--fg-muted)}
 .ds-prompt-pop .ds-input,.ds-prompt-pop .ds-textarea{width:100%;height:28px;font-size:var(--text-sm);font-family:var(--font-mono)}
 .ds-prompt-pop .ds-textarea{height:auto;min-height:52px;font-family:var(--font-sans);resize:vertical}
-.ds-prompt-pop__opts{display:flex;align-items:center;gap:var(--sp-3);margin-top:var(--sp-3);font-size:var(--text-xs);color:var(--fg-2)}
+.ds-prompt-pop__opts{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2) var(--sp-3);margin-top:var(--sp-3);font-size:var(--text-xs);color:var(--fg-2)}
 .ds-prompt-pop__opts label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
 .ds-prompt-pop__actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2);margin-top:var(--sp-3)}
 .ds-prompt-pop__actions .ds-prompt-pop__status{font-size:var(--text-xs);color:var(--ok-text);margin-left:auto}
@@ -142,13 +171,14 @@
   }
 
   /* ---------- 사양 + 폼 → 프롬프트 ---------- */
-  function buildPrompt(spec, form, code, rules) {
+  function buildPrompt(spec, form, code, rules, sources) {
     const kindKo = spec.kind in KIND_KO ? KIND_KO[spec.kind] : (spec.kindLabel || spec.kind);
     const how = spec.kind in KIND_KO ? 'DSCharts.' + spec.kind : (spec.lib || 'ECharts + integrations/echarts-theme.js');
     const L = [];
-    L.push('[references 디자인 시스템 — 차트 요청]');
+    L.push('[references 디자인 시스템 — 이 차트를 내 화면에 적용해줘]');
     L.push('');
-    L.push('아래 사양으로 차트를 만들어줘. 디자인을 새로 만들지 말고, 규칙과 코드 예시를 그대로 따라. 색·글꼴·간격은 전부 토큰이 처리하니 색 옵션을 직접 넣지 마.');
+    L.push('지금 작업 중인 프로젝트/화면에 아래 차트를 추가해줘. 사내 디자인 시스템(references)의 차트라서 디자인을 새로 만들지 말고, 아래 코드와 규칙을 그대로 따라. 색·글꼴·간격은 토큰이 처리하니 색 옵션을 직접 넣지 마.');
+    L.push('순서: ① 프로젝트에 디자인 시스템 파일이 없으면 "파일 가져오기"대로 먼저 가져온다 ② 아래 코드의 x/y 필드명은 레퍼런스 샘플 데이터 기준이니 내 데이터의 컬럼명으로 바꾼다. 컬럼명을 모르면 추측하지 말고 질문 하나로 물어본다 ③ 라이트/다크 모두 확인하고 표 뷰를 유지한다.');
     L.push('');
     L.push('■ 차트');
     L.push('- 종류: ' + kindKo + ' (' + how + ')');
@@ -172,10 +202,32 @@
     if (!(spec.kind in KIND_KO)) L.push('4) ECharts 는 vendor/echarts/echarts.min.js(npm run vendor) 또는 CDN, 테마는 ' + BASE + 'integrations/echarts-theme.js');
     L.push('리포: ' + REPO + ' · 사내망에서 위 주소가 막히면 install.sh 로 받아 사내 서버에 두고 같은 경로를 쓴다.');
     if (form.rules !== false && rules) { L.push(''); L.push('■ 디자인 규칙'); L.push(rules); }
+    if (sources && sources.length) L.push(sourcesSection(sources));
     L.push('');
     L.push('■ 결과물');
     L.push('- 완성된 HTML 조각(또는 단일 HTML 페이지). 라이트/다크 둘 다 깨지지 않게. 표 뷰(tableView) 유지. 숫자 단위는 제목/라벨에.');
     return L.join('\n');
+  }
+
+  /* ---------- 토스트 (팝오버 없이 바로 복사했을 때 피드백) ---------- */
+  function toast(msg, kind) {
+    let stack = document.querySelector('.ds-toast-stack.ds-prompt__toasts');
+    if (!stack) { stack = el('div', 'ds-toast-stack ds-prompt__toasts', document.body); stack.setAttribute('aria-live', 'polite'); }
+    const t = el('div', 'ds-toast ds-toast--' + (kind || 'ok'), stack);
+    const b = el('div', 'ds-toast__body', t); el('strong', null, b, kind === 'warn' ? '복사가 막혔습니다' : '복사됨'); el('div', 'ds-toast__msg', b, msg);
+    setTimeout(() => { t.remove(); if (!stack.childElementCount) stack.remove(); }, 2800);
+  }
+  const defaultForm = (spec) => { const f = {}; fieldsFor(spec).forEach(x => { f[x.k] = x.v; }); f.desc = descFor(spec); f.extra = ''; f.rules = true; return f; };
+  async function quickCopy(mount, spec) {
+    const form = defaultForm(spec);
+    const code = (spec.kind in KIND_KO ? codeForDS : codeForTemplate)(spec, form);
+    const embed = pref.embed;
+    const text = buildPrompt(spec, form, code, await loadRules(), embed ? await loadSources(spec) : null);
+    let ok = false; try { await navigator.clipboard.writeText(text); ok = true; } catch (e) { ok = false; }
+    if (ok) { toast('사내 LLM 세션에 Ctrl+V 하면 이 차트를 적용해 만듭니다.' + (embed ? ' (라이브러리 소스 ' + Math.round(text.length / 1024) + 'KB 포함)' : ' 세션이 외부 URL 을 못 받으면 ▾ 에서 "소스 포함"을 켜세요.')); return; }
+    // 클립보드가 막힌 환경: 팝오버를 열고 미리보기에서 직접 복사
+    const pop = openPopover(mount, spec); const det = pop.querySelector('details'); if (det) det.open = true;
+    toast('아래 미리보기에서 직접 복사하세요.', 'warn');
   }
 
   /* ---------- 팝오버 ---------- */
@@ -224,7 +276,7 @@
     closeOpen();
     const pop = el('div', 'ds-popover ds-prompt-pop', host); pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', '프롬프트 만들기');
     const head = el('div', 'ds-prompt-pop__head', pop);
-    el('div', 'ds-prompt-pop__title', head, '이 차트로 프롬프트 만들기');
+    el('div', 'ds-prompt-pop__title', head, '고쳐서 복사');
     el('span', 'ds-prompt-pop__kind', head, spec.kind in KIND_KO ? 'DSCharts.' + spec.kind : (spec.lib || 'ECharts'));
     const grid = el('div', 'ds-prompt-pop__grid', pop);
     const inputs = {};
@@ -245,7 +297,10 @@
     const extra = el('textarea', 'ds-textarea', efld); extra.id = eid; extra.rows = 2; extra.placeholder = '예: 최근 12개월만, 금액은 백만원 단위, 카드 제목은 "월별 매출 추이"';
 
     const opts = el('div', 'ds-prompt-pop__opts', pop);
-    const rl = el('label', null, opts); const rules = el('input', 'ds-checkbox', rl); rules.type = 'checkbox'; rules.checked = true; rl.appendChild(document.createTextNode('디자인 규칙 요약 포함 (처음 요청할 때 켜두세요)'));
+    const rl = el('label', null, opts); const rules = el('input', 'ds-checkbox', rl); rules.type = 'checkbox'; rules.checked = true; rl.appendChild(document.createTextNode('규칙 요약 포함'));
+    const sl = el('label', null, opts); const embed = el('input', 'ds-checkbox', sl); embed.type = 'checkbox'; embed.checked = pref.embed; sl.appendChild(document.createTextNode('라이브러리 소스 포함 (외부 URL 못 받는 세션용, 기억됨)'));
+    sl.title = 'tokens.css, ds.css, ds-theme.js, ds-charts.js 원문을 프롬프트 끝에 붙입니다. 켜두면 한 번 클릭 복사에도 적용됩니다.';
+    embed.addEventListener('change', () => { pref.embed = embed.checked; if (det.open) refresh(); });
 
     const acts = el('div', 'ds-prompt-pop__actions', pop);
     const bPrompt = el('button', 'ds-btn ds-btn--primary ds-btn--sm', acts, '프롬프트 복사'); bPrompt.type = 'button';
@@ -258,7 +313,7 @@
 
     const readForm = () => { const f = {}; Object.keys(inputs).forEach(k => f[k] = inputs[k].value.trim()); f.desc = desc.value.trim(); f.extra = extra.value.trim(); f.rules = rules.checked; return f; };
     const code = () => (spec.kind in KIND_KO ? codeForDS : codeForTemplate)(spec, readForm());
-    const prompt = async () => buildPrompt(spec, readForm(), code(), rules.checked ? await loadRules() : '');
+    const prompt = async () => buildPrompt(spec, readForm(), code(), rules.checked ? await loadRules() : '', embed.checked ? await loadSources(spec) : null);
     const refresh = async () => { preview.value = await prompt(); };
     pop.addEventListener('input', () => { if (det.open) refresh(); });
     det.addEventListener('toggle', () => { if (det.open) refresh(); });
@@ -285,21 +340,19 @@
   function ensureButton(host, spec) {
     const mount = mountOf(host, spec);
     mount.classList.add('ds-prompt-host');
-    const existing = mount.querySelector(':scope > .ds-prompt__fab, :scope > .ds-chart__head .ds-chart__tools > .ds-prompt__btn');
+    const existing = mount.querySelector(':scope > .ds-prompt__fab .ds-prompt__btn, :scope > .ds-chart__head .ds-chart__tools > .ds-prompt__group > .ds-prompt__btn');
     if (existing) return existing;
     const tools = mount.querySelector(':scope > .ds-chart__head .ds-chart__tools');
-    let btn;
-    if (tools) {
-      btn = el('button', 'ds-chart__tool ds-prompt__btn', tools); btn.type = 'button';
-      btn.appendChild(icon()); btn.appendChild(document.createTextNode('프롬프트'));
-      const head = tools.closest('.ds-chart__head'); if (head && head.hidden) head.hidden = false;
-    } else {
-      btn = el('button', 'ds-prompt__fab', mount); btn.type = 'button';
-      btn.appendChild(icon()); btn.appendChild(document.createTextNode('프롬프트'));
-    }
-    btn.title = '이 차트를 쓰라고 Claude/GPT에 보낼 프롬프트를 복사합니다';
-    btn.setAttribute('aria-haspopup', 'dialog');
-    btn.addEventListener('click', e => { e.stopPropagation(); if (openPop && openPop.parentElement === mount) { closeOpen(); return; } openPopover(mount, spec); });
+    const inTools = !!tools;
+    const group = el('span', inTools ? 'ds-prompt__group' : 'ds-prompt__group ds-prompt__fab', inTools ? tools : mount);
+    const btn = el('button', inTools ? 'ds-chart__tool ds-prompt__btn' : 'ds-prompt__fabbtn ds-prompt__btn', group); btn.type = 'button';
+    btn.appendChild(icon()); btn.appendChild(document.createTextNode('복사'));
+    btn.title = '클릭 한 번: 이 차트를 적용하라는 프롬프트(사양+코드+규칙)를 복사합니다. 사내 LLM 세션에 Ctrl+V.';
+    const more = el('button', inTools ? 'ds-chart__tool ds-prompt__btn ds-prompt__more' : 'ds-prompt__fabbtn ds-prompt__btn ds-prompt__more', group, '▾'); more.type = 'button';
+    more.title = 'x/y/제목/데이터 설명을 고쳐서 복사'; more.setAttribute('aria-label', '프롬프트 옵션'); more.setAttribute('aria-haspopup', 'dialog');
+    if (inTools) { const head = tools.closest('.ds-chart__head'); if (head && head.hidden) head.hidden = false; }
+    btn.addEventListener('click', e => { e.stopPropagation(); closeOpen(); quickCopy(mount, spec); });
+    more.addEventListener('click', e => { e.stopPropagation(); if (openPop && openPop.parentElement === mount) { closeOpen(); return; } openPopover(mount, spec); });
     return btn;
   }
 

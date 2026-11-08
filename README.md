@@ -107,15 +107,19 @@ DS_BASE=https://design.internal.example/ sh install.sh ./public/ds
 개별 파일은 `https://nangoh.github.io/references/js/ds-charts.js` 처럼 리포 경로 그대로, CDN 이 필요하면 `https://cdn.jsdelivr.net/gh/Nangoh/references@main/js/ds-charts.js`.
 
 
-## 레퍼런스 사이트에서 바로 프롬프트 복사
+## 레퍼런스 사이트에서 클릭 한 번 → 사내 LLM 세션에 Ctrl+V
 
-차트 갤러리(`examples/charts.html`), 대시보드, 드릴다운 페이지의 모든 차트에는 오른쪽 위에 **프롬프트** 버튼이 있다.
+차트 갤러리(`examples/charts.html`), 대시보드, 드릴다운 페이지의 모든 차트 오른쪽 위에 **복사** 버튼이 있다.
 
-1. 마음에 드는 차트에서 **프롬프트** 클릭
-2. x / y / 제목이 미리 채워져 있다 — 내 데이터의 필드명으로 고치고, "데이터 설명"에 어디서 오는 데이터인지 한 줄
-3. **프롬프트 복사** → Claude / GPT / GLM 입력창에 붙여넣기
+1. 마음에 드는 차트에서 **복사** 클릭 (한 번이면 끝, 토스트로 확인)
+2. 사내 LLM 세션(Claude / GPT / GLM)에 **Ctrl+V**
 
-복사되는 내용: 차트 사양(종류·x·y·제목·데이터) + 그대로 호출할 코드(`DSCharts.*` 또는 ECharts 템플릿) + 디자인 규칙 요약(`prompts/system-prompt-short.md`) + 파일 위치. "코드만 복사"는 호출 코드만 준다. 구현은 `js/ds-prompt.js`이고, 다른 페이지의 ECharts 차트에도 `data-ds-prompt` 속성과 `<script type="text/plain" data-ds-prompt-code>` 템플릿으로 같은 버튼을 붙일 수 있다.
+붙여넣은 세션은 "이 차트를 내 화면에 적용해라"는 지시와 함께 차트 사양(종류·x·y·제목·데이터), 그대로 호출할 코드, 디자인 규칙 요약, 파일을 자동으로 가져오는 방법(번들 링크 / install.sh / manifest)을 받는다. x/y 는 레퍼런스 샘플 기준이라 "내 데이터 컬럼명으로 바꾸고 모르면 질문하라"고 적혀 있다.
+
+- **▾ (옵션)**: x/y/제목/데이터 설명을 고쳐서 복사, 코드만 복사, 파일 받기 명령 복사.
+- **라이브러리 소스 포함**: 세션이 외부 URL 을 못 받는 폐쇄망이면 ▾ 에서 이 옵션을 켠다. tokens.css·ds.css·ds-theme.js·ds-charts.js 원문(약 127KB)이 프롬프트 끝에 붙는다. 한 번 켜면 기억되어 이후 한 번 클릭에도 적용된다.
+
+구현은 `js/ds-prompt.js`. 다른 페이지의 ECharts 차트에도 `data-ds-prompt` 속성과 `<script type="text/plain" data-ds-prompt-code>` 템플릿으로 같은 버튼을 붙일 수 있다.
 
 ## LLM에 먹이는 방법
 
