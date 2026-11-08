@@ -17,7 +17,9 @@
   'use strict';
   const SCRIPT_URL = (document.currentScript && document.currentScript.src) || location.href;
   const REPO = 'https://github.com/Nangoh/references';
-  const RAW = 'https://raw.githubusercontent.com/Nangoh/references/main/';
+  const HOME = 'https://nangoh.github.io/references/';
+  // 사이트 베이스: 이 스크립트가 어디서 로드됐든(github.io, 사내 미러, 로컬 서버) 그 서버 기준. file:// 면 공개 주소.
+  const BASE = (() => { try { const u = new URL(SCRIPT_URL); if (u.protocol === 'file:') return HOME; const m = u.pathname.match(/^(.*\/)(?:js|api\/dist)\/[^/]*$/); return u.origin + (m ? m[1] : u.pathname.replace(/[^/]*$/, '')); } catch (e) { return HOME; } })();
   const KIND_KO = { bar: '막대 차트', line: '선 차트', stat: 'KPI 타일', segmented: '분할 막대', sparkline: '스파크라인', heatmap: '히트맵', diverging: '발산형 막대' };
   const FIELD_LABEL = { x: 'x (범주/시간 필드)', y: 'y (값 필드, 여러 개면 쉼표)', series: 'series (시리즈 필드)', value: 'value (값 필드)', title: '제목' };
 
@@ -160,10 +162,15 @@
     L.push('■ 코드 (이 호출을 그대로 쓰고, 데이터만 실제 값으로 바꿔)');
     L.push(code);
     L.push('');
-    L.push('■ 파일 가져오기');
-    L.push('- 리포: ' + REPO + ' (main)');
-    L.push('- 필요한 파일: tokens/tokens.css, css/ds.css, js/ds-theme.js, js/ds-charts.js' + (spec.kind in KIND_KO ? '' : ', vendor/echarts/echarts.min.js(npm run vendor), integrations/echarts-theme.js'));
-    L.push('- 직접 받을 때: ' + RAW + 'js/ds-charts.js 처럼 같은 경로로. 프로젝트에 이미 있으면 상대경로(../tokens/tokens.css)로 링크만.');
+    L.push('■ 파일 가져오기 — 손으로 복사하지 말고 아래 중 하나로 자동으로');
+    L.push('1) 가장 간단: 호스팅된 번들을 그대로 링크 (복사 없음)');
+    L.push('   <link rel="stylesheet" href="' + BASE + 'api/dist/ds.css">');
+    L.push('   <script src="' + BASE + 'api/dist/ds.js"><\/script>');
+    L.push('2) 프로젝트에 내려받기 (셸을 쓸 수 있는 에이전트): curl -fsSL ' + BASE + 'api/install.sh | sh -s -- ./public/ds');
+    L.push('   그 뒤 ../tokens/tokens.css ../css/ds.css ../js/ds-theme.js ../js/ds-charts.js 를 받은 경로로 링크');
+    L.push('3) 목록과 카탈로그(JSON, CORS 허용): ' + BASE + 'api/manifest.json · ' + BASE + 'api/charts.json · 규칙 전문 ' + BASE + 'api/agents.md');
+    if (!(spec.kind in KIND_KO)) L.push('4) ECharts 는 vendor/echarts/echarts.min.js(npm run vendor) 또는 CDN, 테마는 ' + BASE + 'integrations/echarts-theme.js');
+    L.push('리포: ' + REPO + ' · 사내망에서 위 주소가 막히면 install.sh 로 받아 사내 서버에 두고 같은 경로를 쓴다.');
     if (form.rules !== false && rules) { L.push(''); L.push('■ 디자인 규칙'); L.push(rules); }
     L.push('');
     L.push('■ 결과물');
@@ -243,6 +250,7 @@
     const acts = el('div', 'ds-prompt-pop__actions', pop);
     const bPrompt = el('button', 'ds-btn ds-btn--primary ds-btn--sm', acts, '프롬프트 복사'); bPrompt.type = 'button';
     const bCode = el('button', 'ds-btn ds-btn--sm', acts, '코드만 복사'); bCode.type = 'button';
+    const bGet = el('button', 'ds-btn ds-btn--sm', acts, '파일 받기 명령'); bGet.type = 'button'; bGet.title = 'curl 한 줄로 디자인 시스템 파일을 프로젝트에 내려받는 명령을 복사합니다';
     const bClose = el('button', 'ds-btn ds-btn--ghost ds-btn--sm', acts, '닫기'); bClose.type = 'button';
     const status = el('span', 'ds-prompt-pop__status', acts); status.setAttribute('aria-live', 'polite');
     const det = el('details', null, pop); el('summary', null, det, '미리보기 / 직접 복사');
@@ -256,6 +264,7 @@
     det.addEventListener('toggle', () => { if (det.open) refresh(); });
     bPrompt.addEventListener('click', async () => { const t = await prompt(); preview.value = t; copyText(t, status, preview); });
     bCode.addEventListener('click', async () => { const t = code(); preview.value = t; copyText(t, status, preview); });
+    bGet.addEventListener('click', () => { const t = 'curl -fsSL ' + BASE + 'api/install.sh | sh -s -- ./public/ds'; preview.value = t + '\n\n# 또는 복사 없이 링크만:\n<link rel="stylesheet" href="' + BASE + 'api/dist/ds.css">\n<script src="' + BASE + 'api/dist/ds.js"><\/script>'; copyText(t, status, preview); });
     bClose.addEventListener('click', closeOpen);
     openPop = pop;
     const first = Object.values(inputs)[0]; if (first) first.focus();

@@ -22,6 +22,8 @@ jobs:
         run: npm run validate:palette
       - name: 외부 라이브러리 vendor 복사
         run: npm run vendor
+      - name: api/ 생성 (매니페스트·카탈로그·번들)
+        run: npm run api && node -e "new Function(require('fs').readFileSync('api/dist/ds.js','utf8'))" && sh -n api/install.sh
       - name: Playwright 설치
         run: npm i -D --no-save playwright@1.63.0 && npx playwright install --with-deps chromium
       - name: 예시 페이지 렌더 (콘솔 에러·가로 스크롤 검사 + 스크린샷)

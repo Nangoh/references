@@ -27,11 +27,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run vendor
+      - run: npm run api
       - name: 사이트 디렉터리 구성 (리포 구조 그대로 + 루트 index는 examples/index.html 로 리다이렉트)
         run: |
           mkdir -p _site
-          cp -r tokens css js integrations examples vendor docs _site/
+          cp -r tokens css js integrations examples vendor docs api prompts _site/
           cp README.md AGENTS.md _site/
+          cp api/llms.txt _site/llms.txt
           cat > _site/index.html <<'HTML'
           <!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=examples/index.html"><title>references</title><a href="examples/index.html">examples/index.html</a>
           HTML

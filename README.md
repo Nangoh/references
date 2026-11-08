@@ -68,6 +68,41 @@ GPT 6.1 sol, GLM-5.3 flash 같은 모델이 화면을 생성할 때 이 저장�
 
 예시 데이터는 `examples/data/sales.csv`(2025–2026 지점별 판매, 약 4,300행, 합성)입니다. 실제 수치가 아닙니다.
 
+## 가져가기 — 사람이 아니라 LLM이 받아간다
+
+GitHub Pages 가 정적 "API" 역할을 한다. 빌드 때 `npm run api` 가 `api/` 를 생성하고 그대로 배포된다 (CORS 허용, 토큰 불필요).
+
+| 주소 | 내용 |
+|---|---|
+| `https://nangoh.github.io/references/llms.txt` | LLM 진입점. 규칙·파일·차트 카탈로그 위치를 한 장에 |
+| `…/api/manifest.json` | 파일 목록(경로, URL, 크기, sha256), 버전, 커밋, 설치 명령, CDN 대안 |
+| `…/api/charts.json` | 차트 카탈로그: 종류별 언제 쓰나 / 옵션 / 호출 예 / 예시 페이지 |
+| `…/api/components.json` | ds.css 클래스 목록(블록별) |
+| `…/api/tokens.json`, `…/api/prompt.txt`, `…/api/prompt-short.txt`, `…/api/agents.md` | 토큰과 규칙 전문 |
+| `…/api/dist/ds.css`, `…/api/dist/ds.js` | 한 파일 번들 (토큰+컴포넌트 / 테마+차트+프롬프트) |
+| `…/api/install.sh` | 필요한 파일을 프로젝트에 내려받는 스크립트 |
+
+세 가지 사용법:
+
+```html
+<!-- 1) 복사 없이 링크만 -->
+<link rel="stylesheet" href="https://nangoh.github.io/references/api/dist/ds.css">
+<script src="https://nangoh.github.io/references/api/dist/ds.js"></script>
+```
+
+```bash
+# 2) 프로젝트에 내려받기 (코딩 에이전트에게 이 한 줄을 주면 된다)
+curl -fsSL https://nangoh.github.io/references/api/install.sh | sh -s -- ./public/ds
+```
+
+```bash
+# 3) 사내 미러: 받아서 자체 서버에 두고 DS_BASE 로 가리킨다
+DS_BASE=https://design.internal.example/ sh install.sh ./public/ds
+```
+
+개별 파일은 `https://nangoh.github.io/references/js/ds-charts.js` 처럼 리포 경로 그대로, CDN 이 필요하면 `https://cdn.jsdelivr.net/gh/Nangoh/references@main/js/ds-charts.js`.
+
+
 ## 레퍼런스 사이트에서 바로 프롬프트 복사
 
 차트 갤러리(`examples/charts.html`), 대시보드, 드릴다운 페이지의 모든 차트에는 오른쪽 위에 **프롬프트** 버튼이 있다.

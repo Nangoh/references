@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "description": "사내 공용 디자인 시스템 + 차트 레퍼런스 (토큰, 컴포넌트 CSS, 차트 라이브러리, Spotfire식 탐색기 예시)",
+  "homepage": "https://nangoh.github.io/references/",
   "scripts": {
     "vendor": "node scripts/vendor.js",
     "tokens": "node scripts/build-tokens-json.js",
     "validate:palette": "node scripts/validate-tokens-palette.js",
     "test": "node tests/screenshots.js",
-    "serve": "node scripts/serve.js"
+    "serve": "node scripts/serve.js",
+    "api": "node scripts/build-api.js"
   },
   "devDependencies": {
     "@duckdb/duckdb-wasm": "1.33.1-dev57.0",

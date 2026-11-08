@@ -2,3 +2,4 @@ node_modules/
 vendor/
 tests/__screens__/
 .DS_Store
+api/
