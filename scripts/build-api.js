@@ -79,6 +79,7 @@ write('tokens.json', read('tokens/tokens.json'));
 write('prompt.txt', read('prompts/system-prompt.md'));
 write('prompt-short.txt', read('prompts/system-prompt-short.md'));
 write('agents.md', read('AGENTS.md'));
+write('dev-principles.md', read('docs/00-dev-principles.md'));
 
 /* ---------- llms.txt (LLM 이 사이트를 읽는 관례적 진입점; Pages 루트에도 복사된다) ---------- */
 const llms = `# references — 사내 디자인 시스템 + 차트 레퍼런스
@@ -88,6 +89,7 @@ const llms = `# references — 사내 디자인 시스템 + 차트 레퍼런스
 ## 규칙 (먼저 읽기)
 - 짧은 규칙: ${BASE}api/prompt-short.txt
 - 전체 규칙(코딩 에이전트용): ${BASE}api/agents.md
+- 개발 원칙(만드는 방법, 완료 기준): ${BASE}api/dev-principles.md
 - 디자인 원칙/컴포넌트/차트 문서: ${BASE}docs/
 
 ## 가져오기 (자동)
@@ -122,7 +124,7 @@ const manifest = {
     cdn_note: `사내망에서 github.io 가 막히면 jsDelivr(cdn) 또는 raw 주소를 쓰거나, install.sh 로 받아 자체 서버에 둔다. DS_BASE 환경변수로 미러 지정.`,
     cors: 'GitHub Pages 는 Access-Control-Allow-Origin: * 를 보내므로 브라우저 fetch 로도 받을 수 있다.',
   },
-  endpoints: { llms: BASE + 'llms.txt', manifest: BASE + 'api/manifest.json', charts: BASE + 'api/charts.json', components: BASE + 'api/components.json', tokens: BASE + 'api/tokens.json', prompt: BASE + 'api/prompt.txt', prompt_short: BASE + 'api/prompt-short.txt', agents: BASE + 'api/agents.md', bundle_css: BASE + 'api/dist/ds.css', bundle_js: BASE + 'api/dist/ds.js', install: BASE + 'api/install.sh' },
+  endpoints: { llms: BASE + 'llms.txt', manifest: BASE + 'api/manifest.json', charts: BASE + 'api/charts.json', components: BASE + 'api/components.json', tokens: BASE + 'api/tokens.json', prompt: BASE + 'api/prompt.txt', prompt_short: BASE + 'api/prompt-short.txt', agents: BASE + 'api/agents.md', dev_principles: BASE + 'api/dev-principles.md', bundle_css: BASE + 'api/dist/ds.css', bundle_js: BASE + 'api/dist/ds.js', install: BASE + 'api/install.sh' },
   bundles: [{ path: 'api/dist/ds.css', url: BASE + 'api/dist/ds.css', bytes: Buffer.byteLength(cssBundle), sha256: sha(cssBundle), contains: ['tokens/tokens.css', 'css/ds.css'] }, { path: 'api/dist/ds.js', url: BASE + 'api/dist/ds.js', bytes: Buffer.byteLength(jsBundle), sha256: sha(jsBundle), contains: ['js/ds-theme.js', 'js/ds-charts.js', 'js/ds-prompt.js'] }],
   files,
   github_api: { contents: `https://api.github.com/repos/${REPO}/contents/{path}?ref=main`, tarball: `https://api.github.com/repos/${REPO}/tarball/main`, note: '공개 리포 — 토큰 없이 60회/시간' },
