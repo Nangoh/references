@@ -151,6 +151,51 @@
      - params 는 프롬프트 옵션 창에서 고칠 수 있는 컬럼명 (템플릿에서 {{KEY}} 로 치환)
      - option 안에서 색은 c(= DSEchartsTheme.colors()) 만 쓴다. hex 금지.
      ============================================================ */
+  /* 계층 축 (hieraxis / hieraxis3 공용): LEVELS 순서대로 그룹 → 잎. 잎(마지막 레벨)이 막대, 상위 레벨은 축 아래 띠(라벨 + 구분선 + 옅은 배경). */
+  const hierPrep = (rows, P) => {
+        const levels = P.LEVELS.split(',').map(s => s.trim()); const top = +P.TOP_L1 || 0;
+        const sum = new Map(); for (const r of rows) { const key = levels.map(l => r[l]).join('\u0001'); sum.set(key, (sum.get(key) || 0) + (+r[P.VALUE] || 0)); }
+        let leaves = [...sum].map(([k, v]) => ({ path: k.split('\u0001'), v }));
+        // 정렬: 각 레벨을 그 레벨 합계 내림차순으로, 잎은 값 내림차순 → 그룹이 뭉쳐 나온다
+        const tot = levels.map((_, li) => { const m = new Map(); for (const lf of leaves) { const k = lf.path.slice(0, li + 1).join('\u0001'); m.set(k, (m.get(k) || 0) + lf.v); } return m; });
+        leaves.sort((a, b) => { for (let li = 0; li < levels.length; li++) { const ka = a.path.slice(0, li + 1).join('\u0001'), kb = b.path.slice(0, li + 1).join('\u0001'); if (ka !== kb) return tot[li].get(kb) - tot[li].get(ka); } return 0; });
+        if (top > 0) { const keep = new Set([...tot[0]].sort((a, b) => b[1] - a[1]).slice(0, top).map(x => x[0])); leaves = leaves.filter(lf => keep.has(lf.path[0])); }
+        // 상위 레벨별 구간 [start, end]
+        const bands = levels.slice(0, -1).map((_, li) => { const out = []; leaves.forEach((lf, i) => { const name = lf.path[li]; const last = out[out.length - 1]; if (last && last.name === name && last.parent === lf.path.slice(0, li).join('›')) last.end = i; else out.push({ name, parent: lf.path.slice(0, li).join('›'), start: i, end: i }); }); return out; });
+        return { levels, leaves, bands };
+      };
+  const hierOption = (d, c, H) => {
+        const n = d.leaves.length; const depth = d.levels.length - 1;
+        const rotate = n > 24 ? 45 : n > 14 ? 30 : 0;                       // 잎 라벨: 많으면 기울인다
+        const maxLen = Math.max(1, ...d.leaves.map(l => String(l.path[depth]).length));
+        const leafH = rotate ? Math.round(16 + Math.min(maxLen, 8) * 11 * Math.sin(rotate * Math.PI / 180)) : 20;   // 잎 라벨이 차지하는 높이(글자 수 기준)
+        const rowH = 22;                                                      // 그룹 띠 한 줄 높이
+        const leafMax = new Map(); (d.bands[depth - 1] || []).forEach(b => { let mi = b.start; for (let i = b.start; i <= b.end; i++) if (d.leaves[i].v > d.leaves[mi].v) mi = i; leafMax.set(mi, true); });
+        // 상위 레벨 축: 잎 바로 위 레벨이 잎 라벨 바로 아래, 최상위가 맨 아래
+        const groupAxes = d.bands.map((bands, li) => {
+          const labels = new Array(n).fill(''); const starts = new Set(); bands.forEach(b => { labels[Math.floor((b.start + b.end) / 2)] = b.name; starts.add(b.start); });
+          const top = li === 0; const rowFromLeaf = depth - 1 - li;         // 0 = 잎 바로 위 레벨
+          return { type: 'category', position: 'bottom', offset: leafH + rowFromLeaf * rowH, data: labels, axisPointer: { show: false },
+            axisLabel: { interval: 0, margin: 5, color: top ? c.ink : c.ink2, fontWeight: top ? 600 : 500, fontSize: 11, fontFamily: c.font },
+            axisTick: { show: true, alignWithLabel: false, interval: (i) => starts.has(i), length: rowH - 3, lineStyle: { color: c.axis } },
+            axisLine: { show: true, lineStyle: { color: c.axis } }, splitLine: { show: false } };
+        });
+        const topBands = d.bands[0] || [];
+        return { grid: { left: 56, right: 16, top: 24, bottom: leafH + depth * rowH + 10, containLabel: false },
+          tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: ps => { const lf = d.leaves[ps[0].dataIndex]; return `${lf.path.join(' › ')}<br><b>${H.fmtKRW(lf.v)}</b>`; } },
+          xAxis: [
+            { type: 'category', data: d.leaves.map(l => l.path[depth]), axisLabel: { interval: 0, rotate, fontSize: 11, color: c.muted, fontFamily: c.font, width: rotate ? 72 : Math.max(36, Math.floor(900 / n)), overflow: 'truncate' },
+              axisTick: { alignWithLabel: true, lineStyle: { color: c.axis } }, axisLine: { lineStyle: { color: c.axis } },
+              splitLine: { show: true, interval: (i) => i > 0 && topBands.some(b => b.start === i), lineStyle: { color: c.axis } } },
+            ...groupAxes,
+          ],
+          yAxis: { type: 'value', axisLabel: { formatter: v => H.fmtKRW(v) }, splitNumber: 4 },
+          series: [{ type: 'bar', xAxisIndex: 0, data: d.leaves.map(l => l.v), barMaxWidth: 24, itemStyle: { color: c.series[0], borderRadius: [4, 4, 0, 0] },
+            label: { show: true, position: 'top', fontSize: 11, color: c.ink2, fontFamily: c.font, formatter: p => leafMax.has(p.dataIndex) ? H.fmtKRW(p.value) : '' },
+            markArea: { silent: true, itemStyle: { color: c.ink, opacity: 0.05 }, data: topBands.filter((_, i) => i % 2 === 1).map(b => [{ xAxis: b.start }, { xAxis: b.end }]) } }],
+          dataZoom: n > 40 ? [{ type: 'inside', xAxisIndex: [0, ...groupAxes.map((_, i) => i + 1)] }] : [] };
+      };
+
   const DEFS = [
     { id: 'hist', span: 6, params: { VALUE: 'revenue' },
       prep: (rows, P) => { const vals = rows.map(r => +r[P.VALUE]).filter(v => v > 0).sort((a, b) => a - b); const lo = 0, hi = H.quantile(vals, 0.99); const n = 20, w = (hi - lo) / n; const bins = Array.from({ length: n }, (_, i) => ({ lo: lo + i * w, hi: lo + (i + 1) * w, n: 0 })); for (const v of vals) { const i = Math.min(n - 1, Math.floor((v - lo) / w)); if (i >= 0) bins[i].n++; } return { bins, total: vals.length }; },
@@ -230,6 +275,8 @@
           { name: '2026', type: 'scatter', data: d.map(i => i.b), symbolSize: 10, itemStyle: { color: c.series[0], borderColor: c.surface, borderWidth: 2 }, z: 3, label: { show: true, position: 'right', color: c.ink2, fontFamily: c.font, fontSize: 11, formatter: p => { const it = d[p.dataIndex]; return (it.b >= it.a ? '+' : '−') + H.pct(Math.abs(it.b - it.a) / (it.a || 1), 0); } } },
         ] }) },
 
+    { id: 'hieraxis', span: 12, h: 'tall', params: { LEVELS: 'region,branch', VALUE: 'revenue', TOP_L1: '0' }, prep: hierPrep, option: hierOption },
+    { id: 'hieraxis3', span: 12, h: 'tall', params: { LEVELS: 'region,channel,category', VALUE: 'revenue', TOP_L1: '3' }, prep: hierPrep, option: hierOption },
     { id: 'lollipop', span: 6, h: 'tall', params: { ENTITY: 'branch', VALUE: 'revenue', TOP: '15' },
       prep: (rows, P) => H.groupSum(rows, P.ENTITY, P.VALUE).sort((a, b) => b.v - a.v).slice(0, +P.TOP),
       option: (d, c, H) => ({ grid: { left: 8, right: 56, top: 8, bottom: 8, containLabel: true }, tooltip: { trigger: 'axis', formatter: ps => `${ps[0].name}<br><b>${H.fmtKRW(ps[0].value)}</b>` },
